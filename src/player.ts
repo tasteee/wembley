@@ -3,11 +3,11 @@ import { createInstrument } from './instrument.js'
 import { audioEngine } from './audio-engine.js'
 
 export const createPlayer = (config: ConfigT) => {
-  const load = async (config: SoundfontLoadConfigT) => {
-    console.log('Loading soundfonts:', config)
+  const load = async (soundfontLoadConfig: SoundfontLoadConfigT) => {
+    console.log('Loading soundfonts:', soundfontLoadConfig)
     const instruments: Record<string, InstrumentT> = {}
 
-    for (const [name, url] of Object.entries(config)) {
+    for (const [name, url] of Object.entries(soundfontLoadConfig)) {
       console.log(`Loading ${name} from ${url}...`)
 
       // Load the actual soundfont using the audio engine
