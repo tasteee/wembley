@@ -4,11 +4,48 @@ global.window = {}
 global.performance = { now: () => Date.now() }
 
 // Mock Web Audio API
-global.AudioContext = class MockAudioContext {}
+global.AudioContext = class MockAudioContext {
+  constructor() {
+    this.state = 'running'
+    this.destination = { connect: () => {} }
+    this.currentTime = 0
+  }
+  createGain() {
+    return {
+      gain: { value: 0.7 },
+      connect: () => {},
+      disconnect: () => {}
+    }
+  }
+  resume() { return Promise.resolve() }
+}
+
+// Mock soundfont-player
+jest.mock('soundfont-player', () => ({
+  __esModule: true,
+  default: {
+    instrument: (context, instrumentName, options) => {
+      console.log(`[Mock] Loading soundfont: ${instrumentName}`)
+      return Promise.resolve({
+        play: (note, time, options) => {
+          console.log(`[Mock] Playing soundfont note: ${note} at ${time}`)
+          return {
+            stop: (time) => console.log(`[Mock] Stopping soundfont note at ${time}`)
+          }
+        },
+        stop: () => console.log(`[Mock] Stopping all soundfont notes`)
+      })
+    }
+  }
+}))
 
 // Mock Tone.js completely for tests
 jest.mock('tone', () => ({
-  getContext: () => ({ state: 'running' }),
+  getContext: () => ({ 
+    state: 'running',
+    currentTime: 0,
+    rawContext: new global.AudioContext()
+  }),
   start: () => Promise.resolve(),
   now: () => Date.now() / 1000,
   Gain: class MockGain {

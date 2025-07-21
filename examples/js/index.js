@@ -4,7 +4,13 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __commonJS = (cb, mod2) => function __require() {
+var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
+  get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
+}) : x)(function(x) {
+  if (typeof require !== "undefined") return require.apply(this, arguments);
+  throw Error('Dynamic require of "' + x + '" is not supported');
+});
+var __commonJS = (cb, mod2) => function __require2() {
   return mod2 || (0, cb[__getOwnPropNames(cb)[0]])((mod2 = { exports: {} }).exports, mod2), mod2.exports;
 };
 var __export = (target, all4) => {
@@ -195,8 +201,8 @@ var require_createClass = __commonJS({
 // node_modules/automation-events/build/es5/bundle.js
 var require_bundle = __commonJS({
   "node_modules/automation-events/build/es5/bundle.js"(exports, module) {
-    (function(global, factory) {
-      typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require_slicedToArray(), require_classCallCheck(), require_createClass()) : typeof define === "function" && define.amd ? define(["exports", "@babel/runtime/helpers/slicedToArray", "@babel/runtime/helpers/classCallCheck", "@babel/runtime/helpers/createClass"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.automationEvents = {}, global._slicedToArray, global._classCallCheck, global._createClass));
+    (function(global2, factory) {
+      typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require_slicedToArray(), require_classCallCheck(), require_createClass()) : typeof define === "function" && define.amd ? define(["exports", "@babel/runtime/helpers/slicedToArray", "@babel/runtime/helpers/classCallCheck", "@babel/runtime/helpers/createClass"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.automationEvents = {}, global2._slicedToArray, global2._classCallCheck, global2._createClass));
     })(exports, function(exports2, _slicedToArray, _classCallCheck, _createClass) {
       "use strict";
       var createExtendedExponentialRampToValueAutomationEvent = function createExtendedExponentialRampToValueAutomationEvent2(value, endTime, insertTime) {
@@ -475,6 +481,933 @@ var require_bundle = __commonJS({
       exports2.createSetValueAutomationEvent = createSetValueAutomationEvent2;
       exports2.createSetValueCurveAutomationEvent = createSetValueCurveAutomationEvent2;
     });
+  }
+});
+
+// node_modules/audio-loader/lib/base64.js
+var require_base64 = __commonJS({
+  "node_modules/audio-loader/lib/base64.js"(exports, module) {
+    "use strict";
+    function b64ToUint6(nChr) {
+      return nChr > 64 && nChr < 91 ? nChr - 65 : nChr > 96 && nChr < 123 ? nChr - 71 : nChr > 47 && nChr < 58 ? nChr + 4 : nChr === 43 ? 62 : nChr === 47 ? 63 : 0;
+    }
+    function decode(sBase64, nBlocksSize) {
+      var sB64Enc = sBase64.replace(/[^A-Za-z0-9\+\/]/g, "");
+      var nInLen = sB64Enc.length;
+      var nOutLen = nBlocksSize ? Math.ceil((nInLen * 3 + 1 >> 2) / nBlocksSize) * nBlocksSize : nInLen * 3 + 1 >> 2;
+      var taBytes = new Uint8Array(nOutLen);
+      for (var nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0; nInIdx < nInLen; nInIdx++) {
+        nMod4 = nInIdx & 3;
+        nUint24 |= b64ToUint6(sB64Enc.charCodeAt(nInIdx)) << 18 - 6 * nMod4;
+        if (nMod4 === 3 || nInLen - nInIdx === 1) {
+          for (nMod3 = 0; nMod3 < 3 && nOutIdx < nOutLen; nMod3++, nOutIdx++) {
+            taBytes[nOutIdx] = nUint24 >>> (16 >>> nMod3 & 24) & 255;
+          }
+          nUint24 = 0;
+        }
+      }
+      return taBytes;
+    }
+    module.exports = { decode };
+  }
+});
+
+// node_modules/audio-loader/lib/fetch.js
+var require_fetch = __commonJS({
+  "node_modules/audio-loader/lib/fetch.js"(exports, module) {
+    "use strict";
+    module.exports = function(url, type) {
+      return new Promise(function(done, reject) {
+        var req = new XMLHttpRequest();
+        if (type) req.responseType = type;
+        req.open("GET", url);
+        req.onload = function() {
+          req.status === 200 ? done(req.response) : reject(Error(req.statusText));
+        };
+        req.onerror = function() {
+          reject(Error("Network Error"));
+        };
+        req.send();
+      });
+    };
+  }
+});
+
+// node_modules/audio-loader/lib/index.js
+var require_lib = __commonJS({
+  "node_modules/audio-loader/lib/index.js"(exports, module) {
+    "use strict";
+    var base64 = require_base64();
+    var fetch2 = require_fetch();
+    function fromRegex(r) {
+      return function(o) {
+        return typeof o === "string" && r.test(o);
+      };
+    }
+    function prefix(pre, name2) {
+      return typeof pre === "string" ? pre + name2 : typeof pre === "function" ? pre(name2) : name2;
+    }
+    function load(ac, source, options, defVal) {
+      var loader = (
+        // Basic audio loading
+        isArrayBuffer(source) ? loadArrayBuffer : isAudioFileName(source) ? loadAudioFile : isPromise(source) ? loadPromise : isArray2(source) ? loadArrayData : isObject2(source) ? loadObjectData : isJsonFileName(source) ? loadJsonFile : isBase64Audio(source) ? loadBase64Audio : isJsFileName(source) ? loadMidiJSFile : null
+      );
+      var opts = options || {};
+      return loader ? loader(ac, source, opts) : defVal ? Promise.resolve(defVal) : Promise.reject("Source not valid (" + source + ")");
+    }
+    load.fetch = fetch2;
+    function isArrayBuffer(o) {
+      return o instanceof ArrayBuffer;
+    }
+    function loadArrayBuffer(ac, array, options) {
+      return new Promise(function(done, reject) {
+        ac.decodeAudioData(
+          array,
+          function(buffer) {
+            done(buffer);
+          },
+          function() {
+            reject("Can't decode audio data (" + array.slice(0, 30) + "...)");
+          }
+        );
+      });
+    }
+    var isAudioFileName = fromRegex(/\.(mp3|wav|ogg)(\?.*)?$/i);
+    function loadAudioFile(ac, name2, options) {
+      var url = prefix(options.from, name2);
+      return load(ac, load.fetch(url, "arraybuffer"), options);
+    }
+    function isPromise(o) {
+      return o && typeof o.then === "function";
+    }
+    function loadPromise(ac, promise, options) {
+      return promise.then(function(value) {
+        return load(ac, value, options);
+      });
+    }
+    var isArray2 = Array.isArray;
+    function loadArrayData(ac, array, options) {
+      return Promise.all(array.map(function(data) {
+        return load(ac, data, options, data);
+      }));
+    }
+    function isObject2(o) {
+      return o && typeof o === "object";
+    }
+    function loadObjectData(ac, obj, options) {
+      var dest = {};
+      var promises = Object.keys(obj).map(function(key) {
+        if (options.only && options.only.indexOf(key) === -1) return null;
+        var value = obj[key];
+        return load(ac, value, options, value).then(function(audio) {
+          dest[key] = audio;
+        });
+      });
+      return Promise.all(promises).then(function() {
+        return dest;
+      });
+    }
+    var isJsonFileName = fromRegex(/\.json(\?.*)?$/i);
+    function loadJsonFile(ac, name2, options) {
+      var url = prefix(options.from, name2);
+      return load(ac, load.fetch(url, "text").then(JSON.parse), options);
+    }
+    var isBase64Audio = fromRegex(/^data:audio/);
+    function loadBase64Audio(ac, source, options) {
+      var i = source.indexOf(",");
+      return load(ac, base64.decode(source.slice(i + 1)).buffer, options);
+    }
+    var isJsFileName = fromRegex(/\.js(\?.*)?$/i);
+    function loadMidiJSFile(ac, name2, options) {
+      var url = prefix(options.from, name2);
+      return load(ac, load.fetch(url, "text").then(midiJsToJson), options);
+    }
+    function midiJsToJson(data) {
+      var begin = data.indexOf("MIDI.Soundfont.");
+      if (begin < 0) throw Error("Invalid MIDI.js Soundfont format");
+      begin = data.indexOf("=", begin) + 2;
+      var end = data.lastIndexOf(",");
+      return JSON.parse(data.slice(begin, end) + "}");
+    }
+    if (typeof module === "object" && module.exports) module.exports = load;
+    if (typeof window !== "undefined") window.loadAudio = load;
+  }
+});
+
+// node_modules/adsr/index.js
+var require_adsr = __commonJS({
+  "node_modules/adsr/index.js"(exports, module) {
+    module.exports = ADSR;
+    function ADSR(audioContext) {
+      var node = audioContext.createGain();
+      var voltage = node._voltage = getVoltage(audioContext);
+      var value = scale(voltage);
+      var startValue = scale(voltage);
+      var endValue = scale(voltage);
+      node._startAmount = scale(startValue);
+      node._endAmount = scale(endValue);
+      node._multiplier = scale(value);
+      node._multiplier.connect(node);
+      node._startAmount.connect(node);
+      node._endAmount.connect(node);
+      node.value = value.gain;
+      node.startValue = startValue.gain;
+      node.endValue = endValue.gain;
+      node.startValue.value = 0;
+      node.endValue.value = 0;
+      Object.defineProperties(node, props);
+      return node;
+    }
+    var props = {
+      attack: { value: 0, writable: true },
+      decay: { value: 0, writable: true },
+      sustain: { value: 1, writable: true },
+      release: { value: 0, writable: true },
+      getReleaseDuration: {
+        value: function() {
+          return this.release;
+        }
+      },
+      start: {
+        value: function(at) {
+          var target = this._multiplier.gain;
+          var startAmount = this._startAmount.gain;
+          var endAmount = this._endAmount.gain;
+          this._voltage.start(at);
+          this._decayFrom = this._decayFrom = at + this.attack;
+          this._startedAt = at;
+          var sustain = this.sustain;
+          target.cancelScheduledValues(at);
+          startAmount.cancelScheduledValues(at);
+          endAmount.cancelScheduledValues(at);
+          endAmount.setValueAtTime(0, at);
+          if (this.attack) {
+            target.setValueAtTime(0, at);
+            target.linearRampToValueAtTime(1, at + this.attack);
+            startAmount.setValueAtTime(1, at);
+            startAmount.linearRampToValueAtTime(0, at + this.attack);
+          } else {
+            target.setValueAtTime(1, at);
+            startAmount.setValueAtTime(0, at);
+          }
+          if (this.decay) {
+            target.setTargetAtTime(sustain, this._decayFrom, getTimeConstant(this.decay));
+          }
+        }
+      },
+      stop: {
+        value: function(at, isTarget) {
+          if (isTarget) {
+            at = at - this.release;
+          }
+          var endTime = at + this.release;
+          if (this.release) {
+            var target = this._multiplier.gain;
+            var startAmount = this._startAmount.gain;
+            var endAmount = this._endAmount.gain;
+            target.cancelScheduledValues(at);
+            startAmount.cancelScheduledValues(at);
+            endAmount.cancelScheduledValues(at);
+            var expFalloff = getTimeConstant(this.release);
+            if (this.attack && at < this._decayFrom) {
+              var valueAtTime = getValue(0, 1, this._startedAt, this._decayFrom, at);
+              target.linearRampToValueAtTime(valueAtTime, at);
+              startAmount.linearRampToValueAtTime(1 - valueAtTime, at);
+              startAmount.setTargetAtTime(0, at, expFalloff);
+            }
+            endAmount.setTargetAtTime(1, at, expFalloff);
+            target.setTargetAtTime(0, at, expFalloff);
+          }
+          this._voltage.stop(endTime);
+          return endTime;
+        }
+      },
+      onended: {
+        get: function() {
+          return this._voltage.onended;
+        },
+        set: function(value) {
+          this._voltage.onended = value;
+        }
+      }
+    };
+    var flat = new Float32Array([1, 1]);
+    function getVoltage(context2) {
+      var voltage = context2.createBufferSource();
+      var buffer = context2.createBuffer(1, 2, context2.sampleRate);
+      buffer.getChannelData(0).set(flat);
+      voltage.buffer = buffer;
+      voltage.loop = true;
+      return voltage;
+    }
+    function scale(node) {
+      var gain = node.context.createGain();
+      node.connect(gain);
+      return gain;
+    }
+    function getTimeConstant(time) {
+      return Math.log(time + 1) / Math.log(100);
+    }
+    function getValue(start2, end, fromTime, toTime, at) {
+      var difference = end - start2;
+      var time = toTime - fromTime;
+      var truncateTime = at - fromTime;
+      var phase = truncateTime / time;
+      var value = start2 + phase * difference;
+      if (value <= start2) {
+        value = start2;
+      }
+      if (value >= end) {
+        value = end;
+      }
+      return value;
+    }
+  }
+});
+
+// node_modules/sample-player/lib/player.js
+var require_player = __commonJS({
+  "node_modules/sample-player/lib/player.js"(exports, module) {
+    "use strict";
+    var ADSR = require_adsr();
+    var EMPTY = {};
+    var DEFAULTS = {
+      gain: 1,
+      attack: 0.01,
+      decay: 0.1,
+      sustain: 0.9,
+      release: 0.3,
+      loop: false,
+      cents: 0,
+      loopStart: 0,
+      loopEnd: 0
+    };
+    function SamplePlayer(ac, source, options) {
+      var connected = false;
+      var nextId = 0;
+      var tracked = {};
+      var out = ac.createGain();
+      out.gain.value = 1;
+      var opts = Object.assign({}, DEFAULTS, options);
+      var player = { context: ac, out, opts };
+      if (source instanceof AudioBuffer) player.buffer = source;
+      else player.buffers = source;
+      player.start = function(name2, when, options2) {
+        if (player.buffer && name2 !== null) return player.start(null, name2, when);
+        var buffer = name2 ? player.buffers[name2] : player.buffer;
+        if (!buffer) {
+          console.warn("Buffer " + name2 + " not found.");
+          return;
+        } else if (!connected) {
+          console.warn("SamplePlayer not connected to any node.");
+          return;
+        }
+        var opts2 = options2 || EMPTY;
+        when = Math.max(ac.currentTime, when || 0);
+        player.emit("start", when, name2, opts2);
+        var node = createNode(name2, buffer, opts2);
+        node.id = track(name2, node);
+        node.env.start(when);
+        node.source.start(when);
+        player.emit("started", when, node.id, node);
+        if (opts2.duration) node.stop(when + opts2.duration);
+        return node;
+      };
+      player.play = function(name2, when, options2) {
+        return player.start(name2, when, options2);
+      };
+      player.stop = function(when, ids) {
+        var node;
+        ids = ids || Object.keys(tracked);
+        return ids.map(function(id) {
+          node = tracked[id];
+          if (!node) return null;
+          node.stop(when);
+          return node.id;
+        });
+      };
+      player.connect = function(dest) {
+        connected = true;
+        out.connect(dest);
+        return player;
+      };
+      player.emit = function(event, when, obj, opts2) {
+        if (player.onevent) player.onevent(event, when, obj, opts2);
+        var fn = player["on" + event];
+        if (fn) fn(when, obj, opts2);
+      };
+      return player;
+      function track(name2, node) {
+        node.id = nextId++;
+        tracked[node.id] = node;
+        node.source.onended = function() {
+          var now = ac.currentTime;
+          node.source.disconnect();
+          node.env.disconnect();
+          node.disconnect();
+          player.emit("ended", now, node.id, node);
+        };
+        return node.id;
+      }
+      function createNode(name2, buffer, options2) {
+        var node = ac.createGain();
+        node.gain.value = 0;
+        node.connect(out);
+        node.env = envelope(ac, options2, opts);
+        node.env.connect(node.gain);
+        node.source = ac.createBufferSource();
+        node.source.buffer = buffer;
+        node.source.connect(node);
+        node.source.loop = options2.loop || opts.loop;
+        node.source.playbackRate.value = centsToRate(options2.cents || opts.cents);
+        node.source.loopStart = options2.loopStart || opts.loopStart;
+        node.source.loopEnd = options2.loopEnd || opts.loopEnd;
+        node.stop = function(when) {
+          var time = when || ac.currentTime;
+          player.emit("stop", time, name2);
+          var stopAt = node.env.stop(time);
+          node.source.stop(stopAt);
+        };
+        return node;
+      }
+    }
+    function isNum(x) {
+      return typeof x === "number";
+    }
+    var PARAMS = ["attack", "decay", "sustain", "release"];
+    function envelope(ac, options, opts) {
+      var env = ADSR(ac);
+      var adsr = options.adsr || opts.adsr;
+      PARAMS.forEach(function(name2, i) {
+        if (adsr) env[name2] = adsr[i];
+        else env[name2] = options[name2] || opts[name2];
+      });
+      env.value.value = isNum(options.gain) ? options.gain : isNum(opts.gain) ? opts.gain : 1;
+      return env;
+    }
+    function centsToRate(cents) {
+      return cents ? Math.pow(2, cents / 1200) : 1;
+    }
+    module.exports = SamplePlayer;
+  }
+});
+
+// node_modules/sample-player/lib/events.js
+var require_events = __commonJS({
+  "node_modules/sample-player/lib/events.js"(exports, module) {
+    module.exports = function(player) {
+      player.on = function(event, cb) {
+        if (arguments.length === 1 && typeof event === "function") return player.on("event", event);
+        var prop = "on" + event;
+        var old = player[prop];
+        player[prop] = old ? chain(old, cb) : cb;
+        return player;
+      };
+      return player;
+    };
+    function chain(fn1, fn2) {
+      return function(a, b, c, d) {
+        fn1(a, b, c, d);
+        fn2(a, b, c, d);
+      };
+    }
+  }
+});
+
+// node_modules/sample-player/node_modules/note-parser/index.js
+var require_note_parser = __commonJS({
+  "node_modules/sample-player/node_modules/note-parser/index.js"(exports, module) {
+    "use strict";
+    var REGEX5 = /^([a-gA-G])(#{1,}|b{1,}|x{1,}|)(-?\d*)\s*(.*)\s*$/;
+    function regex() {
+      return REGEX5;
+    }
+    var SEMITONES = [0, 2, 4, 5, 7, 9, 11];
+    function parse4(str, isTonic, tuning) {
+      if (typeof str !== "string") return null;
+      var m = REGEX5.exec(str);
+      if (!m || !isTonic && m[4]) return null;
+      var p = { letter: m[1].toUpperCase(), acc: m[2].replace(/x/g, "##") };
+      p.pc = p.letter + p.acc;
+      p.step = (p.letter.charCodeAt(0) + 3) % 7;
+      p.alt = p.acc[0] === "b" ? -p.acc.length : p.acc.length;
+      p.chroma = SEMITONES[p.step] + p.alt;
+      if (m[3]) {
+        p.oct = +m[3];
+        p.midi = p.chroma + 12 * (p.oct + 1);
+        p.freq = midiToFreq2(p.midi, tuning);
+      }
+      if (isTonic) p.tonicOf = m[4];
+      return p;
+    }
+    function midiToFreq2(midi2, tuning) {
+      return Math.pow(2, (midi2 - 69) / 12) * (tuning || 440);
+    }
+    var parser = { parse: parse4, regex, midiToFreq: midiToFreq2 };
+    var FNS = ["letter", "acc", "pc", "step", "alt", "chroma", "oct", "midi", "freq"];
+    FNS.forEach(function(name2) {
+      parser[name2] = function(src) {
+        var p = parse4(src);
+        return p && typeof p[name2] !== "undefined" ? p[name2] : null;
+      };
+    });
+    module.exports = parser;
+  }
+});
+
+// node_modules/sample-player/lib/notes.js
+var require_notes = __commonJS({
+  "node_modules/sample-player/lib/notes.js"(exports, module) {
+    "use strict";
+    var note2 = require_note_parser();
+    var isMidi2 = function(n) {
+      return n !== null && n !== [] && n >= 0 && n < 129;
+    };
+    var toMidi2 = function(n) {
+      return isMidi2(n) ? +n : note2.midi(n);
+    };
+    module.exports = function(player) {
+      if (player.buffers) {
+        var map = player.opts.map;
+        var toKey = typeof map === "function" ? map : toMidi2;
+        var mapper = function(name2) {
+          return name2 ? toKey(name2) || name2 : null;
+        };
+        player.buffers = mapBuffers(player.buffers, mapper);
+        var start2 = player.start;
+        player.start = function(name2, when, options) {
+          var key = mapper(name2);
+          var dec = key % 1;
+          if (dec) {
+            key = Math.floor(key);
+            options = Object.assign(options || {}, { cents: Math.floor(dec * 100) });
+          }
+          return start2(key, when, options);
+        };
+      }
+      return player;
+    };
+    function mapBuffers(buffers, toKey) {
+      return Object.keys(buffers).reduce(function(mapped, name2) {
+        mapped[toKey(name2)] = buffers[name2];
+        return mapped;
+      }, {});
+    }
+  }
+});
+
+// node_modules/sample-player/lib/scheduler.js
+var require_scheduler = __commonJS({
+  "node_modules/sample-player/lib/scheduler.js"(exports, module) {
+    "use strict";
+    var isArr = Array.isArray;
+    var isObj = function(o) {
+      return o && typeof o === "object";
+    };
+    var OPTS = {};
+    module.exports = function(player) {
+      player.schedule = function(time, events) {
+        var now = player.context.currentTime;
+        var when = time < now ? now : time;
+        player.emit("schedule", when, events);
+        var t, o, note2, opts;
+        return events.map(function(event) {
+          if (!event) return null;
+          else if (isArr(event)) {
+            t = event[0];
+            o = event[1];
+          } else {
+            t = event.time;
+            o = event;
+          }
+          if (isObj(o)) {
+            note2 = o.name || o.key || o.note || o.midi || null;
+            opts = o;
+          } else {
+            note2 = o;
+            opts = OPTS;
+          }
+          return player.start(note2, when + (t || 0), opts);
+        });
+      };
+      return player;
+    };
+  }
+});
+
+// node_modules/midimessage/dist/index.min.js
+var require_index_min = __commonJS({
+  "node_modules/midimessage/dist/index.min.js"(exports, module) {
+    (function(e) {
+      if (typeof exports === "object" && typeof module !== "undefined") {
+        module.exports = e();
+      } else if (typeof define === "function" && define.amd) {
+        define([], e);
+      } else {
+        var t;
+        if (typeof window !== "undefined") {
+          t = window;
+        } else if (typeof global !== "undefined") {
+          t = global;
+        } else if (typeof self !== "undefined") {
+          t = self;
+        } else {
+          t = this;
+        }
+        t.midimessage = e();
+      }
+    })(function() {
+      var e, t, s;
+      return function o(e2, t2, s2) {
+        function a(n2, i) {
+          if (!t2[n2]) {
+            if (!e2[n2]) {
+              var l = typeof __require == "function" && __require;
+              if (!i && l) return l(n2, true);
+              if (r) return r(n2, true);
+              var h = new Error("Cannot find module '" + n2 + "'");
+              throw h.code = "MODULE_NOT_FOUND", h;
+            }
+            var c = t2[n2] = { exports: {} };
+            e2[n2][0].call(c.exports, function(t3) {
+              var s3 = e2[n2][1][t3];
+              return a(s3 ? s3 : t3);
+            }, c, c.exports, o, e2, t2, s2);
+          }
+          return t2[n2].exports;
+        }
+        var r = typeof __require == "function" && __require;
+        for (var n = 0; n < s2.length; n++) a(s2[n]);
+        return a;
+      }({ 1: [function(e2, t2, s2) {
+        "use strict";
+        Object.defineProperty(s2, "__esModule", { value: true });
+        s2["default"] = function(e3) {
+          function t3(e4) {
+            this._event = e4;
+            this._data = e4.data;
+            this.receivedTime = e4.receivedTime;
+            if (this._data && this._data.length < 2) {
+              console.warn("Illegal MIDI message of length", this._data.length);
+              return;
+            }
+            this._messageCode = e4.data[0] & 240;
+            this.channel = e4.data[0] & 15;
+            switch (this._messageCode) {
+              case 128:
+                this.messageType = "noteoff";
+                this.key = e4.data[1] & 127;
+                this.velocity = e4.data[2] & 127;
+                break;
+              case 144:
+                this.messageType = "noteon";
+                this.key = e4.data[1] & 127;
+                this.velocity = e4.data[2] & 127;
+                break;
+              case 160:
+                this.messageType = "keypressure";
+                this.key = e4.data[1] & 127;
+                this.pressure = e4.data[2] & 127;
+                break;
+              case 176:
+                this.messageType = "controlchange";
+                this.controllerNumber = e4.data[1] & 127;
+                this.controllerValue = e4.data[2] & 127;
+                if (this.controllerNumber === 120 && this.controllerValue === 0) {
+                  this.channelModeMessage = "allsoundoff";
+                } else if (this.controllerNumber === 121) {
+                  this.channelModeMessage = "resetallcontrollers";
+                } else if (this.controllerNumber === 122) {
+                  if (this.controllerValue === 0) {
+                    this.channelModeMessage = "localcontroloff";
+                  } else {
+                    this.channelModeMessage = "localcontrolon";
+                  }
+                } else if (this.controllerNumber === 123 && this.controllerValue === 0) {
+                  this.channelModeMessage = "allnotesoff";
+                } else if (this.controllerNumber === 124 && this.controllerValue === 0) {
+                  this.channelModeMessage = "omnimodeoff";
+                } else if (this.controllerNumber === 125 && this.controllerValue === 0) {
+                  this.channelModeMessage = "omnimodeon";
+                } else if (this.controllerNumber === 126) {
+                  this.channelModeMessage = "monomodeon";
+                } else if (this.controllerNumber === 127) {
+                  this.channelModeMessage = "polymodeon";
+                }
+                break;
+              case 192:
+                this.messageType = "programchange";
+                this.program = e4.data[1];
+                break;
+              case 208:
+                this.messageType = "channelpressure";
+                this.pressure = e4.data[1] & 127;
+                break;
+              case 224:
+                this.messageType = "pitchbendchange";
+                var t4 = e4.data[2] & 127;
+                var s3 = e4.data[1] & 127;
+                this.pitchBend = (t4 << 8) + s3;
+                break;
+            }
+          }
+          return new t3(e3);
+        };
+        t2.exports = s2["default"];
+      }, {}] }, {}, [1])(1);
+    });
+  }
+});
+
+// node_modules/sample-player/lib/midi.js
+var require_midi = __commonJS({
+  "node_modules/sample-player/lib/midi.js"(exports, module) {
+    var midimessage = require_index_min();
+    module.exports = function(player) {
+      player.listenToMidi = function(input, options) {
+        var started = {};
+        var opts = options || {};
+        var gain = opts.gain || function(vel) {
+          return vel / 127;
+        };
+        input.onmidimessage = function(msg) {
+          var mm = msg.messageType ? msg : midimessage(msg);
+          if (mm.messageType === "noteon" && mm.velocity === 0) {
+            mm.messageType = "noteoff";
+          }
+          if (opts.channel && mm.channel !== opts.channel) return;
+          switch (mm.messageType) {
+            case "noteon":
+              started[mm.key] = player.play(mm.key, 0, { gain: gain(mm.velocity) });
+              break;
+            case "noteoff":
+              if (started[mm.key]) {
+                started[mm.key].stop();
+                delete started[mm.key];
+              }
+              break;
+          }
+        };
+        return player;
+      };
+      return player;
+    };
+  }
+});
+
+// node_modules/sample-player/lib/index.js
+var require_lib2 = __commonJS({
+  "node_modules/sample-player/lib/index.js"(exports, module) {
+    "use strict";
+    var player = require_player();
+    var events = require_events();
+    var notes2 = require_notes();
+    var scheduler = require_scheduler();
+    var midi2 = require_midi();
+    function SamplePlayer(ac, source, options) {
+      return midi2(scheduler(notes2(events(player(ac, source, options)))));
+    }
+    if (typeof module === "object" && module.exports) module.exports = SamplePlayer;
+    if (typeof window !== "undefined") window.SamplePlayer = SamplePlayer;
+  }
+});
+
+// node_modules/note-parser/dist/note-parser.js
+var require_note_parser2 = __commonJS({
+  "node_modules/note-parser/dist/note-parser.js"(exports, module) {
+    !function(t, n) {
+      "object" == typeof exports && "undefined" != typeof module ? n(exports) : "function" == typeof define && define.amd ? define(["exports"], n) : n(t.NoteParser = t.NoteParser || {});
+    }(exports, function(t) {
+      "use strict";
+      function n(t2, n2) {
+        return Array(n2 + 1).join(t2);
+      }
+      function r(t2) {
+        return "number" == typeof t2;
+      }
+      function e(t2) {
+        return "string" == typeof t2;
+      }
+      function u(t2) {
+        return void 0 !== t2;
+      }
+      function c(t2, n2) {
+        return Math.pow(2, (t2 - 69) / 12) * (n2 || 440);
+      }
+      function o() {
+        return b;
+      }
+      function i(t2, n2, r2) {
+        if ("string" != typeof t2) return null;
+        var e2 = b.exec(t2);
+        if (!e2 || !n2 && e2[4]) return null;
+        var u2 = { letter: e2[1].toUpperCase(), acc: e2[2].replace(/x/g, "##") };
+        u2.pc = u2.letter + u2.acc, u2.step = (u2.letter.charCodeAt(0) + 3) % 7, u2.alt = "b" === u2.acc[0] ? -u2.acc.length : u2.acc.length;
+        var o2 = A[u2.step] + u2.alt;
+        return u2.chroma = o2 < 0 ? 12 + o2 : o2 % 12, e2[3] && (u2.oct = +e2[3], u2.midi = o2 + 12 * (u2.oct + 1), u2.freq = c(u2.midi, r2)), n2 && (u2.tonicOf = e2[4]), u2;
+      }
+      function f(t2) {
+        return r(t2) ? t2 < 0 ? n("b", -t2) : n("#", t2) : "";
+      }
+      function a(t2) {
+        return r(t2) ? "" + t2 : "";
+      }
+      function l(t2, n2, r2) {
+        return null === t2 || void 0 === t2 ? null : t2.step ? l(t2.step, t2.alt, t2.oct) : t2 < 0 || t2 > 6 ? null : C.charAt(t2) + f(n2) + a(r2);
+      }
+      function p(t2) {
+        if ((r(t2) || e(t2)) && t2 >= 0 && t2 < 128) return +t2;
+        var n2 = i(t2);
+        return n2 && u(n2.midi) ? n2.midi : null;
+      }
+      function s(t2, n2) {
+        var r2 = p(t2);
+        return null === r2 ? null : c(r2, n2);
+      }
+      function d(t2) {
+        return (i(t2) || {}).letter;
+      }
+      function m(t2) {
+        return (i(t2) || {}).acc;
+      }
+      function h(t2) {
+        return (i(t2) || {}).pc;
+      }
+      function v(t2) {
+        return (i(t2) || {}).step;
+      }
+      function g(t2) {
+        return (i(t2) || {}).alt;
+      }
+      function x(t2) {
+        return (i(t2) || {}).chroma;
+      }
+      function y(t2) {
+        return (i(t2) || {}).oct;
+      }
+      var b = /^([a-gA-G])(#{1,}|b{1,}|x{1,}|)(-?\d*)\s*(.*)\s*$/, A = [0, 2, 4, 5, 7, 9, 11], C = "CDEFGAB";
+      t.regex = o, t.parse = i, t.build = l, t.midi = p, t.freq = s, t.letter = d, t.acc = m, t.pc = h, t.step = v, t.alt = g, t.chroma = x, t.oct = y;
+    });
+  }
+});
+
+// node_modules/soundfont-player/lib/legacy.js
+var require_legacy = __commonJS({
+  "node_modules/soundfont-player/lib/legacy.js"(exports, module) {
+    "use strict";
+    var parser = require_note_parser2();
+    function Soundfont2(ctx, nameToUrl) {
+      console.warn("new Soundfont() is deprected");
+      console.log("Please use Soundfont.instrument() instead of new Soundfont().instrument()");
+      if (!(this instanceof Soundfont2)) return new Soundfont2(ctx);
+      this.nameToUrl = nameToUrl || Soundfont2.nameToUrl;
+      this.ctx = ctx;
+      this.instruments = {};
+      this.promises = [];
+    }
+    Soundfont2.prototype.onready = function(callback) {
+      console.warn("deprecated API");
+      console.log("Please use Promise.all(Soundfont.instrument(), Soundfont.instrument()).then() instead of new Soundfont().onready()");
+      Promise.all(this.promises).then(callback);
+    };
+    Soundfont2.prototype.instrument = function(name2, options) {
+      console.warn("new Soundfont().instrument() is deprecated.");
+      console.log("Please use Soundfont.instrument() instead.");
+      var ctx = this.ctx;
+      name2 = name2 || "default";
+      if (name2 in this.instruments) return this.instruments[name2];
+      var inst = { name: name2, play: oscillatorPlayer(ctx, options) };
+      this.instruments[name2] = inst;
+      if (name2 !== "default") {
+        var promise = Soundfont2.instrument(ctx, name2, options).then(function(instrument) {
+          inst.play = instrument.play;
+          return inst;
+        });
+        this.promises.push(promise);
+        inst.onready = function(cb) {
+          console.warn("onready is deprecated. Use Soundfont.instrument().then()");
+          promise.then(cb);
+        };
+      } else {
+        inst.onready = function(cb) {
+          console.warn("onready is deprecated. Use Soundfont.instrument().then()");
+          cb();
+        };
+      }
+      return inst;
+    };
+    function loadBuffers(ac, name2, options) {
+      console.warn("Soundfont.loadBuffers is deprecate.");
+      console.log("Use Soundfont.instrument(..) and get buffers properties from the result.");
+      return Soundfont2.instrument(ac, name2, options).then(function(inst) {
+        return inst.buffers;
+      });
+    }
+    Soundfont2.loadBuffers = loadBuffers;
+    function oscillatorPlayer(ctx, defaultOptions) {
+      defaultOptions = defaultOptions || {};
+      return function(note2, time, duration, options) {
+        console.warn("The oscillator player is deprecated.");
+        console.log("Starting with version 0.9.0 you will have to wait until the soundfont is loaded to play sounds.");
+        var midi2 = note2 > 0 && note2 < 129 ? +note2 : parser.midi(note2);
+        var freq2 = midi2 ? parser.midiToFreq(midi2, 440) : null;
+        if (!freq2) return;
+        duration = duration || 0.2;
+        options = options || {};
+        var destination = options.destination || defaultOptions.destination || ctx.destination;
+        var vcoType = options.vcoType || defaultOptions.vcoType || "sine";
+        var gain = options.gain || defaultOptions.gain || 0.4;
+        var vco = ctx.createOscillator();
+        vco.type = vcoType;
+        vco.frequency.value = freq2;
+        var vca = ctx.createGain();
+        vca.gain.value = gain;
+        vco.connect(vca);
+        vca.connect(destination);
+        vco.start(time);
+        if (duration > 0) vco.stop(time + duration);
+        return vco;
+      };
+    }
+    Soundfont2.noteToMidi = parser.midi;
+    module.exports = Soundfont2;
+  }
+});
+
+// node_modules/soundfont-player/lib/index.js
+var require_lib3 = __commonJS({
+  "node_modules/soundfont-player/lib/index.js"(exports, module) {
+    "use strict";
+    var load = require_lib();
+    var player = require_lib2();
+    function instrument(ac, name2, options) {
+      if (arguments.length === 1) return function(n, o) {
+        return instrument(ac, n, o);
+      };
+      var opts = options || {};
+      var isUrl = opts.isSoundfontURL || isSoundfontURL;
+      var toUrl = opts.nameToUrl || nameToUrl;
+      var url = isUrl(name2) ? name2 : toUrl(name2, opts.soundfont, opts.format);
+      return load(ac, url, { only: opts.only || opts.notes }).then(function(buffers) {
+        var p = player(ac, buffers, opts).connect(opts.destination ? opts.destination : ac.destination);
+        p.url = url;
+        p.name = name2;
+        return p;
+      });
+    }
+    function isSoundfontURL(name2) {
+      return /\.js(\?.*)?$/i.test(name2);
+    }
+    function nameToUrl(name2, sf, format) {
+      format = format === "ogg" ? format : "mp3";
+      sf = sf === "FluidR3_GM" ? sf : "MusyngKite";
+      return "https://gleitz.github.io/midi-js-soundfonts/" + sf + "/" + name2 + "-" + format + ".js";
+    }
+    var Soundfont2 = require_legacy();
+    Soundfont2.instrument = instrument;
+    Soundfont2.nameToUrl = nameToUrl;
+    if (typeof module === "object" && module.exports) module.exports = Soundfont2;
+    if (typeof window !== "undefined") window.Soundfont = Soundfont2;
   }
 });
 
@@ -3383,7 +4316,7 @@ var DEFAULT_OPTIONS2 = {
 };
 var createAudioBufferConstructor = (audioBufferStore2, cacheTestResult2, createNotSupportedError2, nativeAudioBufferConstructor2, nativeOfflineAudioContextConstructor2, testNativeAudioBufferConstructorSupport, wrapAudioBufferCopyChannelMethods2, wrapAudioBufferCopyChannelMethodsOutOfBounds2) => {
   let nativeOfflineAudioContext = null;
-  return class AudioBuffer {
+  return class AudioBuffer2 {
     constructor(options) {
       if (nativeOfflineAudioContextConstructor2 === null) {
         throw new Error("Missing the native OfflineAudioContext constructor.");
@@ -3406,7 +4339,7 @@ var createAudioBufferConstructor = (audioBufferStore2, cacheTestResult2, createN
       return audioBuffer;
     }
     static [Symbol.hasInstance](instance) {
-      return instance !== null && typeof instance === "object" && Object.getPrototypeOf(instance) === AudioBuffer.prototype || audioBufferStore2.has(instance);
+      return instance !== null && typeof instance === "object" && Object.getPrototypeOf(instance) === AudioBuffer2.prototype || audioBufferStore2.has(instance);
     }
   };
 };
@@ -11373,8 +12306,8 @@ var Context = class _Context extends BaseContext {
    * Is invoked from the clock source
    */
   _timeoutLoop() {
-    const now2 = this.now();
-    this._timeouts.forEachBefore(now2, (event) => {
+    const now = this.now();
+    this._timeouts.forEachBefore(now, (event) => {
       event.callback();
       this._timeouts.remove(event);
     });
@@ -11388,11 +12321,11 @@ var Context = class _Context extends BaseContext {
    */
   setTimeout(fn, timeout) {
     this._timeoutIds++;
-    const now2 = this.now();
+    const now = this.now();
     this._timeouts.add({
       callback: fn,
       id: this._timeoutIds,
-      time: now2 + timeout
+      time: now + timeout
     });
     return this._timeoutIds;
   }
@@ -11420,14 +12353,14 @@ var Context = class _Context extends BaseContext {
   setInterval(fn, interval2) {
     const id = ++this._timeoutIds;
     const intervalFn = () => {
-      const now2 = this.now();
+      const now = this.now();
       this._timeouts.add({
         callback: () => {
           fn();
           intervalFn();
         },
         id,
-        time: now2 + interval2
+        time: now + interval2
       });
     };
     intervalFn();
@@ -12913,8 +13846,8 @@ var Param = class _Param extends ToneWithContext {
     });
   }
   get value() {
-    const now2 = this.now();
-    return this.getValueAtTime(now2);
+    const now = this.now();
+    return this.getValueAtTime(now);
   }
   set value(value) {
     this.cancelScheduledValues(this.now());
@@ -13194,14 +14127,14 @@ var Param = class _Param extends ToneWithContext {
    * all of the events which are scheduled on this Param onto the passed in param.
    */
   apply(param) {
-    const now2 = this.context.currentTime;
-    param.setValueAtTime(this.getValueAtTime(now2), now2);
-    const previousEvent = this._events.get(now2);
+    const now = this.context.currentTime;
+    param.setValueAtTime(this.getValueAtTime(now), now);
+    const previousEvent = this._events.get(now);
     if (previousEvent && previousEvent.type === "setTargetAtTime") {
       const nextEvent = this._events.getAfter(previousEvent.time);
-      const endTime = nextEvent ? nextEvent.time : now2 + 2;
-      const subdivisions = (endTime - now2) / 10;
-      for (let i = now2; i < endTime; i += subdivisions) {
+      const endTime = nextEvent ? nextEvent.time : now + 2;
+      const subdivisions = (endTime - now) / 10;
+      for (let i = now; i < endTime; i += subdivisions) {
         param.linearRampToValueAtTime(this.getValueAtTime(i), i);
       }
     }
@@ -14307,9 +15240,9 @@ var TickSource = class _TickSource extends ToneWithContext {
     return this.getSecondsAtTime(this.now());
   }
   set seconds(s) {
-    const now2 = this.now();
-    const ticks = this.frequency.timeToTicks(s, now2);
-    this.setTicksAtTime(ticks, now2);
+    const now = this.now();
+    const ticks = this.frequency.timeToTicks(s, now);
+    this.setTicksAtTime(ticks, now);
   }
   /**
    * Return the elapsed seconds at the given time.
@@ -15035,9 +15968,9 @@ var DrawClass = class extends ToneWithContext {
    * The draw loop
    */
   _drawLoop() {
-    const now2 = this.context.currentTime;
-    this._events.forEachBefore(now2 + this.anticipation, (event) => {
-      if (now2 - event.time <= this.expiration) {
+    const now = this.context.currentTime;
+    this._events.forEachBefore(now + this.anticipation, (event) => {
+      if (now - event.time <= this.expiration) {
         event.callback();
       }
       this._events.remove(event);
@@ -16158,8 +17091,8 @@ var TransportClass = class _TransportClass extends ToneWithContext {
    * Setting the value will jump to that position right away.
    */
   get position() {
-    const now2 = this.now();
-    const ticks = this._clock.getTicksAtTime(now2);
+    const now = this.now();
+    const ticks = this._clock.getTicksAtTime(now);
     return new TicksClass(this.context, ticks).toBarsBeatsSixteenths();
   }
   set position(progress) {
@@ -16174,8 +17107,8 @@ var TransportClass = class _TransportClass extends ToneWithContext {
     return this._clock.seconds;
   }
   set seconds(s) {
-    const now2 = this.now();
-    const ticks = this._clock.frequency.timeToTicks(s, now2);
+    const now = this.now();
+    const ticks = this._clock.frequency.timeToTicks(s, now);
     this.ticks = ticks;
   }
   /**
@@ -16184,8 +17117,8 @@ var TransportClass = class _TransportClass extends ToneWithContext {
    */
   get progress() {
     if (this.loop) {
-      const now2 = this.now();
-      const ticks = this._clock.getTicksAtTime(now2);
+      const now = this.now();
+      const ticks = this._clock.getTicksAtTime(now);
       return (ticks - this._loopStart) / (this._loopEnd - this._loopStart);
     } else {
       return 0;
@@ -16199,17 +17132,17 @@ var TransportClass = class _TransportClass extends ToneWithContext {
   }
   set ticks(t) {
     if (this._clock.ticks !== t) {
-      const now2 = this.now();
+      const now = this.now();
       if (this.state === "started") {
-        const ticks = this._clock.getTicksAtTime(now2);
-        const remainingTick = this._clock.frequency.getDurationOfTicks(Math.ceil(ticks) - ticks, now2);
-        const time = now2 + remainingTick;
+        const ticks = this._clock.getTicksAtTime(now);
+        const remainingTick = this._clock.frequency.getDurationOfTicks(Math.ceil(ticks) - ticks, now);
+        const time = now + remainingTick;
         this.emit("stop", time);
         this._clock.setTicksAtTime(t, time);
         this.emit("start", time, this._clock.getSecondsAtTime(time));
       } else {
-        this.emit("ticks", now2);
-        this._clock.setTicksAtTime(t, now2);
+        this.emit("ticks", now);
+        this._clock.setTicksAtTime(t, now);
       }
     }
   }
@@ -16261,10 +17194,10 @@ var TransportClass = class _TransportClass extends ToneWithContext {
     if (this.state !== "started") {
       return 0;
     } else {
-      const now2 = this.now();
-      const transportPos = this.getTicksAtTime(now2);
+      const now = this.now();
+      const transportPos = this.getTicksAtTime(now);
       const remainingTicks = subdivision - transportPos % subdivision;
-      return this._clock.nextTickTime(remainingTicks, now2);
+      return this._clock.nextTickTime(remainingTicks, now);
     }
   }
   /**
@@ -16277,9 +17210,9 @@ var TransportClass = class _TransportClass extends ToneWithContext {
    * 			Otherwise it will be computed based on their current values.
    */
   syncSignal(signal, ratio) {
-    const now2 = this.now();
+    const now = this.now();
     let source = this.bpm;
-    let sourceValue = 1 / (60 / source.getValueAtTime(now2) / this.PPQ);
+    let sourceValue = 1 / (60 / source.getValueAtTime(now) / this.PPQ);
     let nodes = [];
     if (signal.units === "time") {
       const scaleFactor = 1 / 64 / sourceValue;
@@ -16292,8 +17225,8 @@ var TransportClass = class _TransportClass extends ToneWithContext {
       nodes = [scaleBefore, reciprocal, scaleAfter];
     }
     if (!ratio) {
-      if (signal.getValueAtTime(now2) !== 0) {
-        ratio = signal.getValueAtTime(now2) / sourceValue;
+      if (signal.getValueAtTime(now) !== 0) {
+        ratio = signal.getValueAtTime(now) / sourceValue;
       } else {
         ratio = 0;
       }
@@ -18004,10 +18937,10 @@ var OmniOscillator = class _OmniOscillator extends Source {
     if (oscType !== this._sourceType) {
       this._sourceType = oscType;
       const OscConstructor = OmniOscillatorSourceMap[oscType];
-      const now2 = this.now();
+      const now = this.now();
       if (this._oscillator) {
         const oldOsc = this._oscillator;
-        oldOsc.stop(now2);
+        oldOsc.stop(now);
         this.context.setTimeout(() => oldOsc.dispose(), this.blockTime);
       }
       this._oscillator = new OscConstructor({
@@ -18018,7 +18951,7 @@ var OmniOscillator = class _OmniOscillator extends Source {
       this._oscillator.connect(this.output);
       this._oscillator.onstop = () => this.onstop(this);
       if (this.state === "started") {
-        this._oscillator.start(now2);
+        this._oscillator.start(now);
       }
     }
   }
@@ -18480,14 +19413,14 @@ var Player = class _Player extends Source {
   }
   set playbackRate(rate) {
     this._playbackRate = rate;
-    const now2 = this.now();
-    const stopEvent = this._state.getNextState("stopped", now2);
+    const now = this.now();
+    const stopEvent = this._state.getNextState("stopped", now);
     if (stopEvent && stopEvent.implicitEnd) {
       this._state.cancel(stopEvent.time);
       this._activeSources.forEach((source) => source.cancelStop());
     }
     this._activeSources.forEach((source) => {
-      source.playbackRate.setValueAtTime(rate, now2);
+      source.playbackRate.setValueAtTime(rate, now);
     });
   }
   /**
@@ -20016,9 +20949,6 @@ var Channel = class _Channel extends ToneAudioNode {
 Channel.buses = /* @__PURE__ */ new Map();
 
 // node_modules/tone/build/esm/index.js
-function now() {
-  return getContext().now();
-}
 var Transport = getContext().transport;
 var Destination = getContext().destination;
 var Master = getContext().destination;
@@ -20027,18 +20957,30 @@ var Draw = getContext().draw;
 var context = getContext();
 
 // src/audio-engine.ts
+var import_soundfont_player = __toESM(require_lib3(), 1);
 var createAudioEngine = () => {
   let audioContext = null;
   const getAudioContext = async () => {
     if (audioContext && audioContext.isStarted) {
       return audioContext;
     }
-    if (getContext().state === "suspended") {
-      await start();
+    let nativeContext;
+    try {
+      nativeContext = new AudioContext();
+      if (nativeContext.state === "suspended") {
+        await nativeContext.resume();
+      }
+    } catch (error) {
+      if (getContext().state === "suspended") {
+        await start();
+      }
+      nativeContext = getContext().rawContext;
     }
-    const masterGain = new Gain(0.7).toDestination();
+    const masterGain = nativeContext.createGain();
+    masterGain.connect(nativeContext.destination);
+    masterGain.gain.value = 0.7;
     audioContext = {
-      context: getContext(),
+      context: nativeContext,
       masterGain,
       isStarted: true
     };
@@ -20048,18 +20990,33 @@ var createAudioEngine = () => {
     const soundfont = {
       name: extractNameFromUrl(args.url),
       url: args.url,
-      samples: /* @__PURE__ */ new Map(),
+      soundfontPlayer: null,
       isLoaded: false
     };
     try {
-      await getAudioContext();
-      for (let midi2 = 48; midi2 <= 84; midi2++) {
-        soundfont.samples.set(midi2, null);
+      const audioCtx = await getAudioContext();
+      console.log(`Loading soundfont from ${args.url}...`);
+      let instrumentName;
+      let loadOptions = {};
+      if (args.url.endsWith(".sf2")) {
+        console.warn(`Direct .sf2 file loading is not yet supported. Using default instrument for ${soundfont.name}`);
+        instrumentName = "acoustic_grand_piano";
+      } else {
+        if (args.url.includes("/") || args.url.includes(".js")) {
+          instrumentName = args.url;
+        } else {
+          instrumentName = args.url;
+        }
       }
+      const player = await import_soundfont_player.default.instrument(audioCtx.context, instrumentName, {
+        ...loadOptions
+        // Don't connect to Tone.js destination - let soundfont-player handle its own routing
+      });
+      soundfont.soundfontPlayer = player;
       soundfont.isLoaded = true;
-      console.log(`\u2713 Loaded Tone.js soundfont: ${soundfont.name}`);
+      console.log(`\u2713 Loaded soundfont: ${soundfont.name}`);
     } catch (error) {
-      console.error(`Failed to initialize soundfont ${soundfont.name}:`, error);
+      console.error(`Failed to load soundfont ${soundfont.name}:`, error);
       throw error;
     }
     return soundfont;
@@ -20079,9 +21036,7 @@ var createAudioEngine = () => {
       const voice = {
         id: voiceId,
         midi: noteArgs.midi,
-        source: null,
-        gainNode: null,
-        panNode: null,
+        soundfontNote: null,
         isPlaying: false,
         stop: (stopArgs) => {
           promise.then((actualVoice) => actualVoice.stop(stopArgs)).catch(console.error);
@@ -20091,9 +21046,7 @@ var createAudioEngine = () => {
         }
       };
       promise.then((actualVoice) => {
-        voice.source = actualVoice.source;
-        voice.gainNode = actualVoice.gainNode;
-        voice.panNode = actualVoice.panNode;
+        voice.soundfontNote = actualVoice.soundfontNote;
         voice.isPlaying = actualVoice.isPlaying;
       }).catch(console.error);
       activeVoices.set(voiceId, voice);
@@ -20122,135 +21075,46 @@ var createAudioEngine = () => {
 };
 var playNoteInternal = async (args) => {
   const audioCtx = await args.engine.getAudioContext();
-  const frequency = midiToFrequency(args.midi);
-  const validateEnvelopeParam = (value, defaultValue, minValue) => {
-    if (value === void 0 || value === null || isNaN(value)) return defaultValue;
-    return Math.max(value / 1e3, minValue);
-  };
-  const synth = new Synth({
-    oscillator: {
-      type: "sawtooth"
-    },
-    envelope: {
-      attack: validateEnvelopeParam(args.attack, 0.01, 1e-3),
-      // Default 10ms, min 1ms
-      decay: 0.3,
-      sustain: 0.6,
-      release: validateEnvelopeParam(args.release, 0.1, 0.01)
-      // Default 100ms, min 10ms
-    }
-  });
-  const validateGain = (velocity, gainValue, configGain) => {
-    const safeVelocity = Math.max(0, Math.min(100, velocity || 70));
-    const safeGain = Math.max(0, Math.min(100, gainValue || configGain || 70));
-    return safeVelocity / 100 * (safeGain / 100);
-  };
-  const validatePan = (panValue) => {
-    if (panValue === void 0 || panValue === null || isNaN(panValue)) return 0;
-    return Math.max(-1, Math.min(1, panValue / 100));
-  };
-  const gainNode = new Gain(validateGain(args.velocity, args.gain, args.config.gain));
-  const panNode = new Panner(validatePan(args.pan));
-  synth.connect(gainNode);
-  gainNode.connect(panNode);
-  panNode.connect(audioCtx.masterGain);
-  if (args.detune) {
-    try {
-      synth.detune.value = args.detune;
-    } catch (error) {
-      console.warn("Unable to set detune:", error);
-    }
+  if (!args.soundfont.soundfontPlayer || !args.soundfont.isLoaded) {
+    throw new Error("Soundfont not loaded");
   }
-  const calculateStartTime = (startTime2) => {
-    if (startTime2 === void 0 || startTime2 === null) return now();
-    if (startTime2 <= 0) return now();
-    return now() + startTime2;
+  const startTime = args.startTime ? audioCtx.context.currentTime + args.startTime / 1e3 : audioCtx.context.currentTime;
+  const duration = args.duration ? args.duration / 1e3 : void 0;
+  const velocityGain = Math.max(0, Math.min(100, args.velocity || 70)) / 100;
+  const configGain = Math.max(0, Math.min(100, args.config.gain || 70)) / 100;
+  const finalGain = velocityGain * configGain * (args.gain ? args.gain / 100 : 1);
+  const playOptions = {
+    time: startTime,
+    gain: finalGain
   };
-  const startTime = calculateStartTime(args.startTime);
-  if (args.duration && args.duration > 0) {
-    const durationInSeconds = Math.max(args.duration / 1e3, 0.01);
-    try {
-      synth.triggerAttackRelease(frequency, durationInSeconds, startTime);
-    } catch (error) {
-      console.error("Error in triggerAttackRelease:", error);
-      try {
-        synth.triggerAttackRelease(frequency, durationInSeconds, now());
-      } catch (fallbackError) {
-        console.error("Fallback also failed:", fallbackError);
-      }
-    }
-  } else {
-    try {
-      synth.triggerAttack(frequency, startTime);
-    } catch (error) {
-      console.error("Error in triggerAttack:", error);
-      try {
-        synth.triggerAttack(frequency, now());
-      } catch (fallbackError) {
-        console.error("Fallback also failed:", fallbackError);
-      }
-    }
+  if (duration) {
+    playOptions.duration = duration;
   }
+  const soundfontNote = args.soundfont.soundfontPlayer.play(args.midi, startTime, playOptions);
   const voice = {
     id: args.voiceId,
     midi: args.midi,
-    source: synth,
-    // Tone.Synth instead of Tone.Player
-    gainNode,
-    panNode,
+    soundfontNote,
     isPlaying: true,
     stop: (stopArgs) => {
-      const stopTime = stopArgs?.stopTime || now();
-      const fadeTime = stopArgs?.fadeTime || 0.05;
-      if (voice.isPlaying && synth) {
+      if (voice.isPlaying && soundfontNote) {
         try {
-          if (!args.duration) {
-            synth.triggerRelease(stopTime + fadeTime);
+          const stopTime = stopArgs?.stopTime || audioCtx.context.currentTime;
+          if (soundfontNote.stop) {
+            soundfontNote.stop(stopTime);
           }
           voice.isPlaying = false;
-          setTimeout(() => {
-            synth.dispose();
-            gainNode.dispose();
-            panNode.dispose();
-          }, fadeTime * 1e3 + 100);
         } catch (error) {
+          console.warn("Error stopping soundfont note:", error);
           voice.isPlaying = false;
         }
       }
     },
     modulate: (modArgs) => {
-      if (!gainNode || !panNode) return;
-      const now2 = now();
-      const startTime2 = modArgs.startTime || now2;
-      const duration = Math.max((modArgs.duration || 0) / 1e3, 0);
-      if (modArgs.gain !== void 0 && !isNaN(modArgs.gain)) {
-        const targetGain = validateGain(args.velocity, modArgs.gain, args.config.gain);
-        try {
-          if (duration > 0) {
-            gainNode.gain.linearRampTo(targetGain, duration, startTime2);
-          } else {
-            gainNode.gain.value = targetGain;
-          }
-        } catch (error) {
-        }
-      }
-      if (modArgs.pan !== void 0 && !isNaN(modArgs.pan)) {
-        const targetPan = validatePan(modArgs.pan);
-        try {
-          if (duration > 0) {
-            panNode.pan.linearRampTo(targetPan, duration, startTime2);
-          } else {
-            panNode.pan.value = targetPan;
-          }
-        } catch (error) {
-        }
-      }
+      console.warn("Real-time modulation is not supported with soundfont playback");
     }
   };
   return voice;
-};
-var midiToFrequency = (midi2) => {
-  return 440 * Math.pow(2, (midi2 - 69) / 12);
 };
 var extractNameFromUrl = (url) => {
   const match = url.match(/([^/]+)\.sf2?$/i);
