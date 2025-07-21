@@ -1,4 +1,4 @@
-import type { ChordT, PlayingNotesT, ConfigT, VoicingT } from './types.js'
+import type { ChordT, PlayingNotesT, ConfigT, VoicingT, InstanceTrackerT } from './types.js'
 import type { AudioSynthT, AudioVoiceT } from './audio-engine.js'
 import { getChordNotes, applyInversion } from './utils/chord-parser.js'
 import { applyVoicing } from './voicings.js'
@@ -24,7 +24,7 @@ type ChordStateT = {
   pan: number
 }
 
-export const createChord = (args: { chord: string; synth: AudioSynthT; config: ConfigT }) => {
+export const createChord = (args: { chord: string; synth: AudioSynthT; config: ConfigT; instanceTracker: InstanceTrackerT }) => {
   const initialNotes = getChordNotes({ chord: args.chord, octave: 4 })
   
   const state: ChordStateT = {
@@ -157,18 +157,23 @@ export const createChord = (args: { chord: string; synth: AudioSynthT; config: C
     },
 
     play: () => {
-      return createPlayingChord({ state, synth: args.synth })
+      return createPlayingChord({ state, synth: args.synth, instanceTracker: args.instanceTracker })
     },
 
     stop: () => {
       console.log(`Stopping chord ${state.chord} (${state.notes.join(', ')}) immediately`)
+      const instances = args.instanceTracker.chordInstances.get(state.chord)
+      if (instances) {
+        instances.forEach(voice => voice.stop())
+        instances.clear()
+      }
     }
   }
 
   return chordInstance
 }
 
-const createPlayingChord = (args: { state: ChordStateT; synth: AudioSynthT }) => {
+const createPlayingChord = (args: { state: ChordStateT; synth: AudioSynthT; instanceTracker: InstanceTrackerT }) => {
   const playingState = {
     afterMs: 0,
     gain: args.state.gain,
@@ -222,6 +227,16 @@ const createPlayingChord = (args: { state: ChordStateT; synth: AudioSynthT }) =>
       
       voices.push(voice)
     })
+    
+    // Track chord instances
+    if (!args.instanceTracker.chordInstances.has(args.state.chord)) {
+      args.instanceTracker.chordInstances.set(args.state.chord, new Set())
+    }
+    const chordInstances = args.instanceTracker.chordInstances.get(args.state.chord)!
+    voices.forEach(voice => {
+      chordInstances.add(voice)
+      args.instanceTracker.allInstances.add(voice)
+    })
   } else {
     console.log(`  Velocity: ${args.state.velocity}`)
     
@@ -249,6 +264,16 @@ const createPlayingChord = (args: { state: ChordStateT; synth: AudioSynthT }) =>
       })
       
       voices.push(voice)
+    })
+    
+    // Track chord instances
+    if (!args.instanceTracker.chordInstances.has(args.state.chord)) {
+      args.instanceTracker.chordInstances.set(args.state.chord, new Set())
+    }
+    const chordInstances = args.instanceTracker.chordInstances.get(args.state.chord)!
+    voices.forEach(voice => {
+      chordInstances.add(voice)
+      args.instanceTracker.allInstances.add(voice)
     })
   }
 
@@ -289,11 +314,23 @@ const createPlayingChord = (args: { state: ChordStateT; synth: AudioSynthT }) =>
           
           setTimeout(() => {
             voices.forEach(voice => voice.stop())
+            // Clean up tracking
+            const chordInstances = args.instanceTracker.chordInstances.get(args.state.chord)
+            if (chordInstances) {
+              voices.forEach(voice => chordInstances.delete(voice))
+            }
+            voices.forEach(voice => args.instanceTracker.allInstances.delete(voice))
           }, playingState.afterMs)
         }, 0)
       } else {
         console.log(`Stopping chord ${args.state.chord} immediately`)
         voices.forEach(voice => voice.stop())
+        // Clean up tracking
+        const chordInstances = args.instanceTracker.chordInstances.get(args.state.chord)
+        if (chordInstances) {
+          voices.forEach(voice => chordInstances.delete(voice))
+        }
+        voices.forEach(voice => args.instanceTracker.allInstances.delete(voice))
       }
     }
   }

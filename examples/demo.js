@@ -242,12 +242,17 @@ const playSelectedChord = () => {
 
 const stopAllNotes = () => {
 	try {
-		// In a real implementation, we'd need to track playing notes
-		// For now, this is a placeholder
-		console.log('🛑 Stopping all notes')
+		// Use the actual stop functionality
+		if (demoState.gear) {
+			demoState.gear.stop()
+			console.log('🛑 Stopped all notes using gear.stop()')
+		} else {
+			console.log('🛑 No gear loaded - nothing to stop')
+		}
 		showNotification('All notes stopped', 'info')
 	} catch (error) {
 		console.error('Error stopping notes:', error)
+		showNotification('Error stopping notes', 'error')
 	}
 }
 

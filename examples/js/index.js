@@ -2148,10 +2148,15 @@ var createNote = (args) => {
       return noteInstance;
     },
     play: () => {
-      return createPlayingNote({ state, synth: args.synth });
+      return createPlayingNote({ state, synth: args.synth, instanceTracker: args.instanceTracker });
     },
     stop: () => {
       console.log(`Stopping note ${state.note} immediately`);
+      const instances = args.instanceTracker.noteInstances.get(state.note);
+      if (instances) {
+        instances.forEach((voice) => voice.stop());
+        instances.clear();
+      }
     }
   };
   return noteInstance;
@@ -2182,6 +2187,11 @@ var createPlayingNote = (args) => {
     gain: args.state.gain,
     pan: args.state.pan
   });
+  if (!args.instanceTracker.noteInstances.has(args.state.note)) {
+    args.instanceTracker.noteInstances.set(args.state.note, /* @__PURE__ */ new Set());
+  }
+  args.instanceTracker.noteInstances.get(args.state.note).add(voice);
+  args.instanceTracker.allInstances.add(voice);
   const playingNote = {
     after: (ms) => {
       playingState.afterMs = ms;
@@ -2207,11 +2217,21 @@ var createPlayingNote = (args) => {
           });
           setTimeout(() => {
             voice.stop();
+            const instances = args.instanceTracker.noteInstances.get(args.state.note);
+            if (instances) {
+              instances.delete(voice);
+            }
+            args.instanceTracker.allInstances.delete(voice);
           }, playingState.afterMs);
         }, 0);
       } else {
         console.log(`Stopping note ${args.state.note} immediately`);
         voice.stop();
+        const instances = args.instanceTracker.noteInstances.get(args.state.note);
+        if (instances) {
+          instances.delete(voice);
+        }
+        args.instanceTracker.allInstances.delete(voice);
       }
     }
   };
@@ -2273,10 +2293,28 @@ var createNotes = (args) => {
       return notesInstance;
     },
     play: () => {
-      return createPlayingNotes({ state, synth: args.synth });
+      return createPlayingNotes({ state, synth: args.synth, instanceTracker: args.instanceTracker });
     },
-    stop: () => {
-      console.log(`Stopping notes ${state.notes.join(", ")} immediately`);
+    stop: (note2) => {
+      if (note2) {
+        console.log(`Stopping note ${note2} from notes ${state.notes.join(", ")}`);
+        const notesKey = state.notes.join(",");
+        const instances = args.instanceTracker.notesInstances.get(notesKey);
+        if (instances) {
+          instances.forEach((voice) => {
+            voice.stop();
+          });
+          instances.clear();
+        }
+      } else {
+        console.log(`Stopping notes ${state.notes.join(", ")} immediately`);
+        const notesKey = state.notes.join(",");
+        const instances = args.instanceTracker.notesInstances.get(notesKey);
+        if (instances) {
+          instances.forEach((voice) => voice.stop());
+          instances.clear();
+        }
+      }
     }
   };
   return notesInstance;
@@ -2308,6 +2346,15 @@ var createPlayingNotes = (args) => {
       });
       voices.push(voice);
     });
+    const notesKey = args.state.notes.join(",");
+    if (!args.instanceTracker.notesInstances.has(notesKey)) {
+      args.instanceTracker.notesInstances.set(notesKey, /* @__PURE__ */ new Set());
+    }
+    const notesInstances = args.instanceTracker.notesInstances.get(notesKey);
+    voices.forEach((voice) => {
+      notesInstances.add(voice);
+      args.instanceTracker.allInstances.add(voice);
+    });
   } else {
     console.log(`Playing notes ${args.state.notes.join(", ")} simultaneously`);
     console.log(`  Velocity: ${args.state.velocity}`);
@@ -2329,6 +2376,15 @@ var createPlayingNotes = (args) => {
         pan: args.state.pan
       });
       voices.push(voice);
+    });
+    const notesKey = args.state.notes.join(",");
+    if (!args.instanceTracker.notesInstances.has(notesKey)) {
+      args.instanceTracker.notesInstances.set(notesKey, /* @__PURE__ */ new Set());
+    }
+    const notesInstances = args.instanceTracker.notesInstances.get(notesKey);
+    voices.forEach((voice) => {
+      notesInstances.add(voice);
+      args.instanceTracker.allInstances.add(voice);
     });
   }
   if (args.state.durationMs) {
@@ -2361,11 +2417,23 @@ var createPlayingNotes = (args) => {
           });
           setTimeout(() => {
             voices.forEach((voice) => voice.stop());
+            const notesKey = args.state.notes.join(",");
+            const notesInstances = args.instanceTracker.notesInstances.get(notesKey);
+            if (notesInstances) {
+              voices.forEach((voice) => notesInstances.delete(voice));
+            }
+            voices.forEach((voice) => args.instanceTracker.allInstances.delete(voice));
           }, playingState.afterMs);
         }, 0);
       } else {
         console.log(`Stopping notes ${args.state.notes.join(", ")} immediately`);
         voices.forEach((voice) => voice.stop());
+        const notesKey = args.state.notes.join(",");
+        const notesInstances = args.instanceTracker.notesInstances.get(notesKey);
+        if (notesInstances) {
+          voices.forEach((voice) => notesInstances.delete(voice));
+        }
+        voices.forEach((voice) => args.instanceTracker.allInstances.delete(voice));
       }
     }
   };
@@ -2622,10 +2690,15 @@ var createChord = (args) => {
       return chordInstance;
     },
     play: () => {
-      return createPlayingChord({ state, synth: args.synth });
+      return createPlayingChord({ state, synth: args.synth, instanceTracker: args.instanceTracker });
     },
     stop: () => {
       console.log(`Stopping chord ${state.chord} (${state.notes.join(", ")}) immediately`);
+      const instances = args.instanceTracker.chordInstances.get(state.chord);
+      if (instances) {
+        instances.forEach((voice) => voice.stop());
+        instances.clear();
+      }
     }
   };
   return chordInstance;
@@ -2671,6 +2744,14 @@ var createPlayingChord = (args) => {
       });
       voices.push(voice);
     });
+    if (!args.instanceTracker.chordInstances.has(args.state.chord)) {
+      args.instanceTracker.chordInstances.set(args.state.chord, /* @__PURE__ */ new Set());
+    }
+    const chordInstances = args.instanceTracker.chordInstances.get(args.state.chord);
+    voices.forEach((voice) => {
+      chordInstances.add(voice);
+      args.instanceTracker.allInstances.add(voice);
+    });
   } else {
     console.log(`  Velocity: ${args.state.velocity}`);
     if (args.state.afterMs > 0) {
@@ -2691,6 +2772,14 @@ var createPlayingChord = (args) => {
         pan: args.state.pan
       });
       voices.push(voice);
+    });
+    if (!args.instanceTracker.chordInstances.has(args.state.chord)) {
+      args.instanceTracker.chordInstances.set(args.state.chord, /* @__PURE__ */ new Set());
+    }
+    const chordInstances = args.instanceTracker.chordInstances.get(args.state.chord);
+    voices.forEach((voice) => {
+      chordInstances.add(voice);
+      args.instanceTracker.allInstances.add(voice);
     });
   }
   if (args.state.durationMs) {
@@ -2723,11 +2812,21 @@ var createPlayingChord = (args) => {
           });
           setTimeout(() => {
             voices.forEach((voice) => voice.stop());
+            const chordInstances = args.instanceTracker.chordInstances.get(args.state.chord);
+            if (chordInstances) {
+              voices.forEach((voice) => chordInstances.delete(voice));
+            }
+            voices.forEach((voice) => args.instanceTracker.allInstances.delete(voice));
           }, playingState.afterMs);
         }, 0);
       } else {
         console.log(`Stopping chord ${args.state.chord} immediately`);
         voices.forEach((voice) => voice.stop());
+        const chordInstances = args.instanceTracker.chordInstances.get(args.state.chord);
+        if (chordInstances) {
+          voices.forEach((voice) => chordInstances.delete(voice));
+        }
+        voices.forEach((voice) => args.instanceTracker.allInstances.delete(voice));
       }
     }
   };
@@ -2737,19 +2836,45 @@ var createPlayingChord = (args) => {
 // src/instrument.ts
 var createInstrument = (args) => {
   console.log(`Creating instrument "${args.name}" from ${args.soundfontUrl}`);
+  const instanceTracker = {
+    noteInstances: /* @__PURE__ */ new Map(),
+    chordInstances: /* @__PURE__ */ new Map(),
+    notesInstances: /* @__PURE__ */ new Map(),
+    allInstances: /* @__PURE__ */ new Set()
+  };
   const instrument = {
     note: (note2) => {
-      return createNote({ note: note2, synth: args.synth, config: args.config });
+      return createNote({
+        note: note2,
+        synth: args.synth,
+        config: args.config,
+        instanceTracker
+      });
     },
     notes: (notes2) => {
-      return createNotes({ notes: notes2, synth: args.synth, config: args.config });
+      return createNotes({
+        notes: notes2,
+        synth: args.synth,
+        config: args.config,
+        instanceTracker
+      });
     },
     chord: (chord2) => {
-      return createChord({ chord: chord2, synth: args.synth, config: args.config });
+      return createChord({
+        chord: chord2,
+        synth: args.synth,
+        config: args.config,
+        instanceTracker
+      });
     },
     stop: () => {
       console.log(`Stopping all sounds from instrument "${args.name}"`);
       args.synth.stopAllNotes();
+      instanceTracker.allInstances.forEach((voice) => voice.stop());
+      instanceTracker.noteInstances.clear();
+      instanceTracker.chordInstances.clear();
+      instanceTracker.notesInstances.clear();
+      instanceTracker.allInstances.clear();
     }
   };
   return instrument;
@@ -19980,9 +20105,7 @@ var createAudioEngine = () => {
     };
     const stopAllNotes = () => {
       console.log(`Stopping all notes for synth (${activeVoices.size} active voices)`);
-      activeVoices.forEach((voice) => {
-        voice.stop();
-      });
+      activeVoices.forEach((voice) => voice.stop());
       activeVoices.clear();
     };
     return {
@@ -20136,53 +20259,48 @@ var extractNameFromUrl = (url) => {
 var audioEngine = createAudioEngine();
 
 // src/player.ts
-var createPlayer = (args) => {
-  const player = {
-    load: async (config) => {
-      console.log("Loading soundfonts:", config);
-      const instruments = {};
-      for (const [name2, url] of Object.entries(config)) {
-        console.log(`Loading ${name2} from ${url}...`);
-        const soundfont = await audioEngine.loadSoundfont({ url });
-        const synth = audioEngine.createSynth({ soundfont, config: args.config });
-        instruments[name2] = createInstrument({
-          name: name2,
-          soundfontUrl: url,
-          synth,
-          config: args.config
-        });
-        console.log(`\u2713 ${name2} loaded successfully`);
-      }
-      const gear = {
-        ...instruments,
-        stop: () => {
-          console.log("Stopping all sounds from all instruments");
-          Object.values(instruments).forEach((instrument) => {
-            instrument.stop();
-          });
-        }
-      };
-      return gear;
+var createPlayer = (config) => {
+  const load = async (config2) => {
+    console.log("Loading soundfonts:", config2);
+    const instruments = {};
+    for (const [name2, url] of Object.entries(config2)) {
+      console.log(`Loading ${name2} from ${url}...`);
+      const soundfont = await audioEngine.loadSoundfont({ url });
+      const synth = audioEngine.createSynth({ soundfont, config: config2 });
+      instruments[name2] = createInstrument({
+        name: name2,
+        synth,
+        soundfontUrl: url,
+        config: config2
+      });
+      console.log(`\u2713 ${name2} loaded successfully`);
     }
+    const stop = () => {
+      console.log("Stopping all sounds from all instruments");
+      const allInstruments = Object.values(instruments);
+      allInstruments.forEach((instrument) => instrument.stop());
+    };
+    const gear = { ...instruments, stop };
+    return gear;
+  };
+  const player = {
+    load
   };
   return player;
 };
 
 // src/wembley.ts
 var createWembley = () => {
-  const wembley2 = {
-    configure: (config) => {
-      const finalConfig = {
-        gain: 70,
-        maxVelocity: 85,
-        minVelocity: 45,
-        voicings: {},
-        ...config
-      };
-      console.log("Configuring wembley with:", finalConfig);
-      return createPlayer({ config: finalConfig });
-    }
+  const configure = (config) => {
+    return createPlayer({
+      gain: 70,
+      maxVelocity: 85,
+      minVelocity: 45,
+      voicings: {},
+      ...config
+    });
   };
+  const wembley2 = { configure };
   return wembley2;
 };
 

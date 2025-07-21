@@ -1,5 +1,5 @@
-import type { NoteT, PlayingNoteT, ConfigT } from './types.js'
-import type { AudioSynthT } from './audio-engine.js'
+import type { NoteT, PlayingNoteT, ConfigT, InstanceTrackerT } from './types.js'
+import type { AudioSynthT, AudioVoiceT } from './audio-engine.js'
 import { noteToMidi } from './utils/note-parser.js'
 
 type NoteStateT = {
@@ -16,7 +16,7 @@ type NoteStateT = {
   pan: number
 }
 
-export const createNote = (args: { note: string; synth: AudioSynthT; config: ConfigT }) => {
+export const createNote = (args: { note: string; synth: AudioSynthT; config: ConfigT; instanceTracker: InstanceTrackerT }) => {
   const state: NoteStateT = {
     note: args.note,
     velocity: args.config.minVelocity || 45,
@@ -75,19 +75,24 @@ export const createNote = (args: { note: string; synth: AudioSynthT; config: Con
     },
 
     play: () => {
-      return createPlayingNote({ state, synth: args.synth })
+      return createPlayingNote({ state, synth: args.synth, instanceTracker: args.instanceTracker })
     },
 
     stop: () => {
-      // Immediate stop - would stop any currently playing instances
+      // Stop all currently playing instances of this note
       console.log(`Stopping note ${state.note} immediately`)
+      const instances = args.instanceTracker.noteInstances.get(state.note)
+      if (instances) {
+        instances.forEach(voice => voice.stop())
+        instances.clear()
+      }
     }
   }
 
   return noteInstance
 }
 
-const createPlayingNote = (args: { state: NoteStateT; synth: AudioSynthT }) => {
+const createPlayingNote = (args: { state: NoteStateT; synth: AudioSynthT; instanceTracker: InstanceTrackerT }) => {
   const playingState = {
     afterMs: 0,
     gain: args.state.gain,
@@ -124,6 +129,13 @@ const createPlayingNote = (args: { state: NoteStateT; synth: AudioSynthT }) => {
     pan: args.state.pan
   })
 
+  // Track this instance
+  if (!args.instanceTracker.noteInstances.has(args.state.note)) {
+    args.instanceTracker.noteInstances.set(args.state.note, new Set())
+  }
+  args.instanceTracker.noteInstances.get(args.state.note)!.add(voice)
+  args.instanceTracker.allInstances.add(voice)
+
   const playingNote: PlayingNoteT = {
     after: (ms: number) => {
       playingState.afterMs = ms
@@ -155,11 +167,23 @@ const createPlayingNote = (args: { state: NoteStateT; synth: AudioSynthT }) => {
           
           setTimeout(() => {
             voice.stop()
+            // Remove from tracking
+            const instances = args.instanceTracker.noteInstances.get(args.state.note)
+            if (instances) {
+              instances.delete(voice)
+            }
+            args.instanceTracker.allInstances.delete(voice)
           }, playingState.afterMs)
         }, 0)
       } else {
         console.log(`Stopping note ${args.state.note} immediately`)
         voice.stop()
+        // Remove from tracking
+        const instances = args.instanceTracker.noteInstances.get(args.state.note)
+        if (instances) {
+          instances.delete(voice)
+        }
+        args.instanceTracker.allInstances.delete(voice)
       }
     }
   }
