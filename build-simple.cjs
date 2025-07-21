@@ -10,16 +10,17 @@ async function build() {
       fs.mkdirSync('./dist')
     }
 
-    // Build ESM version
+    // Build ESM version with bundled dependencies for browser
     await esbuild.build({
       entryPoints: ['./src/index.ts'],
       bundle: true,
       format: 'esm',
       platform: 'browser',
       outfile: './dist/index.js',
-      external: ['tone', 'tonal'],
+      // Don't externalize dependencies for browser bundle
       sourcemap: false,
       minify: false,
+      target: 'es2020',
     })
 
     // Build CommonJS version

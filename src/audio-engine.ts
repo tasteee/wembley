@@ -277,14 +277,14 @@ const playNoteInternal = async (args: {
 
 	// Schedule playback with robust time calculation
 	const calculateStartTime = (startTime?: number): string | number => {
-		if (startTime === undefined || startTime === null) return 'now'
+		if (startTime === undefined || startTime === null) return Tone.now()
 		
 		// startTime should be relative time in seconds (e.g., 0.5 for 500ms delay)
-		// Convert to Tone.js relative time format
-		if (startTime <= 0) return 'now'
+		// For delayed playback, add to current audio context time
+		if (startTime <= 0) return Tone.now()
 		
-		// Return relative time string for future playback
-		return `+${startTime}`
+		// Return absolute time for scheduled playback
+		return Tone.now() + startTime
 	}
 
 	const startTime = calculateStartTime(args.startTime)
@@ -296,8 +296,12 @@ const playNoteInternal = async (args: {
 			synth.triggerAttackRelease(frequency, durationInSeconds, startTime)
 		} catch (error) {
 			console.error('Error in triggerAttackRelease:', error)
-			// Fallback to immediate play
-			synth.triggerAttackRelease(frequency, durationInSeconds, 'now')
+			// Fallback to immediate play with simplified timing
+			try {
+				synth.triggerAttackRelease(frequency, durationInSeconds, Tone.now())
+			} catch (fallbackError) {
+				console.error('Fallback also failed:', fallbackError)
+			}
 		}
 	} else {
 		try {
@@ -305,7 +309,11 @@ const playNoteInternal = async (args: {
 		} catch (error) {
 			console.error('Error in triggerAttack:', error)
 			// Fallback to immediate play
-			synth.triggerAttack(frequency, 'now')
+			try {
+				synth.triggerAttack(frequency, Tone.now())
+			} catch (fallbackError) {
+				console.error('Fallback also failed:', fallbackError)
+			}
 		}
 	}
 
