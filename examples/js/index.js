@@ -17563,10 +17563,10 @@ var playNoteInternal = async (args) => {
       type: "sawtooth"
     },
     envelope: {
-      attack: (args.attack || 10) / 1000,
+      attack: Math.max((args.attack || 10) / 1000, 0.001),
       decay: 0.3,
       sustain: 0.6,
-      release: (args.release || 100) / 1000
+      release: Math.max((args.release || 100) / 1000, 0.01)
     }
   });
   const gainNode = new Gain(args.velocity / 100 * (args.gain || args.config.gain || 70) / 100);
@@ -17574,12 +17574,21 @@ var playNoteInternal = async (args) => {
   synth.connect(gainNode);
   gainNode.connect(panNode);
   panNode.connect(audioCtx.masterGain);
-  if (args.detune) {
+  if (args.detune)
     synth.detune.value = args.detune;
-  }
-  const startTime = args.startTime ? `+${(args.startTime * 1000 - performance.now()) / 1000}` : "now";
-  if (args.duration) {
-    synth.triggerAttackRelease(frequency, args.duration / 1000, startTime);
+  const calculateStartTime = (startTime2) => {
+    if (startTime2 === undefined || startTime2 === null)
+      return "now";
+    const currentTime = performance.now() / 1000;
+    const targetTime = startTime2;
+    if (targetTime <= currentTime + 0.001)
+      return "now";
+    return `+${targetTime - currentTime}`;
+  };
+  const startTime = calculateStartTime(args.startTime);
+  if (args.duration && args.duration > 0) {
+    const durationInSeconds = Math.max(args.duration / 1000, 0.01);
+    synth.triggerAttackRelease(frequency, durationInSeconds, startTime);
   } else {
     synth.triggerAttack(frequency, startTime);
   }

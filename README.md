@@ -20,21 +20,21 @@ import wembley from 'wembley'
 
 // set defaults and other settings.
 const player = wembley.configure({
-  gain: 70,
-  maxVelocity: 85,
-  minVelocity: 45,
+	gain: 70,
+	maxVelocity: 85,
+	minVelocity: 45,
 
-  voicings: {
-    reversed: (notes) => notes.reverse(),
-    only2and3: (notes) => [notes[1], notes[2]]
-  }
+	voicings: {
+		reversed: (notes) => notes.reverse(),
+		only2and3: (notes) => [notes[1], notes[2]]
+	}
 })
 
 const gear = await player.load({
-  // load from a URL.
-  piano: 'https://url.to/piano.sf2',
-  // or a local URL.
-  dustyGuitar: '/sounds/dusty_guitar.sf2',
+	// load from a URL.
+	piano: 'https://url.to/piano.sf2',
+	// or a local URL.
+	dustyGuitar: '/sounds/dusty_guitar.sf2'
 })
 
 // Play a note. Stop a note.
@@ -71,12 +71,13 @@ gear.piano.chord('C#m').velocity(45, 75).play()
 gear.piano.chord('C#m').stagger(200).play()
 
 // With chords, you can apply modifications.
-piano.chord('F#')
-  .octave(3)
-  .inversion(1)
-  .voicing('clustered')
-  .bassNote('B') // or a number (indexed)
-  .play()
+piano
+	.chord('F#')
+	.octave(3)
+	.inversion(1)
+	.voicing('clustered')
+	.bassNote('B') // or a number (indexed)
+	.play()
 
 // Supported voicings are:
 type VoicingT =
@@ -94,17 +95,18 @@ type VoicingT =
 	| 'orchestral'
 
 // General modifiers...
-gear.piano.note('C3')
-  .velocity(90)         // 0-100
-  .velocity(50, 100)    // 0-max, min-100
-  .after(250)           // delay in ms
-  .duration(400)        // in ms
-  .detune(-50)          // cents
-  .attack(5)            // ms
-  .release(100)         // ms
-  .gain(50) // 0-100
-  .pan(-70) // -100-100
-  .play()
+gear.piano
+	.note('C3')
+	.velocity(90) // 0-100
+	.velocity(50, 100) // 0-max, min-100
+	.after(250) // delay in ms
+	.duration(400) // in ms
+	.detune(-50) // cents
+	.attack(5) // ms
+	.release(100) // ms
+	.gain(50) // 0-100
+	.pan(-70) // -100-100
+	.play()
 
 // Stop notes with that swagger, too.
 note.stop() // stop immediately
@@ -112,5 +114,17 @@ note.after(300).stop() // stop in 300ms
 
 // Stop the note 300ms from now, but transition
 // the gain to 0 and the pan to 30 between now and then.
-note.after(300).gain(0).pan(30).stop() 
+note.after(300).gain(0).pan(30).stop()
 ```
+
+## Soundfonts
+
+Many repositories allow you to browse, download, and use soundfonts, often providing direct file URLs. Examples include:
+
+[Polyphone's online library](https://www.polyphone.io/)
+[Archive.org's collection of sf2 soundfonts](https://forum.audiob.us/discussion/50062/your-favorite-places-to-get-free-and-legal-soundfonts)
+[Soundfonts4U site](https://forum.audiob.us/discussion/50062/your-favorite-places-to-get-free-and-legal-soundfonts)
+[DarkeSword's soundfont archive](https://forum.audiob.us/discussion/50062/your-favorite-places-to-get-free-and-legal-soundfonts)
+[Soundfonts at KeyMusician (FluidR3_GM.sf2)](https://member.keymusician.com/Member/FluidR3_GM/index.html)
+
+While these sites often offer downloads rather than a hotlink-ready URL, you can upload any sf2 file you want to your own storage (like GitHub or a static file server) and serve them via URL.

@@ -66,6 +66,47 @@ const getData = ({ a, b }) => ({
 })
 ```
 
+## FLAT CODE (BAD) / NESTED CODE (BAD) EXAMPLES
+
+```js
+const someFunction = () => {
+  // ❌ BAD: BLOCK CAN BE ELIMINATED.
+  if (foo) {
+    throw new Error('foo bar')
+  }
+
+  // ✅ GOOD: ONE LINER IF STATEMENT
+  if (foo) throw new Error('foo bar')
+
+  // ❌ BAD: BLOCK CAN BE ELIMINATED.
+  if (foo) {
+    return
+  }
+
+  // ✅ GOOD: ONE LINER IF STATEMENT
+  if (foo) return
+
+    // ❌ BAD: MISSED OPPORTUNITY TO RETURN EARLY AND
+    // ELIMINATE USAGE OF ELSE BLOCK.
+  if (foo) {
+    doSomething()
+    doSomethingElse()
+  } else {
+    doSomethingElse()
+  }
+
+  // ✅ GOOD: NO ELSE BLOCK. EARLY RETURN PREFERRED
+  // AS FORM OF CONTROL FLOW.
+  if (foo) {
+    doSomething()
+    doSomethingElse()
+    return
+  }
+
+  doSomethingElse()  
+}
+
+
 ### 📌 Summary of DOs and DON'Ts
 
 | ✅ DO                                               | ❌ DON'T                                     |

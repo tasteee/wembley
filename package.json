@@ -12,8 +12,9 @@
     "require": "./dist/index.cjs"
   },
   "scripts": {
-    "build": "bun run build.ts",
+    "build": "bun run build && cp dist/index.js examples/js/index.js",
     "prepublishOnly": "bun run build",
+    "serve": "serve ./examples",
     "test": "bun test"
   },
   "files": [
@@ -41,8 +42,9 @@
   "bugs": "https://github.com/tasteee/wembley/issues",
   "author": "tasteee",
   "devDependencies": {
+    "@types/bun": "^1.1.10",
     "bun-plugin-dts": "^0.3.0",
-    "@types/bun": "^1.1.10"
+    "serve": "^14.2.4"
   },
   "dependencies": {
     "tonal": "^6.4.2",
