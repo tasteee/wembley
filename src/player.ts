@@ -1,5 +1,6 @@
 import type { PlayerT, ConfigT, SoundfontLoadConfigT, GearT } from './types.js'
 import { createInstrument } from './instrument.js'
+import { audioEngine } from './audio-engine.js'
 
 export const createPlayer = (args: { config: ConfigT }) => {
   const player: PlayerT = {
@@ -10,16 +11,16 @@ export const createPlayer = (args: { config: ConfigT }) => {
       
       // Create instruments for each soundfont
       for (const [name, url] of Object.entries(config)) {
-        // In a real implementation, this would load the actual soundfont
-        // For now, we'll simulate the loading process
         console.log(`Loading ${name} from ${url}...`)
         
-        // Simulate async loading
-        await new Promise(resolve => setTimeout(resolve, 100))
+        // Load the actual soundfont using the audio engine
+        const soundfont = await audioEngine.loadSoundfont({ url })
+        const synth = audioEngine.createSynth({ soundfont, config: args.config })
         
         gear[name] = createInstrument({
           name,
           soundfontUrl: url,
+          synth,
           config: args.config
         })
         

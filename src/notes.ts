@@ -1,4 +1,6 @@
 import type { NotesT, PlayingNotesT, ConfigT } from './types.js'
+import type { AudioSynthT, AudioVoiceT } from './audio-engine.js'
+import { noteToMidi } from './utils/note-parser.js'
 
 type NotesStateT = {
   notes: string[]
@@ -15,7 +17,7 @@ type NotesStateT = {
   pan: number
 }
 
-export const createNotes = (args: { notes: string[]; config: ConfigT }) => {
+export const createNotes = (args: { notes: string[]; synth: AudioSynthT; config: ConfigT }) => {
   const state: NotesStateT = {
     notes: args.notes,
     velocity: args.config.minVelocity || 45,
@@ -80,7 +82,7 @@ export const createNotes = (args: { notes: string[]; config: ConfigT }) => {
     },
 
     play: () => {
-      return createPlayingNotes({ state })
+      return createPlayingNotes({ state, synth: args.synth })
     },
 
     stop: () => {
@@ -91,26 +93,69 @@ export const createNotes = (args: { notes: string[]; config: ConfigT }) => {
   return notesInstance
 }
 
-const createPlayingNotes = (args: { state: NotesStateT }) => {
+const createPlayingNotes = (args: { state: NotesStateT; synth: AudioSynthT }) => {
   const playingState = {
     afterMs: 0,
     gain: args.state.gain,
     pan: args.state.pan
   }
 
-  // Simulate playing the notes
+  const voices: AudioVoiceT[] = []
+
+  // Play the notes using the audio synth
   if (args.state.staggerMs > 0) {
     console.log(`Playing notes ${args.state.notes.join(', ')} with ${args.state.staggerMs}ms stagger`)
+    
     args.state.notes.forEach((note, index) => {
+      const midi = noteToMidi({ note })
       const delay = args.state.afterMs + (index * args.state.staggerMs)
-      console.log(`  ${note} after ${delay}ms with velocity ${args.state.velocity}`)
+      const startTime = delay > 0 ? (performance.now() + delay) / 1000 : undefined
+      
+      console.log(`  ${note} (MIDI ${midi}) after ${delay}ms with velocity ${args.state.velocity}`)
+      
+      const voice = args.synth.playNote({
+        midi,
+        velocity: args.state.velocity,
+        startTime,
+        duration: args.state.durationMs,
+        detune: args.state.detuneCents,
+        attack: args.state.attackMs,
+        release: args.state.releaseMs,
+        gain: args.state.gain,
+        pan: args.state.pan
+      })
+      
+      voices.push(voice)
     })
   } else {
     console.log(`Playing notes ${args.state.notes.join(', ')} simultaneously`)
     console.log(`  Velocity: ${args.state.velocity}`)
+    
     if (args.state.afterMs > 0) {
       console.log(`  After: ${args.state.afterMs}ms`)
     }
+
+    const startTime = args.state.afterMs > 0 
+      ? (performance.now() + args.state.afterMs) / 1000 
+      : undefined
+
+    args.state.notes.forEach(note => {
+      const midi = noteToMidi({ note })
+      
+      const voice = args.synth.playNote({
+        midi,
+        velocity: args.state.velocity,
+        startTime,
+        duration: args.state.durationMs,
+        detune: args.state.detuneCents,
+        attack: args.state.attackMs,
+        release: args.state.releaseMs,
+        gain: args.state.gain,
+        pan: args.state.pan
+      })
+      
+      voices.push(voice)
+    })
   }
 
   if (args.state.durationMs) {
@@ -137,8 +182,24 @@ const createPlayingNotes = (args: { state: NotesStateT }) => {
       if (playingState.afterMs > 0) {
         console.log(`Stopping notes ${args.state.notes.join(', ')} after ${playingState.afterMs}ms`)
         console.log(`  Transitioning to gain: ${playingState.gain}, pan: ${playingState.pan}`)
+        
+        // Apply modulations before stopping
+        setTimeout(() => {
+          voices.forEach(voice => {
+            voice.modulate({
+              gain: playingState.gain,
+              pan: playingState.pan,
+              duration: playingState.afterMs
+            })
+          })
+          
+          setTimeout(() => {
+            voices.forEach(voice => voice.stop())
+          }, playingState.afterMs)
+        }, 0)
       } else {
         console.log(`Stopping notes ${args.state.notes.join(', ')} immediately`)
+        voices.forEach(voice => voice.stop())
       }
     }
   }

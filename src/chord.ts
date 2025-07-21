@@ -1,6 +1,8 @@
 import type { ChordT, PlayingNotesT, ConfigT, VoicingT } from './types.js'
+import type { AudioSynthT, AudioVoiceT } from './audio-engine.js'
 import { getChordNotes, applyInversion } from './utils/chord-parser.js'
 import { applyVoicing } from './voicings.js'
+import { noteToMidi } from './utils/note-parser.js'
 
 type ChordStateT = {
   chord: string
@@ -22,7 +24,7 @@ type ChordStateT = {
   pan: number
 }
 
-export const createChord = (args: { chord: string; config: ConfigT }) => {
+export const createChord = (args: { chord: string; synth: AudioSynthT; config: ConfigT }) => {
   const initialNotes = getChordNotes({ chord: args.chord, octave: 4 })
   
   const state: ChordStateT = {
@@ -58,8 +60,13 @@ export const createChord = (args: { chord: string; config: ConfigT }) => {
     
     if (state.bassNote !== undefined) {
       if (typeof state.bassNote === 'string') {
-        // Replace bass with specific note
-        notes[0] = state.bassNote
+        // Replace bass with specific note - ensure it has an octave
+        let bassNote = state.bassNote
+        if (!/\d/.test(bassNote)) {
+          // Add default octave if none specified
+          bassNote = `${bassNote}${state.octave}`
+        }
+        notes[0] = bassNote
       } else {
         // Use indexed note as bass
         const bassIndex = state.bassNote % notes.length
@@ -148,7 +155,7 @@ export const createChord = (args: { chord: string; config: ConfigT }) => {
     },
 
     play: () => {
-      return createPlayingChord({ state })
+      return createPlayingChord({ state, synth: args.synth })
     },
 
     stop: () => {
@@ -159,14 +166,16 @@ export const createChord = (args: { chord: string; config: ConfigT }) => {
   return chordInstance
 }
 
-const createPlayingChord = (args: { state: ChordStateT }) => {
+const createPlayingChord = (args: { state: ChordStateT; synth: AudioSynthT }) => {
   const playingState = {
     afterMs: 0,
     gain: args.state.gain,
     pan: args.state.pan
   }
 
-  // Simulate playing the chord
+  const voices: AudioVoiceT[] = []
+
+  // Display chord info
   console.log(`Playing chord ${args.state.chord}`)
   console.log(`  Notes: ${args.state.notes.join(', ')}`)
   
@@ -186,17 +195,59 @@ const createPlayingChord = (args: { state: ChordStateT }) => {
     console.log(`  Bass note: ${args.state.bassNote}`)
   }
 
+  // Play the chord using the audio synth
   if (args.state.staggerMs > 0) {
     console.log(`  Stagger: ${args.state.staggerMs}ms`)
+    
     args.state.notes.forEach((note, index) => {
+      const midi = noteToMidi({ note })
       const delay = args.state.afterMs + (index * args.state.staggerMs)
-      console.log(`    ${note} after ${delay}ms`)
+      const startTime = delay > 0 ? (performance.now() + delay) / 1000 : undefined
+      
+      console.log(`    ${note} (MIDI ${midi}) after ${delay}ms`)
+      
+      const voice = args.synth.playNote({
+        midi,
+        velocity: args.state.velocity,
+        startTime,
+        duration: args.state.durationMs,
+        detune: args.state.detuneCents,
+        attack: args.state.attackMs,
+        release: args.state.releaseMs,
+        gain: args.state.gain,
+        pan: args.state.pan
+      })
+      
+      voices.push(voice)
     })
   } else {
     console.log(`  Velocity: ${args.state.velocity}`)
+    
     if (args.state.afterMs > 0) {
       console.log(`  After: ${args.state.afterMs}ms`)
     }
+
+    const startTime = args.state.afterMs > 0 
+      ? (performance.now() + args.state.afterMs) / 1000 
+      : undefined
+
+    args.state.notes.forEach(note => {
+      const midi = noteToMidi({ note })
+      
+      const voice = args.synth.playNote({
+        midi,
+        velocity: args.state.velocity,
+        startTime,
+        duration: args.state.durationMs,
+        detune: args.state.detuneCents,
+        attack: args.state.attackMs,
+        release: args.state.releaseMs,
+        gain: args.state.gain,
+        pan: args.state.pan
+      })
+      
+      voices.push(voice)
+    })
   }
 
   if (args.state.durationMs) {
@@ -223,8 +274,24 @@ const createPlayingChord = (args: { state: ChordStateT }) => {
       if (playingState.afterMs > 0) {
         console.log(`Stopping chord ${args.state.chord} after ${playingState.afterMs}ms`)
         console.log(`  Transitioning to gain: ${playingState.gain}, pan: ${playingState.pan}`)
+        
+        // Apply modulations before stopping
+        setTimeout(() => {
+          voices.forEach(voice => {
+            voice.modulate({
+              gain: playingState.gain,
+              pan: playingState.pan,
+              duration: playingState.afterMs
+            })
+          })
+          
+          setTimeout(() => {
+            voices.forEach(voice => voice.stop())
+          }, playingState.afterMs)
+        }, 0)
       } else {
         console.log(`Stopping chord ${args.state.chord} immediately`)
+        voices.forEach(voice => voice.stop())
       }
     }
   }
