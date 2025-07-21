@@ -1,0 +1,233 @@
+import type { ChordT, PlayingNotesT, ConfigT, VoicingT } from './types.js'
+import { getChordNotes, applyInversion } from './utils/chord-parser.js'
+import { applyVoicing } from './voicings.js'
+
+type ChordStateT = {
+  chord: string
+  notes: string[]
+  velocity: number
+  minVelocity?: number
+  maxVelocity?: number
+  afterMs: number
+  durationMs?: number
+  staggerMs: number
+  octave: number
+  inversion: number
+  voicing?: VoicingT | string
+  bassNote?: string | number
+  detuneCents: number
+  attackMs?: number
+  releaseMs?: number
+  gain: number
+  pan: number
+}
+
+export const createChord = (args: { chord: string; config: ConfigT }) => {
+  const initialNotes = getChordNotes({ chord: args.chord, octave: 4 })
+  
+  const state: ChordStateT = {
+    chord: args.chord,
+    notes: initialNotes,
+    velocity: args.config.minVelocity || 45,
+    afterMs: 0,
+    staggerMs: 0,
+    octave: 4,
+    inversion: 0,
+    detuneCents: 0,
+    gain: args.config.gain || 70,
+    pan: 0
+  }
+
+  const updateNotes = () => {
+    let notes = getChordNotes({ chord: state.chord, octave: state.octave })
+    
+    if (state.inversion > 0) {
+      notes = applyInversion({ notes, inversion: state.inversion })
+    }
+    
+    if (state.voicing) {
+      if (typeof state.voicing === 'string' && state.voicing in (args.config.voicings || {})) {
+        // Custom voicing from config
+        const customVoicing = args.config.voicings![state.voicing]
+        notes = customVoicing(notes)
+      } else if (typeof state.voicing !== 'string') {
+        // Built-in voicing
+        notes = applyVoicing({ notes, voicing: state.voicing })
+      }
+    }
+    
+    if (state.bassNote !== undefined) {
+      if (typeof state.bassNote === 'string') {
+        // Replace bass with specific note
+        notes[0] = state.bassNote
+      } else {
+        // Use indexed note as bass
+        const bassIndex = state.bassNote % notes.length
+        const bassNote = notes[bassIndex]
+        notes = [bassNote, ...notes.filter((_, i) => i !== bassIndex)]
+      }
+    }
+    
+    state.notes = notes
+  }
+
+  const chordInstance: ChordT = {
+    velocity: ((vel: number, maxVel?: number) => {
+      if (maxVel !== undefined) {
+        state.minVelocity = vel
+        state.maxVelocity = maxVel
+        state.velocity = Math.random() * (maxVel - vel) + vel
+      } else {
+        state.velocity = vel
+      }
+      return chordInstance
+    }) as ChordT['velocity'],
+
+    after: (ms: number) => {
+      state.afterMs = ms
+      return chordInstance
+    },
+
+    duration: (ms: number) => {
+      state.durationMs = ms
+      return chordInstance
+    },
+
+    stagger: (ms: number) => {
+      state.staggerMs = ms
+      return chordInstance
+    },
+
+    octave: (octave: number) => {
+      state.octave = octave
+      updateNotes()
+      return chordInstance
+    },
+
+    inversion: (inversion: number) => {
+      state.inversion = inversion
+      updateNotes()
+      return chordInstance
+    },
+
+    voicing: (voicing: VoicingT | string) => {
+      state.voicing = voicing
+      updateNotes()
+      return chordInstance
+    },
+
+    bassNote: (note: string | number) => {
+      state.bassNote = note
+      updateNotes()
+      return chordInstance
+    },
+
+    detune: (cents: number) => {
+      state.detuneCents = cents
+      return chordInstance
+    },
+
+    attack: (ms: number) => {
+      state.attackMs = ms
+      return chordInstance
+    },
+
+    release: (ms: number) => {
+      state.releaseMs = ms
+      return chordInstance
+    },
+
+    gain: (gain: number) => {
+      state.gain = gain
+      return chordInstance
+    },
+
+    pan: (pan: number) => {
+      state.pan = pan
+      return chordInstance
+    },
+
+    play: () => {
+      return createPlayingChord({ state })
+    },
+
+    stop: () => {
+      console.log(`Stopping chord ${state.chord} (${state.notes.join(', ')}) immediately`)
+    }
+  }
+
+  return chordInstance
+}
+
+const createPlayingChord = (args: { state: ChordStateT }) => {
+  const playingState = {
+    afterMs: 0,
+    gain: args.state.gain,
+    pan: args.state.pan
+  }
+
+  // Simulate playing the chord
+  console.log(`Playing chord ${args.state.chord}`)
+  console.log(`  Notes: ${args.state.notes.join(', ')}`)
+  
+  if (args.state.octave !== 4) {
+    console.log(`  Octave: ${args.state.octave}`)
+  }
+  
+  if (args.state.inversion > 0) {
+    console.log(`  Inversion: ${args.state.inversion}`)
+  }
+  
+  if (args.state.voicing) {
+    console.log(`  Voicing: ${args.state.voicing}`)
+  }
+  
+  if (args.state.bassNote !== undefined) {
+    console.log(`  Bass note: ${args.state.bassNote}`)
+  }
+
+  if (args.state.staggerMs > 0) {
+    console.log(`  Stagger: ${args.state.staggerMs}ms`)
+    args.state.notes.forEach((note, index) => {
+      const delay = args.state.afterMs + (index * args.state.staggerMs)
+      console.log(`    ${note} after ${delay}ms`)
+    })
+  } else {
+    console.log(`  Velocity: ${args.state.velocity}`)
+    if (args.state.afterMs > 0) {
+      console.log(`  After: ${args.state.afterMs}ms`)
+    }
+  }
+
+  if (args.state.durationMs) {
+    console.log(`  Duration: ${args.state.durationMs}ms`)
+  }
+
+  const playingChord: PlayingNotesT = {
+    after: (ms: number) => {
+      playingState.afterMs = ms
+      return playingChord
+    },
+
+    gain: (gain: number) => {
+      playingState.gain = gain
+      return playingChord
+    },
+
+    pan: (pan: number) => {
+      playingState.pan = pan
+      return playingChord
+    },
+
+    stop: () => {
+      if (playingState.afterMs > 0) {
+        console.log(`Stopping chord ${args.state.chord} after ${playingState.afterMs}ms`)
+        console.log(`  Transitioning to gain: ${playingState.gain}, pan: ${playingState.pan}`)
+      } else {
+        console.log(`Stopping chord ${args.state.chord} immediately`)
+      }
+    }
+  }
+
+  return playingChord
+}
