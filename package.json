@@ -12,7 +12,9 @@
     "require": "./dist/index.cjs"
   },
   "scripts": {
-    "build": "bun run build && cp dist/index.js examples/js/index.js",
+    "build": "npm-run-all build-file copy",
+    "build-file": "bun run build.ts",
+    "copy": "cp dist examples/js",
     "prepublishOnly": "bun run build",
     "serve": "serve ./examples",
     "test": "bun test"
