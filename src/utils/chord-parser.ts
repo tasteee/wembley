@@ -1,52 +1,52 @@
+import { Chord, Note } from 'tonal'
 import { transposeNote } from './note-parser.js'
 
 export const parseChord = (args: { chord: string }) => {
-  const chordRegex = /^([A-G][#b]?)(.*)$/
-  const match = args.chord.match(chordRegex)
+  const chordData = Chord.get(args.chord)
   
-  if (!match) {
+  if (!chordData.tonic) {
     throw new Error(`Invalid chord format: ${args.chord}`)
   }
   
-  const [, root, quality] = match
-  
   return {
-    root,
-    quality: quality || 'major'
+    root: chordData.tonic,
+    quality: chordData.quality
   }
 }
 
 export const getChordNotes = (args: { chord: string; octave?: number }) => {
-  const { root, quality } = parseChord(args)
   const octave = args.octave || 4
-  const rootNote = `${root}${octave}`
+  const chordData = Chord.get(args.chord)
   
-  // Basic chord patterns (intervals from root)
-  const chordIntervals: Record<string, number[]> = {
-    'major': [0, 4, 7],
-    '': [0, 4, 7], // Default to major
-    'm': [0, 3, 7],
-    'min': [0, 3, 7],
-    'minor': [0, 3, 7],
-    'dim': [0, 3, 6],
-    'aug': [0, 4, 8],
-    '7': [0, 4, 7, 10],
-    'maj7': [0, 4, 7, 11],
-    'm7': [0, 3, 7, 10],
-    'dim7': [0, 3, 6, 9],
-    'sus2': [0, 2, 7],
-    'sus4': [0, 5, 7],
-    'add9': [0, 4, 7, 14],
-    '9': [0, 4, 7, 10, 14],
-    '11': [0, 4, 7, 10, 14, 17],
-    '13': [0, 4, 7, 10, 14, 17, 21]
+  if (!chordData.tonic) {
+    throw new Error(`Invalid chord format: ${args.chord}`)
   }
   
-  const intervals = chordIntervals[quality] || chordIntervals['major']
+  // Get chord notes from tonal
+  let chordNotes = chordData.notes
   
-  return intervals.map(interval => 
-    transposeNote({ note: rootNote, semitones: interval })
-  )
+  // If tonal didn't give us any notes, fall back to basic patterns
+  if (chordNotes.length === 0) {
+    const basicChords: Record<string, string[]> = {
+      'M': ['1P', '3M', '5P'], // Major
+      '': ['1P', '3M', '5P'], // Default major
+      'm': ['1P', '3m', '5P'], // Minor
+      'dim': ['1P', '3m', '5d'], // Diminished
+      'aug': ['1P', '3M', '5A'], // Augmented
+      '7': ['1P', '3M', '5P', '7m'], // Dominant 7th
+      'M7': ['1P', '3M', '5P', '7M'], // Major 7th
+      'm7': ['1P', '3m', '5P', '7m'], // Minor 7th
+    }
+    
+    const rootNote = `${chordData.tonic}${octave}`
+    const intervals = basicChords[chordData.quality] || basicChords['M']
+    return intervals.map(interval => 
+      Note.transpose(rootNote, interval)
+    ).filter(Boolean)
+  }
+  
+  // Add octave to each note
+  return chordNotes.map(note => `${note}${octave}`)
 }
 
 export const applyInversion = (args: { notes: string[]; inversion: number }) => {

@@ -1,44 +1,38 @@
+import { Note, Midi, Interval } from 'tonal'
+
 export const parseNote = (args: { note: string }) => {
-  const noteRegex = /^([A-G])([#b]?)(\d+)$/
-  const match = args.note.match(noteRegex)
+  const parsed = Note.get(args.note)
   
-  if (!match) {
+  if (!parsed.name) {
     throw new Error(`Invalid note format: ${args.note}`)
   }
   
-  const [, noteName, accidental, octaveStr] = match
-  const octave = parseInt(octaveStr, 10)
-  
   return {
-    noteName,
-    accidental: accidental || '',
-    octave,
-    fullNote: args.note
+    noteName: parsed.pc || parsed.letter || '',
+    accidental: parsed.acc || '',
+    octave: parsed.oct || 4,
+    fullNote: parsed.name
   }
 }
 
 export const noteToMidi = (args: { note: string }) => {
-  const { noteName, accidental, octave } = parseNote(args)
-  
-  const noteOffsets = {
-    C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11
+  const midi = Midi.toMidi(args.note)
+  if (midi === null) {
+    throw new Error(`Cannot convert note to MIDI: ${args.note}`)
   }
-  
-  const baseOffset = noteOffsets[noteName as keyof typeof noteOffsets]
-  const accidentalOffset = accidental === '#' ? 1 : accidental === 'b' ? -1 : 0
-  
-  return (octave + 1) * 12 + baseOffset + accidentalOffset
+  return midi
 }
 
 export const midiToNote = (args: { midi: number }) => {
-  const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-  const octave = Math.floor(args.midi / 12) - 1
-  const noteIndex = args.midi % 12
-  
-  return `${noteNames[noteIndex]}${octave}`
+  const note = Midi.midiToNoteName(args.midi)
+  if (!note) {
+    throw new Error(`Cannot convert MIDI to note: ${args.midi}`)
+  }
+  return note
 }
 
 export const transposeNote = (args: { note: string; semitones: number }) => {
-  const midi = noteToMidi({ note: args.note })
+  // Use MIDI conversion as it's more reliable for semitone transpositions
+  const midi = noteToMidi(args)
   return midiToNote({ midi: midi + args.semitones })
 }
