@@ -42,9 +42,15 @@
   "bugs": "https://github.com/tasteee/wembley/issues",
   "author": "tasteee",
   "devDependencies": {
+    "@playwright/test": "^1.54.1",
     "@types/bun": "^1.1.10",
+    "@types/jest": "^30.0.0",
     "bun-plugin-dts": "^0.3.0",
-    "serve": "^14.2.4"
+    "esbuild": "^0.25.8",
+    "jest": "^30.0.4",
+    "playwright": "^1.54.1",
+    "serve": "^14.2.4",
+    "ts-jest": "^29.4.0"
   },
   "dependencies": {
     "tonal": "^6.4.2",

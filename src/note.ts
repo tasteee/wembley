@@ -98,7 +98,7 @@ const createPlayingNote = (args: { state: NoteStateT; synth: AudioSynthT }) => {
   const midi = noteToMidi({ note: args.state.note })
   
   const startTime = args.state.afterMs > 0 
-    ? (performance.now() + args.state.afterMs) / 1000 
+    ? args.state.afterMs / 1000  // Convert ms to seconds for relative timing
     : undefined
 
   console.log(`Playing note ${args.state.note} (MIDI ${midi}) with velocity ${args.state.velocity}`)

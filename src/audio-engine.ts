@@ -235,21 +235,37 @@ const playNoteInternal = async (args: {
 	const frequency = midiToFrequency(args.midi)
 
 	// Create a simple synth using Tone.js with validated envelope parameters
+	const validateEnvelopeParam = (value: number | undefined, defaultValue: number, minValue: number): number => {
+		if (value === undefined || value === null || isNaN(value)) return defaultValue
+		return Math.max(value / 1000, minValue) // Convert ms to seconds with minimum
+	}
+
 	const synth = new Tone.Synth({
 		oscillator: {
 			type: 'sawtooth'
 		},
 		envelope: {
-			attack: Math.max((args.attack || 10) / 1000, 0.001), // Minimum 1ms
+			attack: validateEnvelopeParam(args.attack, 0.01, 0.001), // Default 10ms, min 1ms
 			decay: 0.3,
 			sustain: 0.6,
-			release: Math.max((args.release || 100) / 1000, 0.01) // Minimum 10ms
+			release: validateEnvelopeParam(args.release, 0.1, 0.01) // Default 100ms, min 10ms
 		}
 	})
 
-	// Create gain and panner nodes
-	const gainNode = new Tone.Gain(((args.velocity / 100) * (args.gain || args.config.gain || 70)) / 100)
-	const panNode = new Tone.Panner(args.pan ? Math.max(-1, Math.min(1, args.pan / 100)) : 0)
+	// Create gain and panner nodes with validated parameters
+	const validateGain = (velocity: number, gainValue: number | undefined, configGain: number): number => {
+		const safeVelocity = Math.max(0, Math.min(100, velocity || 70))
+		const safeGain = Math.max(0, Math.min(100, gainValue || configGain || 70))
+		return (safeVelocity / 100) * (safeGain / 100)
+	}
+
+	const validatePan = (panValue: number | undefined): number => {
+		if (panValue === undefined || panValue === null || isNaN(panValue)) return 0
+		return Math.max(-1, Math.min(1, panValue / 100))
+	}
+
+	const gainNode = new Tone.Gain(validateGain(args.velocity, args.gain, args.config.gain))
+	const panNode = new Tone.Panner(validatePan(args.pan))
 
 	// Chain: synth -> gain -> pan -> master
 	synth.connect(gainNode)
@@ -263,14 +279,12 @@ const playNoteInternal = async (args: {
 	const calculateStartTime = (startTime?: number): string | number => {
 		if (startTime === undefined || startTime === null) return 'now'
 		
-		const currentTime = performance.now() / 1000 // Convert to seconds
-		const targetTime = startTime
-		
-		// If target time is in the past or too close to now, play immediately
-		if (targetTime <= currentTime + 0.001) return 'now'
+		// startTime should be relative time in seconds (e.g., 0.5 for 500ms delay)
+		// Convert to Tone.js relative time format
+		if (startTime <= 0) return 'now'
 		
 		// Return relative time string for future playback
-		return `+${targetTime - currentTime}`
+		return `+${startTime}`
 	}
 
 	const startTime = calculateStartTime(args.startTime)
@@ -278,9 +292,21 @@ const playNoteInternal = async (args: {
 	// Validate duration parameter to prevent envelope issues
 	if (args.duration && args.duration > 0) {
 		const durationInSeconds = Math.max(args.duration / 1000, 0.01) // Minimum 10ms
-		synth.triggerAttackRelease(frequency, durationInSeconds, startTime)
+		try {
+			synth.triggerAttackRelease(frequency, durationInSeconds, startTime)
+		} catch (error) {
+			console.error('Error in triggerAttackRelease:', error)
+			// Fallback to immediate play
+			synth.triggerAttackRelease(frequency, durationInSeconds, 'now')
+		}
 	} else {
-		synth.triggerAttack(frequency, startTime)
+		try {
+			synth.triggerAttack(frequency, startTime)
+		} catch (error) {
+			console.error('Error in triggerAttack:', error)
+			// Fallback to immediate play
+			synth.triggerAttack(frequency, 'now')
+		}
 	}
 
 	// Create voice object
@@ -322,10 +348,10 @@ const playNoteInternal = async (args: {
 
 			const now = Tone.now()
 			const startTime = modArgs.startTime || now
-			const duration = (modArgs.duration || 0) / 1000
+			const duration = Math.max((modArgs.duration || 0) / 1000, 0)
 
-			if (modArgs.gain !== undefined) {
-				const targetGain = (modArgs.gain / 100) * (((args.velocity / 100) * (args.gain || args.config.gain || 70)) / 100)
+			if (modArgs.gain !== undefined && !isNaN(modArgs.gain)) {
+				const targetGain = validateGain(args.velocity, modArgs.gain, args.config.gain)
 				try {
 					if (duration > 0) {
 						gainNode.gain.linearRampTo(targetGain, duration, startTime)
@@ -337,8 +363,8 @@ const playNoteInternal = async (args: {
 				}
 			}
 
-			if (modArgs.pan !== undefined) {
-				const targetPan = Math.max(-1, Math.min(1, modArgs.pan / 100))
+			if (modArgs.pan !== undefined && !isNaN(modArgs.pan)) {
+				const targetPan = validatePan(modArgs.pan)
 				try {
 					if (duration > 0) {
 						panNode.pan.linearRampTo(targetPan, duration, startTime)
