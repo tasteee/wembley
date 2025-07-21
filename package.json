@@ -1,11 +1,11 @@
 {
-  "name": "pkg-name",
+  "name": "wembley",
   "type": "module",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "description": "",
+  "description": "A delightful, DX-obsessed soundfont sequencer for the web. Chainable, expressive, and stupid-easy to get ideas flowing.",
   "exports": {
     "types": "./dist/index.d.ts",
     "import": "./dist/index.js",
@@ -13,22 +13,33 @@
   },
   "scripts": {
     "build": "bun run build.ts",
-    "prepublishOnly": "bun run build"
+    "prepublishOnly": "bun run build",
+    "test": "bun test"
   },
   "files": [
     "dist"
   ],
   "keywords": [
-    "bun"
+    "audio",
+    "soundfont",
+    "sequencer",
+    "music",
+    "web-audio",
+    "midi",
+    "synthesizer",
+    "piano",
+    "chord",
+    "note",
+    "instrument"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/wobsoriano/pkg-name#readme",
+  "homepage": "https://github.com/tasteee/wembley#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/wobsoriano/pkg-name.git"
+    "url": "git+https://github.com/tasteee/wembley.git"
   },
-  "bugs": "https://github.com/wobsoriano/pkg-name/issues",
-  "author": "Robert Soriano <sorianorobertc@gmail.com>",
+  "bugs": "https://github.com/tasteee/wembley/issues",
+  "author": "tasteee",
   "devDependencies": {
     "bun-plugin-dts": "^0.3.0",
     "@types/bun": "^1.1.10"
