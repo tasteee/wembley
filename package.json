@@ -12,9 +12,9 @@
     "require": "./dist/index.cjs"
   },
   "scripts": {
-    "build": "npm-run-all build-file copy",
-    "build-file": "bun run build.ts",
-    "copy": "cp dist examples/js",
+    "build": "node build-simple.cjs",
+    "build-file": "node build-simple.cjs",
+    "copy": "powershell -Command \"Copy-Item -Path 'dist/*' -Destination 'examples/js' -Recurse -Force\"",
     "prepublishOnly": "bun run build",
     "serve": "serve ./examples",
     "test": "bun test"
@@ -48,13 +48,13 @@
     "@playwright/test": "^1.54.1",
     "@types/bun": "^1.1.10",
     "@types/jest": "^30.0.0",
-    "bun-plugin-dts": "^0.3.0",
     "esbuild": "^0.25.8",
     "jest": "^30.0.4",
     "npm-run-all": "^4.1.5",
     "playwright": "^1.54.1",
     "serve": "^14.2.4",
-    "ts-jest": "^29.4.0"
+    "ts-jest": "^29.4.0",
+    "typescript": "^5.8.3"
   },
   "dependencies": {
     "tonal": "^6.4.2",

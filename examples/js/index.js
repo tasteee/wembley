@@ -2437,7 +2437,11 @@ var applyVoicing = (args) => {
     orchestral: orchestralVoicing
   };
   const voicingFunction = voicingFunctions[args.voicing];
-  return voicingFunction(args.notes);
+  const final = voicingFunction(args.notes);
+  console.log("voicing applied: ", args.voicing);
+  console.log("notes before voicing: ", args.notes);
+  console.log("notes after voicing: ", final);
+  return final;
 };
 var openVoicing = (notes2) => {
   return notes2.map((note2, index4) => {
@@ -2456,21 +2460,20 @@ var drop2Voicing = (notes2) => {
   return result;
 };
 var drop3Voicing = (notes2) => {
-  if (notes2.length < 4) return notes2;
   const result = [...notes2];
   const thirdHighest = result[result.length - 3];
   result[result.length - 3] = transposeNote({ note: thirdHighest, semitones: -12 });
   return result;
 };
 var drop2and4Voicing = (notes2) => {
-  if (notes2.length < 4) return notes2;
   let result = [...notes2];
   result = drop2Voicing(result);
   result = drop3Voicing(result);
   return result;
 };
 var rootlessVoicing = (notes2) => {
-  return notes2.slice(1);
+  const [root, ...rest] = notes2;
+  return rest;
 };
 var spreadVoicing = (notes2) => {
   return notes2.map((note2, index4) => {
@@ -2531,11 +2534,12 @@ var createChord = (args) => {
     if (state.inversion > 0) {
       notes2 = applyInversion({ notes: notes2, inversion: state.inversion });
     }
+    console.log("updateNotes()", { notes: notes2, state });
     if (state.voicing) {
       if (typeof state.voicing === "string" && state.voicing in (args.config.voicings || {})) {
         const customVoicing = args.config.voicings[state.voicing];
         notes2 = customVoicing(notes2);
-      } else if (typeof state.voicing !== "string") {
+      } else {
         notes2 = applyVoicing({ notes: notes2, voicing: state.voicing });
       }
     }
