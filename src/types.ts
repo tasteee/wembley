@@ -86,9 +86,12 @@ export type InstrumentT = {
   note: (note: string) => NoteT
   notes: (notes: string[]) => NotesT
   chord: (chord: string) => ChordT
+  stop: () => void
 }
 
-export type GearT = Record<string, InstrumentT>
+export type GearT = {
+  stop: () => void
+} & Record<string, InstrumentT>
 
 export type PlayerT = {
   load: (config: SoundfontLoadConfigT) => Promise<GearT>

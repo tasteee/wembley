@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wembley Stop Functionality Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .logs {
+            background: #f5f5f5;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Wembley Stop Functionality Demo</h1>
+    
+    <div class="section">
+        <h3>Global Stop</h3>
+        <button onclick="testGlobalStop()">gear.stop() - Stop all sounds</button>
+    </div>
+    
+    <div class="section">
+        <h3>Instrument Stop</h3>
+        <button onclick="testInstrumentStop()">gear.piano.stop() - Stop piano sounds</button>
+    </div>
+    
+    <div class="section">
+        <h3>Unplayed Instance Stops (Configuration Objects)</h3>
+        <button onclick="testUnplayedNoteStop()">gear.piano.note('C3').stop() - Log only</button>
+        <button onclick="testUnplayedChordStop()">gear.piano.chord('Cmaj').stop() - Log only</button>
+        <button onclick="testUnplayedNotesStop()">gear.piano.notes(['C3','E3','G3']).stop() - Log only</button>
+    </div>
+    
+    <div class="section">
+        <h3>Playing Instance Stops</h3>
+        <button onclick="playAndStopNote()">Play C3 note and stop it after 2 seconds</button>
+        <button onclick="playAndStopChord()">Play Cmaj chord and stop it after 2 seconds</button>
+        <button onclick="playAndStopNotes()">Play notes and stop them after 2 seconds</button>
+    </div>
+    
+    <div class="section">
+        <h3>Multiple Instance Test</h3>
+        <button onclick="testMultipleInstances()">Play 2x C3 notes, stop only first instance after 1s</button>
+    </div>
+    
+    <div class="logs" id="logs"></div>
+    
+    <script type="module">
+        import wembley from './js/index.js'
+        
+        let gear = null
+        
+        // Initialize wembley
+        async function init() {
+            try {
+                const player = wembley.configure({
+                    gain: 70,
+                    minVelocity: 45,
+                    maxVelocity: 85
+                })
+                
+                gear = await player.load({
+                    piano: 'https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-mp3.js'
+                })
+                
+                log('🎹 Wembley initialized successfully!')
+            } catch (error) {
+                log(`❌ Error initializing: ${error.message}`)
+            }
+        }
+        
+        function log(message) {
+            const logs = document.getElementById('logs')
+            logs.innerHTML += message + '\n'
+            logs.scrollTop = logs.scrollHeight
+            console.log(message)
+        }
+        
+        // Intercept console.log to show in UI
+        const originalLog = console.log
+        console.log = function(...args) {
+            const message = args.join(' ')
+            const logs = document.getElementById('logs')
+            logs.innerHTML += `🔊 ${message}\n`
+            logs.scrollTop = logs.scrollHeight
+            originalLog.apply(console, args)
+        }
+        
+        // Global functions for buttons
+        window.testGlobalStop = () => {
+            if (!gear) return log('❌ Gear not initialized')
+            log('🛑 Testing global stop...')
+            gear.stop()
+        }
+        
+        window.testInstrumentStop = () => {
+            if (!gear) return log('❌ Gear not initialized')
+            log('🛑 Testing instrument stop...')
+            gear.piano.stop()
+        }
+        
+        window.testUnplayedNoteStop = () => {
+            if (!gear) return log('❌ Gear not initialized')
+            log('🛑 Testing unplayed note stop...')
+            gear.piano.note('C3').stop()
+        }
+        
+        window.testUnplayedChordStop = () => {
+            if (!gear) return log('❌ Gear not initialized')
+            log('🛑 Testing unplayed chord stop...')
+            gear.piano.chord('Cmaj').stop()
+        }
+        
+        window.testUnplayedNotesStop = () => {
+            if (!gear) return log('❌ Gear not initialized')
+            log('🛑 Testing unplayed notes stop...')
+            gear.piano.notes(['C3', 'E3', 'G3']).stop()
+        }
+        
+        window.playAndStopNote = () => {
+            if (!gear) return log('❌ Gear not initialized')
+            log('🎵 Playing C3 note...')
+            const playingNote = gear.piano.note('C3').velocity(60).play()
+            setTimeout(() => {
+                log('🛑 Stopping C3 note...')
+                playingNote.stop()
+            }, 2000)
+        }
+        
+        window.playAndStopChord = () => {
+            if (!gear) return log('❌ Gear not initialized')
+            log('🎵 Playing Cmaj chord...')
+            const playingChord = gear.piano.chord('Cmaj').velocity(60).play()
+            setTimeout(() => {
+                log('🛑 Stopping Cmaj chord...')
+                playingChord.stop()
+            }, 2000)
+        }
+        
+        window.playAndStopNotes = () => {
+            if (!gear) return log('❌ Gear not initialized')
+            log('🎵 Playing notes C3, E3, G3...')
+            const playingNotes = gear.piano.notes(['C3', 'E3', 'G3']).velocity(60).play()
+            setTimeout(() => {
+                log('🛑 Stopping notes...')
+                playingNotes.stop()
+            }, 2000)
+        }
+        
+        window.testMultipleInstances = () => {
+            if (!gear) return log('❌ Gear not initialized')
+            log('🎵 Playing first C3 note...')
+            const firstNote = gear.piano.note('C3').velocity(50).play()
+            
+            setTimeout(() => {
+                log('🎵 Playing second C3 note...')
+                const secondNote = gear.piano.note('C3').velocity(70).play()
+                
+                setTimeout(() => {
+                    log('🛑 Stopping ONLY first C3 note (second should continue)...')
+                    firstNote.stop()
+                }, 1000)
+                
+                setTimeout(() => {
+                    log('🛑 Stopping second C3 note...')
+                    secondNote.stop()
+                }, 3000)
+            }, 500)
+        }
+        
+        // Initialize on load
+        init()
+    </script>
+</body>
+</html>

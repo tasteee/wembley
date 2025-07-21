@@ -1,4 +1,4 @@
-import type { PlayerT, ConfigT, SoundfontLoadConfigT, GearT } from './types.js'
+import type { PlayerT, ConfigT, SoundfontLoadConfigT, GearT, InstrumentT } from './types.js'
 import { createInstrument } from './instrument.js'
 import { audioEngine } from './audio-engine.js'
 
@@ -7,7 +7,7 @@ export const createPlayer = (args: { config: ConfigT }) => {
     load: async (config: SoundfontLoadConfigT) => {
       console.log('Loading soundfonts:', config)
       
-      const gear: GearT = {}
+      const instruments: Record<string, InstrumentT> = {}
       
       // Create instruments for each soundfont
       for (const [name, url] of Object.entries(config)) {
@@ -17,7 +17,7 @@ export const createPlayer = (args: { config: ConfigT }) => {
         const soundfont = await audioEngine.loadSoundfont({ url })
         const synth = audioEngine.createSynth({ soundfont, config: args.config })
         
-        gear[name] = createInstrument({
+        instruments[name] = createInstrument({
           name,
           soundfontUrl: url,
           synth,
@@ -26,6 +26,17 @@ export const createPlayer = (args: { config: ConfigT }) => {
         
         console.log(`✓ ${name} loaded successfully`)
       }
+
+      // Create gear with global stop functionality
+      const gear = {
+        ...instruments,
+        stop: () => {
+          console.log('Stopping all sounds from all instruments')
+          Object.values(instruments).forEach(instrument => {
+            instrument.stop()
+          })
+        }
+      } as GearT
       
       return gear
     }

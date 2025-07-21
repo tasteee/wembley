@@ -2746,6 +2746,10 @@ var createInstrument = (args) => {
     },
     chord: (chord2) => {
       return createChord({ chord: chord2, synth: args.synth, config: args.config });
+    },
+    stop: () => {
+      console.log(`Stopping all sounds from instrument "${args.name}"`);
+      args.synth.stopAllNotes();
     }
   };
   return instrument;
@@ -19974,9 +19978,17 @@ var createAudioEngine = () => {
       args2.voice.stop({ stopTime: args2.stopTime });
       activeVoices.delete(args2.voice.id);
     };
+    const stopAllNotes = () => {
+      console.log(`Stopping all notes for synth (${activeVoices.size} active voices)`);
+      activeVoices.forEach((voice) => {
+        voice.stop();
+      });
+      activeVoices.clear();
+    };
     return {
       playNote,
-      stopNote
+      stopNote,
+      stopAllNotes
     };
   };
   return {
@@ -20128,12 +20140,12 @@ var createPlayer = (args) => {
   const player = {
     load: async (config) => {
       console.log("Loading soundfonts:", config);
-      const gear = {};
+      const instruments = {};
       for (const [name2, url] of Object.entries(config)) {
         console.log(`Loading ${name2} from ${url}...`);
         const soundfont = await audioEngine.loadSoundfont({ url });
         const synth = audioEngine.createSynth({ soundfont, config: args.config });
-        gear[name2] = createInstrument({
+        instruments[name2] = createInstrument({
           name: name2,
           soundfontUrl: url,
           synth,
@@ -20141,6 +20153,15 @@ var createPlayer = (args) => {
         });
         console.log(`\u2713 ${name2} loaded successfully`);
       }
+      const gear = {
+        ...instruments,
+        stop: () => {
+          console.log("Stopping all sounds from all instruments");
+          Object.values(instruments).forEach((instrument) => {
+            instrument.stop();
+          });
+        }
+      };
       return gear;
     }
   };

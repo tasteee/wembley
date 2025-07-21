@@ -103,7 +103,19 @@ const someFunction = () => {
     return
   }
 
-  doSomethingElse()  
+  doSomethingElse()
+
+
+
+  // ✅THIS IS THE ONLY CASE SOMETHING SHOULD BE IMPLICITLY RETURNED,
+  // WHEN A METHOD CAN BE HANDLED ELEGANTLY IN A ONE LINER:
+  activeVoices.forEach(voice => voice.stop()
+
+  // ❌YOU SHOULD NEVER DO THIS AND TAKE UP A WHOLE LINE JUST FOR SOMETHING
+  // SIMPLE LIKE voice.stop().
+  activeVoices.forEach(voice => {
+    voice.stop()
+  })
 }
 
 

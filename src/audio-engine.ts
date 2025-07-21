@@ -33,6 +33,7 @@ export type AudioSynthT = {
 		pan?: number
 	}) => AudioVoiceT
 	stopNote: (args: { voice: AudioVoiceT; stopTime?: number }) => void
+	stopAllNotes: () => void
 }
 
 export type AudioVoiceT = {
@@ -158,9 +159,18 @@ const createAudioEngine = (): AudioEngineT => {
 			activeVoices.delete(args.voice.id)
 		}
 
+		const stopAllNotes = () => {
+			console.log(`Stopping all notes for synth (${activeVoices.size} active voices)`)
+			activeVoices.forEach(voice => {
+				voice.stop()
+			})
+			activeVoices.clear()
+		}
+
 		return {
 			playNote,
-			stopNote
+			stopNote,
+			stopAllNotes
 		}
 	}
 
