@@ -22,9 +22,9 @@ export const applyVoicing = (args: { notes: string[]; voicing: VoicingT }) => {
 }
 
 const openVoicing = (notes: string[]) => {
-  // Spread notes across wider range
+  // Spread notes across wider range using perfect fifths
   return notes.map((note, index) => {
-    const semitones = index * 7 // Fifth intervals
+    const semitones = index * 7 // Perfect fifth intervals
     return transposeNote({ note, semitones })
   })
 }
@@ -78,32 +78,34 @@ const spreadVoicing = (notes: string[]) => {
 }
 
 const clusterVoicing = (notes: string[]) => {
-  // Cluster notes close together (add seconds)
+  // Cluster notes close together (add minor seconds)
   return notes.flatMap((note, index) => {
     if (index === 0) return [note]
-    return [note, transposeNote({ note, semitones: 1 })]
+    // Add a minor second (1 semitone) above each note except the first
+    const clusterNote = transposeNote({ note, semitones: 1 })
+    return [note, clusterNote]
   })
 }
 
 const shellVoicing = (notes: string[]) => {
-  // Just root and seventh (shell voicing)
+  // Shell voicing: root and seventh (or root and highest note if no seventh)
   if (notes.length >= 4) {
-    return [notes[0], notes[3]]
+    return [notes[0], notes[3]] // Root and seventh
   }
-  return [notes[0], notes[notes.length - 1]]
+  return [notes[0], notes[notes.length - 1]] // Root and highest
 }
 
 const pianisticVoicing = (notes: string[]) => {
-  // Common piano voicing - left hand bass, right hand chord
-  const bass = transposeNote({ note: notes[0], semitones: -12 })
+  // Piano-style voicing: bass note in left hand, chord tones in right hand  
+  const bassNote = transposeNote({ note: notes[0], semitones: -12 })
   const upperNotes = notes.slice(1).map(note => 
     transposeNote({ note, semitones: 12 })
   )
-  return [bass, ...upperNotes]
+  return [bassNote, ...upperNotes]
 }
 
 const guitaristicVoicing = (notes: string[]) => {
-  // Guitar-friendly voicing within 4-fret span
+  // Guitar-friendly voicing within reasonable fret span (perfect fourths)
   return notes.map((note, index) => {
     const fretOffset = index * 5 // Perfect fourth intervals
     return transposeNote({ note, semitones: fretOffset })
@@ -111,9 +113,9 @@ const guitaristicVoicing = (notes: string[]) => {
 }
 
 const orchestralVoicing = (notes: string[]) => {
-  // Wide orchestral spread
+  // Wide orchestral spread across full range
   return notes.map((note, index) => {
-    const octaveSpread = index * 12 // Full octave spread
+    const octaveSpread = index * 12 // Full octave spread between voices
     return transposeNote({ note, semitones: octaveSpread })
   })
 }

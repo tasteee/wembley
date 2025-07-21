@@ -1,8 +1,9 @@
+import * as Tone from 'tone'
 import type { ConfigT } from './types.js'
 
 export type AudioContextT = {
-  context: AudioContext
-  masterGain: GainNode
+  context: Tone.BaseContext
+  masterGain: Tone.Gain
   isStarted: boolean
 }
 
@@ -15,7 +16,7 @@ export type AudioEngineT = {
 export type AudioFontT = {
   name: string
   url: string
-  samples: Map<number, AudioBuffer>
+  samples: Map<number, Tone.ToneAudioBuffer | null>
   isLoaded: boolean
 }
 
@@ -37,9 +38,9 @@ export type AudioSynthT = {
 export type AudioVoiceT = {
   id: string
   midi: number
-  source: AudioBufferSourceNode | null
-  gainNode: GainNode | null
-  panNode: StereoPannerNode | null
+  source: Tone.Player | null
+  gainNode: Tone.Gain | null
+  panNode: Tone.Panner | null
   isPlaying: boolean
   stop: (args?: { stopTime?: number; fadeTime?: number }) => void
   modulate: (args: { 
@@ -58,32 +59,27 @@ const createAudioEngine = (): AudioEngineT => {
       return audioContext
     }
 
-    // Check if we're in a browser environment with Web Audio API
-    const globalObj = globalThis as any
-    if (typeof globalObj.AudioContext === 'undefined' && typeof globalObj.webkitAudioContext === 'undefined') {
-      // Fallback for Node.js/test environments
-      console.log('Web Audio API not available, creating mock audio context')
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined') {
+      // Node.js/test environment - create mock context
+      console.log('Running in Node.js environment, creating mock audio context')
       audioContext = {
-        context: null as any, // Mock context
-        masterGain: null as any, // Mock master gain
+        context: null as any,
+        masterGain: null as any,
         isStarted: true
       }
       return audioContext
     }
 
-    const AudioCtx = globalObj.AudioContext || globalObj.webkitAudioContext
-    const context = new AudioCtx()
-    const masterGain = context.createGain()
-    masterGain.connect(context.destination)
-    masterGain.gain.value = 0.7
-
-    // Ensure context starts (requires user interaction)
-    if (context.state === 'suspended') {
-      await context.resume()
+    // Initialize Tone.js
+    if (Tone.getContext().state === 'suspended') {
+      await Tone.start()
     }
 
+    const masterGain = new Tone.Gain(0.7).toDestination()
+    
     audioContext = {
-      context,
+      context: Tone.getContext(),
       masterGain,
       isStarted: true
     }
@@ -109,23 +105,18 @@ const createAudioEngine = (): AudioEngineT => {
         return soundfont
       }
       
-      // Generate basic sine wave samples for common MIDI notes (C3-C6)
+      // Create Tone.js oscillator samples for common MIDI notes (C3-C6)
       for (let midi = 48; midi <= 84; midi++) {
-        const buffer = createSyntheticSample({ 
-          audioContext: audioCtx.context, 
-          frequency: midiToFrequency(midi),
-          duration: 3.0
-        })
-        soundfont.samples.set(midi, buffer)
+        // We'll create samples on-demand using Tone.js synthesis
+        soundfont.samples.set(midi, null) // Placeholder for now
       }
 
       soundfont.isLoaded = true
-      console.log(`✓ Loaded synthetic soundfont: ${soundfont.name}`)
+      console.log(`✓ Loaded Tone.js soundfont: ${soundfont.name}`)
       
     } catch (error) {
       console.error(`Failed to load soundfont from ${args.url}:`, error)
-      // Still mark as loaded so the API continues to work
-      soundfont.isLoaded = true
+      soundfont.isLoaded = true // Still mark as loaded so API continues to work
     }
 
     return soundfont
@@ -156,7 +147,7 @@ const createAudioEngine = (): AudioEngineT => {
         engine: engineInstance
       })
 
-      // Create a temporary voice that will be replaced when audio context is ready
+      // Create a voice that will be populated when audio context is ready
       const voice: AudioVoiceT = {
         id: voiceId,
         midi: noteArgs.midi,
@@ -244,77 +235,74 @@ const playNoteInternal = async (args: {
     return mockVoice
   }
 
-  const { context } = audioCtx
-
-  // Get the closest sample (for simplicity, use exact match or nearest)
-  let sample = args.soundfont.samples.get(args.midi)
-  if (!sample) {
-    // Find nearest sample
-    const availableMidis = Array.from(args.soundfont.samples.keys()).sort((a, b) => a - b)
-    if (availableMidis.length === 0) {
-      throw new Error(`No samples available in soundfont`)
+  // Create Tone.js synth for this note
+  const frequency = midiToFrequency(args.midi)
+  
+  // Create a simple synth using Tone.js
+  const synth = new Tone.Synth({
+    oscillator: {
+      type: 'sawtooth'
+    },
+    envelope: {
+      attack: (args.attack || 10) / 1000,
+      decay: 0.3,
+      sustain: 0.6,
+      release: (args.release || 100) / 1000
     }
-    
-    const nearestMidi = availableMidis.reduce((prev, curr) => 
-      Math.abs(curr - args.midi) < Math.abs(prev - args.midi) ? curr : prev
-    )
-    sample = args.soundfont.samples.get(nearestMidi)
-  }
-
-  if (!sample) {
-    throw new Error(`No sample available for MIDI note ${args.midi}`)
-  }
-
-  // Create audio nodes
-  const source = context.createBufferSource()
-  const gainNode = context.createGain()
-  const panNode = context.createStereoPanner()
-
-  source.buffer = sample
-  source.connect(gainNode)
+  })
+  
+  // Create gain and panner nodes
+  const gainNode = new Tone.Gain((args.velocity / 100) * (args.gain || args.config.gain || 70) / 100)
+  const panNode = new Tone.Panner(args.pan ? Math.max(-1, Math.min(1, args.pan / 100)) : 0)
+  
+  // Chain: synth -> gain -> pan -> master
+  synth.connect(gainNode)
   gainNode.connect(panNode)
   panNode.connect(audioCtx.masterGain)
 
-  // Apply settings
-  const velocityGain = (args.velocity / 100) * (args.gain || args.config.gain || 70) / 100
-  gainNode.gain.value = velocityGain
-
-  if (args.pan !== undefined) {
-    panNode.pan.value = Math.max(-1, Math.min(1, args.pan / 100))
-  }
-
+  // Apply detune if specified
   if (args.detune) {
-    source.detune.value = args.detune
+    synth.detune.value = args.detune
   }
 
   // Schedule playback
-  const startTime = args.startTime || context.currentTime
-  source.start(startTime)
-
+  const startTime = args.startTime ? `+${(args.startTime * 1000 - performance.now()) / 1000}` : 'now'
+  
   if (args.duration) {
-    source.stop(startTime + (args.duration / 1000))
+    synth.triggerAttackRelease(frequency, args.duration / 1000, startTime)
+  } else {
+    synth.triggerAttack(frequency, startTime)
   }
 
   // Create voice object
   const voice: AudioVoiceT = {
     id: args.voiceId,
     midi: args.midi,
-    source,
+    source: synth as any, // Tone.Synth instead of Tone.Player
     gainNode,
     panNode,
     isPlaying: true,
 
     stop: (stopArgs) => {
-      const stopTime = stopArgs?.stopTime || context.currentTime
+      const stopTime = stopArgs?.stopTime || Tone.now()
       const fadeTime = stopArgs?.fadeTime || 0.05
 
-      if (voice.isPlaying && gainNode && source) {
+      if (voice.isPlaying && synth) {
         try {
-          gainNode.gain.exponentialRampToValueAtTime(0.001, stopTime + fadeTime)
-          source.stop(stopTime + fadeTime)
+          if (!args.duration) { // Only manually stop if not auto-stopping
+            synth.triggerRelease(stopTime + fadeTime)
+          }
           voice.isPlaying = false
+          
+          // Clean up after fade completes
+          setTimeout(() => {
+            synth.dispose()
+            gainNode.dispose()
+            panNode.dispose()
+          }, fadeTime * 1000 + 100)
+          
         } catch (error) {
-          // Audio node may have already stopped
+          // Synth may have already been disposed
           voice.isPlaying = false
         }
       }
@@ -323,20 +311,20 @@ const playNoteInternal = async (args: {
     modulate: (modArgs) => {
       if (!gainNode || !panNode) return
       
-      const now = context.currentTime
+      const now = Tone.now()
       const startTime = modArgs.startTime || now
       const duration = (modArgs.duration || 0) / 1000
 
       if (modArgs.gain !== undefined) {
-        const targetGain = (modArgs.gain / 100) * velocityGain
+        const targetGain = (modArgs.gain / 100) * ((args.velocity / 100) * (args.gain || args.config.gain || 70) / 100)
         try {
           if (duration > 0) {
-            gainNode.gain.linearRampToValueAtTime(targetGain, startTime + duration)
+            gainNode.gain.linearRampTo(targetGain, duration, startTime)
           } else {
             gainNode.gain.value = targetGain
           }
         } catch (error) {
-          // Audio node may have been disconnected
+          // Node may have been disposed
         }
       }
 
@@ -344,62 +332,18 @@ const playNoteInternal = async (args: {
         const targetPan = Math.max(-1, Math.min(1, modArgs.pan / 100))
         try {
           if (duration > 0) {
-            panNode.pan.linearRampToValueAtTime(targetPan, startTime + duration)
+            panNode.pan.linearRampTo(targetPan, duration, startTime)
           } else {
             panNode.pan.value = targetPan
           }
         } catch (error) {
-          // Audio node may have been disconnected
+          // Node may have been disposed
         }
       }
     }
   }
 
   return voice
-}
-
-const createSyntheticSample = (args: { 
-  audioContext: AudioContext
-  frequency: number
-  duration: number
-}): AudioBuffer => {
-  const sampleRate = args.audioContext.sampleRate
-  const length = sampleRate * args.duration
-  const buffer = args.audioContext.createBuffer(1, length, sampleRate)
-  const data = buffer.getChannelData(0)
-
-  // Create a simple synthesized waveform (sine with envelope)
-  for (let i = 0; i < length; i++) {
-    const t = i / sampleRate
-    
-    // Sine wave
-    let sample = Math.sin(2 * Math.PI * args.frequency * t)
-    
-    // Add some harmonics for richer sound
-    sample += 0.3 * Math.sin(2 * Math.PI * args.frequency * 2 * t)
-    sample += 0.1 * Math.sin(2 * Math.PI * args.frequency * 3 * t)
-    
-    // ADSR envelope
-    const attackTime = 0.1
-    const decayTime = 0.3
-    const sustainLevel = 0.6
-    const releaseTime = 2.6
-    
-    let envelope = 1
-    if (t < attackTime) {
-      envelope = t / attackTime
-    } else if (t < attackTime + decayTime) {
-      envelope = 1 - (1 - sustainLevel) * (t - attackTime) / decayTime
-    } else if (t < args.duration - releaseTime) {
-      envelope = sustainLevel
-    } else {
-      envelope = sustainLevel * (args.duration - t) / releaseTime
-    }
-    
-    data[i] = sample * envelope * 0.3 // Overall volume
-  }
-
-  return buffer
 }
 
 const midiToFrequency = (midi: number): number => {
