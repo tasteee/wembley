@@ -1,4 +1,6 @@
 import type { NoteT, PlayingNoteT, ConfigT } from './types.js'
+import type { AudioSynthT, AudioVoiceT } from './audio-engine.js'
+import { noteToMidi } from './utils/note-parser.js'
 
 type NoteStateT = {
   note: string
@@ -14,7 +16,7 @@ type NoteStateT = {
   pan: number
 }
 
-export const createNote = (args: { note: string; config: ConfigT }) => {
+export const createNote = (args: { note: string; synth: AudioSynthT; config: ConfigT }) => {
   const state: NoteStateT = {
     note: args.note,
     velocity: args.config.minVelocity || 45,
@@ -73,13 +75,11 @@ export const createNote = (args: { note: string; config: ConfigT }) => {
     },
 
     play: () => {
-      // Here we would integrate with Web Audio API
-      // For now, we'll return a mock PlayingNote
-      return createPlayingNote({ state })
+      return createPlayingNote({ state, synth: args.synth })
     },
 
     stop: () => {
-      // Immediate stop - would stop Web Audio API note
+      // Immediate stop - would stop any currently playing instances
       console.log(`Stopping note ${state.note} immediately`)
     }
   }
@@ -87,15 +87,21 @@ export const createNote = (args: { note: string; config: ConfigT }) => {
   return noteInstance
 }
 
-const createPlayingNote = (args: { state: NoteStateT }) => {
+const createPlayingNote = (args: { state: NoteStateT; synth: AudioSynthT }) => {
   const playingState = {
     afterMs: 0,
     gain: args.state.gain,
     pan: args.state.pan
   }
 
-  // Simulate playing the note
-  console.log(`Playing note ${args.state.note} with velocity ${args.state.velocity}`)
+  // Convert note to MIDI and play with Web Audio
+  const midi = noteToMidi({ note: args.state.note })
+  
+  const startTime = args.state.afterMs > 0 
+    ? (performance.now() + args.state.afterMs) / 1000 
+    : undefined
+
+  console.log(`Playing note ${args.state.note} (MIDI ${midi}) with velocity ${args.state.velocity}`)
   
   if (args.state.afterMs > 0) {
     console.log(`  After ${args.state.afterMs}ms`)
@@ -104,6 +110,19 @@ const createPlayingNote = (args: { state: NoteStateT }) => {
   if (args.state.durationMs) {
     console.log(`  Duration: ${args.state.durationMs}ms`)
   }
+
+  // Play the note using the audio synth
+  const voice = args.synth.playNote({
+    midi,
+    velocity: args.state.velocity,
+    startTime,
+    duration: args.state.durationMs,
+    detune: args.state.detuneCents,
+    attack: args.state.attackMs,
+    release: args.state.releaseMs,
+    gain: args.state.gain,
+    pan: args.state.pan
+  })
 
   const playingNote: PlayingNoteT = {
     after: (ms: number) => {
@@ -125,8 +144,22 @@ const createPlayingNote = (args: { state: NoteStateT }) => {
       if (playingState.afterMs > 0) {
         console.log(`Stopping note ${args.state.note} after ${playingState.afterMs}ms`)
         console.log(`  Transitioning to gain: ${playingState.gain}, pan: ${playingState.pan}`)
+        
+        // Apply modulations before stopping
+        setTimeout(() => {
+          voice.modulate({
+            gain: playingState.gain,
+            pan: playingState.pan,
+            duration: playingState.afterMs
+          })
+          
+          setTimeout(() => {
+            voice.stop()
+          }, playingState.afterMs)
+        }, 0)
       } else {
         console.log(`Stopping note ${args.state.note} immediately`)
+        voice.stop()
       }
     }
   }
