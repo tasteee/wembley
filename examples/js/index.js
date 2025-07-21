@@ -19980,9 +19980,7 @@ var createAudioEngine = () => {
     };
     const stopAllNotes = () => {
       console.log(`Stopping all notes for synth (${activeVoices.size} active voices)`);
-      activeVoices.forEach((voice) => {
-        voice.stop();
-      });
+      activeVoices.forEach((voice) => voice.stop());
       activeVoices.clear();
     };
     return {
@@ -20136,53 +20134,48 @@ var extractNameFromUrl = (url) => {
 var audioEngine = createAudioEngine();
 
 // src/player.ts
-var createPlayer = (args) => {
-  const player = {
-    load: async (config) => {
-      console.log("Loading soundfonts:", config);
-      const instruments = {};
-      for (const [name2, url] of Object.entries(config)) {
-        console.log(`Loading ${name2} from ${url}...`);
-        const soundfont = await audioEngine.loadSoundfont({ url });
-        const synth = audioEngine.createSynth({ soundfont, config: args.config });
-        instruments[name2] = createInstrument({
-          name: name2,
-          soundfontUrl: url,
-          synth,
-          config: args.config
-        });
-        console.log(`\u2713 ${name2} loaded successfully`);
-      }
-      const gear = {
-        ...instruments,
-        stop: () => {
-          console.log("Stopping all sounds from all instruments");
-          Object.values(instruments).forEach((instrument) => {
-            instrument.stop();
-          });
-        }
-      };
-      return gear;
+var createPlayer = (config) => {
+  const load = async (config2) => {
+    console.log("Loading soundfonts:", config2);
+    const instruments = {};
+    for (const [name2, url] of Object.entries(config2)) {
+      console.log(`Loading ${name2} from ${url}...`);
+      const soundfont = await audioEngine.loadSoundfont({ url });
+      const synth = audioEngine.createSynth({ soundfont, config: config2 });
+      instruments[name2] = createInstrument({
+        name: name2,
+        synth,
+        soundfontUrl: url,
+        config: config2
+      });
+      console.log(`\u2713 ${name2} loaded successfully`);
     }
+    const stop = () => {
+      console.log("Stopping all sounds from all instruments");
+      const allInstruments = Object.values(instruments);
+      allInstruments.forEach((instrument) => instrument.stop());
+    };
+    const gear = { ...instruments, stop };
+    return gear;
+  };
+  const player = {
+    load
   };
   return player;
 };
 
 // src/wembley.ts
 var createWembley = () => {
-  const wembley2 = {
-    configure: (config) => {
-      const finalConfig = {
-        gain: 70,
-        maxVelocity: 85,
-        minVelocity: 45,
-        voicings: {},
-        ...config
-      };
-      console.log("Configuring wembley with:", finalConfig);
-      return createPlayer({ config: finalConfig });
-    }
+  const configure = (config) => {
+    return createPlayer({
+      gain: 70,
+      maxVelocity: 85,
+      minVelocity: 45,
+      voicings: {},
+      ...config
+    });
   };
+  const wembley2 = { configure };
   return wembley2;
 };
 
