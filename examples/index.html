@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wembley - Live Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .control-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .demo-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .input-field {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+        .note-btn {
+            transition: all 0.2s ease;
+        }
+        .note-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .note-btn.active {
+            background: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 min-h-screen text-white">
+    <div class="container mx-auto px-6 py-12 max-w-6xl">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-6xl font-bold mb-4 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
+                🎹 Wembley
+            </h1>
+            <p class="text-xl text-purple-200 mb-6">
+                A delightful, DX-obsessed soundfont sequencer for the web
+            </p>
+            <a href="https://github.com/tasteee/wembley" target="_blank" 
+               class="inline-flex items-center px-6 py-3 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+                <i class="fab fa-github mr-2"></i>
+                View Source Code
+            </a>
+        </header>
+
+        <!-- Soundfont Loading Section -->
+        <section class="mb-12">
+            <div class="demo-card rounded-xl p-8 mb-8">
+                <h2 class="text-3xl font-bold mb-6 text-center">Load Soundfont</h2>
+                
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium mb-2">Soundfont URL:</label>
+                        <input type="text" id="soundfontUrl" 
+                               class="input-field w-full px-4 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                               placeholder="Enter soundfont URL (.sf2)">
+                    </div>
+                    <div class="flex flex-col justify-end">
+                        <button id="autoFillBtn" 
+                                class="mb-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors">
+                            <i class="fas fa-magic mr-2"></i>
+                            Auto Fill Demo URL
+                        </button>
+                        <button id="loadBtn" 
+                                class="px-4 py-3 bg-green-600 hover:bg-green-700 rounded-lg font-semibold transition-colors disabled:opacity-50">
+                            <span id="loadBtnText">
+                                <i class="fas fa-download mr-2"></i>
+                                Load Soundfont
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="loadingStatus" class="text-center hidden">
+                    <div id="spinner" class="inline-block">
+                        <i class="fas fa-spinner spinner text-2xl text-purple-400"></i>
+                        <span class="ml-2">Loading soundfont...</span>
+                    </div>
+                    <div id="success" class="hidden">
+                        <i class="fas fa-check-circle text-2xl text-green-400"></i>
+                        <span class="ml-2">Soundfont loaded successfully!</span>
+                    </div>
+                    <div id="error" class="hidden">
+                        <i class="fas fa-exclamation-triangle text-2xl text-red-400"></i>
+                        <span class="ml-2">Failed to load soundfont</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controls Section -->
+        <section id="controlsSection" class="hidden">
+            <div class="demo-card rounded-xl p-8">
+                <h2 class="text-3xl font-bold mb-6 text-center">API Demo Controls</h2>
+                
+                <!-- Note Selection -->
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Single Notes</h3>
+                        <div class="grid grid-cols-7 gap-2 mb-4">
+                            <button class="note-btn bg-white text-gray-800 py-2 px-3 rounded font-semibold" data-note="C4">C</button>
+                            <button class="note-btn bg-gray-300 text-gray-800 py-2 px-3 rounded font-semibold" data-note="C#4">C#</button>
+                            <button class="note-btn bg-white text-gray-800 py-2 px-3 rounded font-semibold" data-note="D4">D</button>
+                            <button class="note-btn bg-gray-300 text-gray-800 py-2 px-3 rounded font-semibold" data-note="D#4">D#</button>
+                            <button class="note-btn bg-white text-gray-800 py-2 px-3 rounded font-semibold" data-note="E4">E</button>
+                            <button class="note-btn bg-white text-gray-800 py-2 px-3 rounded font-semibold" data-note="F4">F</button>
+                            <button class="note-btn bg-gray-300 text-gray-800 py-2 px-3 rounded font-semibold" data-note="F#4">F#</button>
+                        </div>
+                        <div class="grid grid-cols-5 gap-2">
+                            <button class="note-btn bg-white text-gray-800 py-2 px-3 rounded font-semibold" data-note="G4">G</button>
+                            <button class="note-btn bg-gray-300 text-gray-800 py-2 px-3 rounded font-semibold" data-note="G#4">G#</button>
+                            <button class="note-btn bg-white text-gray-800 py-2 px-3 rounded font-semibold" data-note="A4">A</button>
+                            <button class="note-btn bg-gray-300 text-gray-800 py-2 px-3 rounded font-semibold" data-note="A#4">A#</button>
+                            <button class="note-btn bg-white text-gray-800 py-2 px-3 rounded font-semibold" data-note="B4">B</button>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Chord Selection</h3>
+                        <div class="grid grid-cols-3 gap-2 mb-4">
+                            <button class="note-btn bg-blue-500 text-white py-2 px-3 rounded font-semibold" data-chord="C">C</button>
+                            <button class="note-btn bg-blue-500 text-white py-2 px-3 rounded font-semibold" data-chord="Dm">Dm</button>
+                            <button class="note-btn bg-blue-500 text-white py-2 px-3 rounded font-semibold" data-chord="Em">Em</button>
+                            <button class="note-btn bg-blue-500 text-white py-2 px-3 rounded font-semibold" data-chord="F">F</button>
+                            <button class="note-btn bg-blue-500 text-white py-2 px-3 rounded font-semibold" data-chord="G">G</button>
+                            <button class="note-btn bg-blue-500 text-white py-2 px-3 rounded font-semibold" data-chord="Am">Am</button>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button class="note-btn bg-purple-500 text-white py-2 px-3 rounded font-semibold" data-chord="Cmaj7">Cmaj7</button>
+                            <button class="note-btn bg-purple-500 text-white py-2 px-3 rounded font-semibold" data-chord="Dm7">Dm7</button>
+                            <button class="note-btn bg-purple-500 text-white py-2 px-3 rounded font-semibold" data-chord="G7">G7</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parameter Controls -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Velocity:</label>
+                        <input type="range" id="velocitySlider" min="1" max="100" value="70" 
+                               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        <div class="flex justify-between text-sm text-purple-200 mt-1">
+                            <span>1</span>
+                            <span id="velocityValue">70</span>
+                            <span>100</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Pan:</label>
+                        <input type="range" id="panSlider" min="-100" max="100" value="0" 
+                               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        <div class="flex justify-between text-sm text-purple-200 mt-1">
+                            <span>L</span>
+                            <span id="panValue">0</span>
+                            <span>R</span>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Duration (ms):</label>
+                        <input type="range" id="durationSlider" min="100" max="2000" value="500" 
+                               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                        <div class="flex justify-between text-sm text-purple-200 mt-1">
+                            <span>100ms</span>
+                            <span id="durationValue">500ms</span>
+                            <span>2s</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chord Options -->
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Voicing:</label>
+                        <select id="voicingSelect" 
+                                class="input-field w-full px-4 py-2 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-400">
+                            <option value="open">Open</option>
+                            <option value="closed">Closed</option>
+                            <option value="drop2">Drop 2</option>
+                            <option value="drop3">Drop 3</option>
+                            <option value="drop2and4">Drop 2&4</option>
+                            <option value="rootless">Rootless</option>
+                            <option value="spread">Spread</option>
+                            <option value="cluster">Cluster</option>
+                            <option value="shell">Shell</option>
+                            <option value="pianistic">Pianistic</option>
+                            <option value="guitaristic">Guitaristic</option>
+                            <option value="orchestral">Orchestral</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Octave:</label>
+                        <select id="octaveSelect" 
+                                class="input-field w-full px-4 py-2 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-purple-400">
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4" selected>4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Play Controls -->
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button id="playNoteBtn" disabled
+                            class="px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors">
+                        <i class="fas fa-play mr-2"></i>
+                        Play Selected Note
+                    </button>
+                    
+                    <button id="playChordBtn" disabled
+                            class="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors">
+                        <i class="fas fa-play mr-2"></i>
+                        Play Selected Chord
+                    </button>
+                    
+                    <button id="stopAllBtn" disabled
+                            class="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg font-semibold transition-colors">
+                        <i class="fas fa-stop mr-2"></i>
+                        Stop All
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- API Showcase Section -->
+        <section id="showcaseSection" class="hidden mt-12">
+            <div class="demo-card rounded-xl p-8">
+                <h2 class="text-3xl font-bold mb-6 text-center">API Showcase</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <button id="demoSequenceBtn" disabled
+                            class="px-6 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-600 rounded-lg font-semibold transition-colors">
+                        <i class="fas fa-music mr-2"></i>
+                        Play Demo Sequence
+                    </button>
+                    
+                    <button id="chordProgressionBtn" disabled
+                            class="px-6 py-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-600 rounded-lg font-semibold transition-colors">
+                        <i class="fas fa-play-circle mr-2"></i>
+                        Chord Progression Demo
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12 text-purple-200">
+            <p>&copy; 2024 Wembley - Built with ❤️ for the web audio community</p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="demo.js"></script>
+</body>
+</html>
