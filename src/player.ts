@@ -2,44 +2,40 @@ import type { PlayerT, ConfigT, SoundfontLoadConfigT, GearT, InstrumentT } from 
 import { createInstrument } from './instrument.js'
 import { audioEngine } from './audio-engine.js'
 
-export const createPlayer = (args: { config: ConfigT }) => {
-  const player: PlayerT = {
-    load: async (config: SoundfontLoadConfigT) => {
-      console.log('Loading soundfonts:', config)
-      
-      const instruments: Record<string, InstrumentT> = {}
-      
-      // Create instruments for each soundfont
-      for (const [name, url] of Object.entries(config)) {
-        console.log(`Loading ${name} from ${url}...`)
-        
-        // Load the actual soundfont using the audio engine
-        const soundfont = await audioEngine.loadSoundfont({ url })
-        const synth = audioEngine.createSynth({ soundfont, config: args.config })
-        
-        instruments[name] = createInstrument({
-          name,
-          soundfontUrl: url,
-          synth,
-          config: args.config
-        })
-        
-        console.log(`✓ ${name} loaded successfully`)
-      }
+export const createPlayer = (config: ConfigT) => {
+  const load = async (config: SoundfontLoadConfigT) => {
+    console.log('Loading soundfonts:', config)
+    const instruments: Record<string, InstrumentT> = {}
 
-      // Create gear with global stop functionality
-      const gear = {
-        ...instruments,
-        stop: () => {
-          console.log('Stopping all sounds from all instruments')
-          Object.values(instruments).forEach(instrument => {
-            instrument.stop()
-          })
-        }
-      } as GearT
-      
-      return gear
+    for (const [name, url] of Object.entries(config)) {
+      console.log(`Loading ${name} from ${url}...`)
+
+      // Load the actual soundfont using the audio engine
+      const soundfont = await audioEngine.loadSoundfont({ url })
+      const synth = audioEngine.createSynth({ soundfont, config })
+
+      instruments[name] = createInstrument({
+        name,
+        synth,
+        soundfontUrl: url,
+        config
+      })
+
+      console.log(`✓ ${name} loaded successfully`)
     }
+
+    const stop = () => {
+      console.log('Stopping all sounds from all instruments')
+      const allInstruments = Object.values(instruments)
+      allInstruments.forEach(instrument => instrument.stop())
+    }
+
+    const gear = { ...instruments, stop }
+    return gear as GearT
+  }
+
+  const player: PlayerT = {
+    load,
   }
 
   return player

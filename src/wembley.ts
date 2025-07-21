@@ -2,21 +2,16 @@ import type { WembleyT, ConfigT } from './types.js'
 import { createPlayer } from './player.js'
 
 export const createWembley = (): WembleyT => {
-  const wembley: WembleyT = {
-    configure: (config?: ConfigT) => {
-      const finalConfig: ConfigT = {
-        gain: 70,
-        maxVelocity: 85,
-        minVelocity: 45,
-        voicings: {},
-        ...config
-      }
-      
-      console.log('Configuring wembley with:', finalConfig)
-      
-      return createPlayer({ config: finalConfig })
-    }
+  const configure = (config?: ConfigT) => {
+    return createPlayer({
+      gain: 70,
+      maxVelocity: 85,
+      minVelocity: 45,
+      voicings: {},
+      ...config
+    })
   }
 
+  const wembley: WembleyT = { configure }
   return wembley
 }
