@@ -1,4 +1,4 @@
-import { Note, Midi, Interval } from 'tonal'
+import { Note, Midi } from 'tonal'
 
 export const parseNote = (args: { note: string }) => {
   const parsed = Note.get(args.note)
