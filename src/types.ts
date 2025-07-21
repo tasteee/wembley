@@ -1,3 +1,5 @@
+import type { AudioVoiceT } from './audio-engine.js'
+
 export type VoicingT =
   | 'open'
   | 'closed'
@@ -13,6 +15,13 @@ export type VoicingT =
   | 'orchestral'
 
 export type VoicingFunctionT = (notes: string[]) => string[]
+
+export type InstanceTrackerT = {
+  noteInstances: Map<string, Set<AudioVoiceT>>
+  chordInstances: Map<string, Set<AudioVoiceT>>
+  notesInstances: Map<string, Set<AudioVoiceT>>
+  allInstances: Set<AudioVoiceT>
+}
 
 export type ConfigT = {
   gain?: number
@@ -47,7 +56,7 @@ export type NotesT = {
   gain: (gain: number) => NotesT
   pan: (pan: number) => NotesT
   play: () => PlayingNotesT
-  stop: () => void
+  stop: (note?: string) => void
 }
 
 export type ChordT = {

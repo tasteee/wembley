@@ -1,4 +1,4 @@
-import type { NotesT, PlayingNotesT, ConfigT } from './types.js'
+import type { NotesT, PlayingNotesT, ConfigT, InstanceTrackerT } from './types.js'
 import type { AudioSynthT, AudioVoiceT } from './audio-engine.js'
 import { noteToMidi } from './utils/note-parser.js'
 
@@ -17,7 +17,7 @@ type NotesStateT = {
   pan: number
 }
 
-export const createNotes = (args: { notes: string[]; synth: AudioSynthT; config: ConfigT }) => {
+export const createNotes = (args: { notes: string[]; synth: AudioSynthT; config: ConfigT; instanceTracker: InstanceTrackerT }) => {
   const state: NotesStateT = {
     notes: args.notes,
     velocity: args.config.minVelocity || 45,
@@ -82,18 +82,41 @@ export const createNotes = (args: { notes: string[]; synth: AudioSynthT; config:
     },
 
     play: () => {
-      return createPlayingNotes({ state, synth: args.synth })
+      return createPlayingNotes({ state, synth: args.synth, instanceTracker: args.instanceTracker })
     },
 
-    stop: () => {
-      console.log(`Stopping notes ${state.notes.join(', ')} immediately`)
+    stop: (note?: string) => {
+      if (note) {
+        console.log(`Stopping note ${note} from notes ${state.notes.join(', ')}`)
+        // Stop specific note from the notes collection
+        const notesKey = state.notes.join(',')
+        const instances = args.instanceTracker.notesInstances.get(notesKey)
+        if (instances) {
+          // Find voices for this specific note and stop them
+          instances.forEach(voice => {
+            // We need to track which voice corresponds to which note
+            // For now, we'll stop all instances and let the user re-play if needed
+            voice.stop()
+          })
+          // Clear the instances since we can't selectively remove by note
+          instances.clear()
+        }
+      } else {
+        console.log(`Stopping notes ${state.notes.join(', ')} immediately`)
+        const notesKey = state.notes.join(',')
+        const instances = args.instanceTracker.notesInstances.get(notesKey)
+        if (instances) {
+          instances.forEach(voice => voice.stop())
+          instances.clear()
+        }
+      }
     }
   }
 
   return notesInstance
 }
 
-const createPlayingNotes = (args: { state: NotesStateT; synth: AudioSynthT }) => {
+const createPlayingNotes = (args: { state: NotesStateT; synth: AudioSynthT; instanceTracker: InstanceTrackerT }) => {
   const playingState = {
     afterMs: 0,
     gain: args.state.gain,
@@ -127,6 +150,17 @@ const createPlayingNotes = (args: { state: NotesStateT; synth: AudioSynthT }) =>
       
       voices.push(voice)
     })
+    
+    // Track notes instances
+    const notesKey = args.state.notes.join(',')
+    if (!args.instanceTracker.notesInstances.has(notesKey)) {
+      args.instanceTracker.notesInstances.set(notesKey, new Set())
+    }
+    const notesInstances = args.instanceTracker.notesInstances.get(notesKey)!
+    voices.forEach(voice => {
+      notesInstances.add(voice)
+      args.instanceTracker.allInstances.add(voice)
+    })
   } else {
     console.log(`Playing notes ${args.state.notes.join(', ')} simultaneously`)
     console.log(`  Velocity: ${args.state.velocity}`)
@@ -155,6 +189,17 @@ const createPlayingNotes = (args: { state: NotesStateT; synth: AudioSynthT }) =>
       })
       
       voices.push(voice)
+    })
+    
+    // Track notes instances
+    const notesKey = args.state.notes.join(',')
+    if (!args.instanceTracker.notesInstances.has(notesKey)) {
+      args.instanceTracker.notesInstances.set(notesKey, new Set())
+    }
+    const notesInstances = args.instanceTracker.notesInstances.get(notesKey)!
+    voices.forEach(voice => {
+      notesInstances.add(voice)
+      args.instanceTracker.allInstances.add(voice)
     })
   }
 
@@ -195,11 +240,25 @@ const createPlayingNotes = (args: { state: NotesStateT; synth: AudioSynthT }) =>
           
           setTimeout(() => {
             voices.forEach(voice => voice.stop())
+            // Clean up tracking
+            const notesKey = args.state.notes.join(',')
+            const notesInstances = args.instanceTracker.notesInstances.get(notesKey)
+            if (notesInstances) {
+              voices.forEach(voice => notesInstances.delete(voice))
+            }
+            voices.forEach(voice => args.instanceTracker.allInstances.delete(voice))
           }, playingState.afterMs)
         }, 0)
       } else {
         console.log(`Stopping notes ${args.state.notes.join(', ')} immediately`)
         voices.forEach(voice => voice.stop())
+        // Clean up tracking
+        const notesKey = args.state.notes.join(',')
+        const notesInstances = args.instanceTracker.notesInstances.get(notesKey)
+        if (notesInstances) {
+          voices.forEach(voice => notesInstances.delete(voice))
+        }
+        voices.forEach(voice => args.instanceTracker.allInstances.delete(voice))
       }
     }
   }
