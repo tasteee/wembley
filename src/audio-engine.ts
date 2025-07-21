@@ -59,7 +59,8 @@ const createAudioEngine = (): AudioEngineT => {
     }
 
     // Check if we're in a browser environment with Web Audio API
-    if (typeof globalThis.AudioContext === 'undefined' && typeof globalThis.webkitAudioContext === 'undefined') {
+    const globalObj = globalThis as any
+    if (typeof globalObj.AudioContext === 'undefined' && typeof globalObj.webkitAudioContext === 'undefined') {
       // Fallback for Node.js/test environments
       console.log('Web Audio API not available, creating mock audio context')
       audioContext = {
@@ -70,7 +71,7 @@ const createAudioEngine = (): AudioEngineT => {
       return audioContext
     }
 
-    const AudioCtx = globalThis.AudioContext || globalThis.webkitAudioContext
+    const AudioCtx = globalObj.AudioContext || globalObj.webkitAudioContext
     const context = new AudioCtx()
     const masterGain = context.createGain()
     masterGain.connect(context.destination)

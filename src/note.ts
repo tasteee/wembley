@@ -1,5 +1,5 @@
 import type { NoteT, PlayingNoteT, ConfigT } from './types.js'
-import type { AudioSynthT, AudioVoiceT } from './audio-engine.js'
+import type { AudioSynthT } from './audio-engine.js'
 import { noteToMidi } from './utils/note-parser.js'
 
 type NoteStateT = {
