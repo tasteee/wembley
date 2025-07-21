@@ -19900,15 +19900,6 @@ var createAudioEngine = () => {
     if (audioContext && audioContext.isStarted) {
       return audioContext;
     }
-    if (typeof window === "undefined") {
-      console.log("Running in Node.js environment, creating mock audio context");
-      audioContext = {
-        context: null,
-        masterGain: null,
-        isStarted: true
-      };
-      return audioContext;
-    }
     if (getContext().state === "suspended") {
       await start();
     }
@@ -19928,20 +19919,15 @@ var createAudioEngine = () => {
       isLoaded: false
     };
     try {
-      const audioCtx = await getAudioContext();
-      if (!audioCtx.context) {
-        console.log(`\u2713 Loaded mock soundfont: ${soundfont.name}`);
-        soundfont.isLoaded = true;
-        return soundfont;
-      }
+      await getAudioContext();
       for (let midi2 = 48; midi2 <= 84; midi2++) {
         soundfont.samples.set(midi2, null);
       }
       soundfont.isLoaded = true;
       console.log(`\u2713 Loaded Tone.js soundfont: ${soundfont.name}`);
     } catch (error) {
-      console.error(`Failed to load soundfont from ${args.url}:`, error);
-      soundfont.isLoaded = true;
+      console.error(`Failed to initialize soundfont ${soundfont.name}:`, error);
+      throw error;
     }
     return soundfont;
   };
@@ -19997,25 +19983,6 @@ var createAudioEngine = () => {
 };
 var playNoteInternal = async (args) => {
   const audioCtx = await args.engine.getAudioContext();
-  if (!audioCtx.context) {
-    console.log(`[Mock] Playing MIDI ${args.midi} with velocity ${args.velocity}`);
-    const mockVoice = {
-      id: args.voiceId,
-      midi: args.midi,
-      source: null,
-      gainNode: null,
-      panNode: null,
-      isPlaying: true,
-      stop: (stopArgs) => {
-        console.log(`[Mock] Stopping MIDI ${args.midi}`);
-        mockVoice.isPlaying = false;
-      },
-      modulate: (modArgs) => {
-        console.log(`[Mock] Modulating MIDI ${args.midi}`, modArgs);
-      }
-    };
-    return mockVoice;
-  }
   const frequency = midiToFrequency(args.midi);
   const validateEnvelopeParam = (value, defaultValue, minValue) => {
     if (value === void 0 || value === null || isNaN(value)) return defaultValue;
@@ -20048,7 +20015,13 @@ var playNoteInternal = async (args) => {
   synth.connect(gainNode);
   gainNode.connect(panNode);
   panNode.connect(audioCtx.masterGain);
-  if (args.detune) synth.detune.value = args.detune;
+  if (args.detune) {
+    try {
+      synth.detune.value = args.detune;
+    } catch (error) {
+      console.warn("Unable to set detune:", error);
+    }
+  }
   const calculateStartTime = (startTime2) => {
     if (startTime2 === void 0 || startTime2 === null) return now();
     if (startTime2 <= 0) return now();

@@ -54,19 +54,7 @@ const createAudioEngine = (): AudioEngineT => {
 			return audioContext
 		}
 
-		// Check if we're in a browser environment
-		if (typeof window === 'undefined') {
-			// Node.js/test environment - create mock context
-			console.log('Running in Node.js environment, creating mock audio context')
-			audioContext = {
-				context: null as any,
-				masterGain: null as any,
-				isStarted: true
-			}
-			return audioContext
-		}
-
-		// Initialize Tone.js
+		// Initialize Tone.js - always use real audio context
 		if (Tone.getContext().state === 'suspended') {
 			await Tone.start()
 		}
@@ -91,26 +79,20 @@ const createAudioEngine = (): AudioEngineT => {
 		}
 
 		try {
-			const audioCtx = await getAudioContext()
+			await getAudioContext() // Ensure audio context is ready
 
-			// If we don't have a real audio context, create mock samples
-			if (!audioCtx.context) {
-				console.log(`✓ Loaded mock soundfont: ${soundfont.name}`)
-				soundfont.isLoaded = true
-				return soundfont
-			}
-
-			// Create Tone.js oscillator samples for common MIDI notes (C3-C6)
+			// For Wembley, we use Tone.js synthesis instead of loading actual soundfont files
+			// This provides immediate playback without network loading delays
+			// Create placeholder entries for MIDI range (C3-C6)
 			for (let midi = 48; midi <= 84; midi++) {
-				// We'll create samples on-demand using Tone.js synthesis
-				soundfont.samples.set(midi, null) // Placeholder for now
+				soundfont.samples.set(midi, null) // Will be synthesized on-demand
 			}
 
 			soundfont.isLoaded = true
 			console.log(`✓ Loaded Tone.js soundfont: ${soundfont.name}`)
 		} catch (error) {
-			console.error(`Failed to load soundfont from ${args.url}:`, error)
-			soundfont.isLoaded = true // Still mark as loaded so API continues to work
+			console.error(`Failed to initialize soundfont ${soundfont.name}:`, error)
+			throw error // Don't silently fail - let the user know something went wrong
 		}
 
 		return soundfont
@@ -206,32 +188,7 @@ const playNoteInternal = async (args: {
 }): Promise<AudioVoiceT> => {
 	const audioCtx = await args.engine.getAudioContext()
 
-	// Handle mock audio context (testing environment)
-	if (!audioCtx.context) {
-		console.log(`[Mock] Playing MIDI ${args.midi} with velocity ${args.velocity}`)
-
-		const mockVoice: AudioVoiceT = {
-			id: args.voiceId,
-			midi: args.midi,
-			source: null,
-			gainNode: null,
-			panNode: null,
-			isPlaying: true,
-
-			stop: (stopArgs) => {
-				console.log(`[Mock] Stopping MIDI ${args.midi}`)
-				mockVoice.isPlaying = false
-			},
-
-			modulate: (modArgs) => {
-				console.log(`[Mock] Modulating MIDI ${args.midi}`, modArgs)
-			}
-		}
-
-		return mockVoice
-	}
-
-	// Create Tone.js synth for this note
+	// Create Tone.js synth for this note  
 	const frequency = midiToFrequency(args.midi)
 
 	// Create a simple synth using Tone.js with validated envelope parameters
@@ -253,7 +210,7 @@ const playNoteInternal = async (args: {
 	})
 
 	// Create gain and panner nodes with validated parameters
-	const validateGain = (velocity: number, gainValue: number | undefined, configGain: number): number => {
+	const validateGain = (velocity: number, gainValue: number | undefined, configGain: number | undefined): number => {
 		const safeVelocity = Math.max(0, Math.min(100, velocity || 70))
 		const safeGain = Math.max(0, Math.min(100, gainValue || configGain || 70))
 		return (safeVelocity / 100) * (safeGain / 100)
@@ -273,7 +230,13 @@ const playNoteInternal = async (args: {
 	panNode.connect(audioCtx.masterGain)
 
 	// Apply detune if specified
-	if (args.detune) synth.detune.value = args.detune
+	if (args.detune) {
+		try {
+			synth.detune.value = args.detune
+		} catch (error) {
+			console.warn('Unable to set detune:', error)
+		}
+	}
 
 	// Schedule playback with robust time calculation
 	const calculateStartTime = (startTime?: number): string | number => {
