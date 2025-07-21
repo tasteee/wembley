@@ -46,15 +46,17 @@ export const createChord = (args: { chord: string; synth: AudioSynthT; config: C
     if (state.inversion > 0) {
       notes = applyInversion({ notes, inversion: state.inversion })
     }
+
+    console.log('updateNotes()', { notes, state })
     
     if (state.voicing) {
       if (typeof state.voicing === 'string' && state.voicing in (args.config.voicings || {})) {
         // Custom voicing from config
         const customVoicing = args.config.voicings![state.voicing]
         notes = customVoicing(notes)
-      } else if (typeof state.voicing !== 'string') {
+      } else {
         // Built-in voicing
-        notes = applyVoicing({ notes, voicing: state.voicing })
+        notes = applyVoicing({ notes, voicing: state.voicing as VoicingT })
       }
     }
     

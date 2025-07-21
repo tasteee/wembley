@@ -18,7 +18,11 @@ export const applyVoicing = (args: { notes: string[]; voicing: VoicingT }) => {
   }
   
   const voicingFunction = voicingFunctions[args.voicing]
-  return voicingFunction(args.notes)
+  const final = voicingFunction(args.notes)
+  console.log('voicing applied: ', args.voicing)
+  console.log('notes before voicing: ', args.notes)
+  console.log('notes after voicing: ', final)
+  return final
 }
 
 const openVoicing = (notes: string[]) => {
@@ -45,7 +49,7 @@ const drop2Voicing = (notes: string[]) => {
 }
 
 const drop3Voicing = (notes: string[]) => {
-  if (notes.length < 4) return notes
+  // if (notes.length < 4) return notes
   
   const result = [...notes]
   // Drop the third highest note down an octave
@@ -55,7 +59,7 @@ const drop3Voicing = (notes: string[]) => {
 }
 
 const drop2and4Voicing = (notes: string[]) => {
-  if (notes.length < 4) return notes
+  // if (notes.length < 4) return notes
   
   let result = [...notes]
   // Apply both drop2 and drop3 transformations
@@ -66,7 +70,8 @@ const drop2and4Voicing = (notes: string[]) => {
 
 const rootlessVoicing = (notes: string[]) => {
   // Remove the root note (first note)
-  return notes.slice(1)
+  const [root, ...rest] = notes
+  return rest
 }
 
 const spreadVoicing = (notes: string[]) => {

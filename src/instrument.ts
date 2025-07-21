@@ -23,6 +23,11 @@ export const createInstrument = (args: {
 
     chord: (chord: string) => {
       return createChord({ chord, synth: args.synth, config: args.config })
+    },
+
+    stop: () => {
+      console.log(`Stopping all sounds from instrument "${args.name}"`)
+      args.synth.stopAllNotes()
     }
   }
 

@@ -33,6 +33,7 @@ export type AudioSynthT = {
 		pan?: number
 	}) => AudioVoiceT
 	stopNote: (args: { voice: AudioVoiceT; stopTime?: number }) => void
+	stopAllNotes: () => void
 }
 
 export type AudioVoiceT = {
@@ -54,19 +55,7 @@ const createAudioEngine = (): AudioEngineT => {
 			return audioContext
 		}
 
-		// Check if we're in a browser environment
-		if (typeof window === 'undefined') {
-			// Node.js/test environment - create mock context
-			console.log('Running in Node.js environment, creating mock audio context')
-			audioContext = {
-				context: null as any,
-				masterGain: null as any,
-				isStarted: true
-			}
-			return audioContext
-		}
-
-		// Initialize Tone.js
+		// Initialize Tone.js - always use real audio context
 		if (Tone.getContext().state === 'suspended') {
 			await Tone.start()
 		}
@@ -91,26 +80,20 @@ const createAudioEngine = (): AudioEngineT => {
 		}
 
 		try {
-			const audioCtx = await getAudioContext()
+			await getAudioContext() // Ensure audio context is ready
 
-			// If we don't have a real audio context, create mock samples
-			if (!audioCtx.context) {
-				console.log(`✓ Loaded mock soundfont: ${soundfont.name}`)
-				soundfont.isLoaded = true
-				return soundfont
-			}
-
-			// Create Tone.js oscillator samples for common MIDI notes (C3-C6)
+			// For Wembley, we use Tone.js synthesis instead of loading actual soundfont files
+			// This provides immediate playback without network loading delays
+			// Create placeholder entries for MIDI range (C3-C6)
 			for (let midi = 48; midi <= 84; midi++) {
-				// We'll create samples on-demand using Tone.js synthesis
-				soundfont.samples.set(midi, null) // Placeholder for now
+				soundfont.samples.set(midi, null) // Will be synthesized on-demand
 			}
 
 			soundfont.isLoaded = true
 			console.log(`✓ Loaded Tone.js soundfont: ${soundfont.name}`)
 		} catch (error) {
-			console.error(`Failed to load soundfont from ${args.url}:`, error)
-			soundfont.isLoaded = true // Still mark as loaded so API continues to work
+			console.error(`Failed to initialize soundfont ${soundfont.name}:`, error)
+			throw error // Don't silently fail - let the user know something went wrong
 		}
 
 		return soundfont
@@ -176,9 +159,18 @@ const createAudioEngine = (): AudioEngineT => {
 			activeVoices.delete(args.voice.id)
 		}
 
+		const stopAllNotes = () => {
+			console.log(`Stopping all notes for synth (${activeVoices.size} active voices)`)
+			activeVoices.forEach(voice => {
+				voice.stop()
+			})
+			activeVoices.clear()
+		}
+
 		return {
 			playNote,
-			stopNote
+			stopNote,
+			stopAllNotes
 		}
 	}
 
@@ -206,50 +198,41 @@ const playNoteInternal = async (args: {
 }): Promise<AudioVoiceT> => {
 	const audioCtx = await args.engine.getAudioContext()
 
-	// Handle mock audio context (testing environment)
-	if (!audioCtx.context) {
-		console.log(`[Mock] Playing MIDI ${args.midi} with velocity ${args.velocity}`)
-
-		const mockVoice: AudioVoiceT = {
-			id: args.voiceId,
-			midi: args.midi,
-			source: null,
-			gainNode: null,
-			panNode: null,
-			isPlaying: true,
-
-			stop: (stopArgs) => {
-				console.log(`[Mock] Stopping MIDI ${args.midi}`)
-				mockVoice.isPlaying = false
-			},
-
-			modulate: (modArgs) => {
-				console.log(`[Mock] Modulating MIDI ${args.midi}`, modArgs)
-			}
-		}
-
-		return mockVoice
-	}
-
-	// Create Tone.js synth for this note
+	// Create Tone.js synth for this note  
 	const frequency = midiToFrequency(args.midi)
 
 	// Create a simple synth using Tone.js with validated envelope parameters
+	const validateEnvelopeParam = (value: number | undefined, defaultValue: number, minValue: number): number => {
+		if (value === undefined || value === null || isNaN(value)) return defaultValue
+		return Math.max(value / 1000, minValue) // Convert ms to seconds with minimum
+	}
+
 	const synth = new Tone.Synth({
 		oscillator: {
 			type: 'sawtooth'
 		},
 		envelope: {
-			attack: Math.max((args.attack || 10) / 1000, 0.001), // Minimum 1ms
+			attack: validateEnvelopeParam(args.attack, 0.01, 0.001), // Default 10ms, min 1ms
 			decay: 0.3,
 			sustain: 0.6,
-			release: Math.max((args.release || 100) / 1000, 0.01) // Minimum 10ms
+			release: validateEnvelopeParam(args.release, 0.1, 0.01) // Default 100ms, min 10ms
 		}
 	})
 
-	// Create gain and panner nodes
-	const gainNode = new Tone.Gain(((args.velocity / 100) * (args.gain || args.config.gain || 70)) / 100)
-	const panNode = new Tone.Panner(args.pan ? Math.max(-1, Math.min(1, args.pan / 100)) : 0)
+	// Create gain and panner nodes with validated parameters
+	const validateGain = (velocity: number, gainValue: number | undefined, configGain: number | undefined): number => {
+		const safeVelocity = Math.max(0, Math.min(100, velocity || 70))
+		const safeGain = Math.max(0, Math.min(100, gainValue || configGain || 70))
+		return (safeVelocity / 100) * (safeGain / 100)
+	}
+
+	const validatePan = (panValue: number | undefined): number => {
+		if (panValue === undefined || panValue === null || isNaN(panValue)) return 0
+		return Math.max(-1, Math.min(1, panValue / 100))
+	}
+
+	const gainNode = new Tone.Gain(validateGain(args.velocity, args.gain, args.config.gain))
+	const panNode = new Tone.Panner(validatePan(args.pan))
 
 	// Chain: synth -> gain -> pan -> master
 	synth.connect(gainNode)
@@ -257,20 +240,24 @@ const playNoteInternal = async (args: {
 	panNode.connect(audioCtx.masterGain)
 
 	// Apply detune if specified
-	if (args.detune) synth.detune.value = args.detune
+	if (args.detune) {
+		try {
+			synth.detune.value = args.detune
+		} catch (error) {
+			console.warn('Unable to set detune:', error)
+		}
+	}
 
 	// Schedule playback with robust time calculation
 	const calculateStartTime = (startTime?: number): string | number => {
-		if (startTime === undefined || startTime === null) return 'now'
+		if (startTime === undefined || startTime === null) return Tone.now()
 		
-		const currentTime = performance.now() / 1000 // Convert to seconds
-		const targetTime = startTime
+		// startTime should be relative time in seconds (e.g., 0.5 for 500ms delay)
+		// For delayed playback, add to current audio context time
+		if (startTime <= 0) return Tone.now()
 		
-		// If target time is in the past or too close to now, play immediately
-		if (targetTime <= currentTime + 0.001) return 'now'
-		
-		// Return relative time string for future playback
-		return `+${targetTime - currentTime}`
+		// Return absolute time for scheduled playback
+		return Tone.now() + startTime
 	}
 
 	const startTime = calculateStartTime(args.startTime)
@@ -278,9 +265,29 @@ const playNoteInternal = async (args: {
 	// Validate duration parameter to prevent envelope issues
 	if (args.duration && args.duration > 0) {
 		const durationInSeconds = Math.max(args.duration / 1000, 0.01) // Minimum 10ms
-		synth.triggerAttackRelease(frequency, durationInSeconds, startTime)
+		try {
+			synth.triggerAttackRelease(frequency, durationInSeconds, startTime)
+		} catch (error) {
+			console.error('Error in triggerAttackRelease:', error)
+			// Fallback to immediate play with simplified timing
+			try {
+				synth.triggerAttackRelease(frequency, durationInSeconds, Tone.now())
+			} catch (fallbackError) {
+				console.error('Fallback also failed:', fallbackError)
+			}
+		}
 	} else {
-		synth.triggerAttack(frequency, startTime)
+		try {
+			synth.triggerAttack(frequency, startTime)
+		} catch (error) {
+			console.error('Error in triggerAttack:', error)
+			// Fallback to immediate play
+			try {
+				synth.triggerAttack(frequency, Tone.now())
+			} catch (fallbackError) {
+				console.error('Fallback also failed:', fallbackError)
+			}
+		}
 	}
 
 	// Create voice object
@@ -322,10 +329,10 @@ const playNoteInternal = async (args: {
 
 			const now = Tone.now()
 			const startTime = modArgs.startTime || now
-			const duration = (modArgs.duration || 0) / 1000
+			const duration = Math.max((modArgs.duration || 0) / 1000, 0)
 
-			if (modArgs.gain !== undefined) {
-				const targetGain = (modArgs.gain / 100) * (((args.velocity / 100) * (args.gain || args.config.gain || 70)) / 100)
+			if (modArgs.gain !== undefined && !isNaN(modArgs.gain)) {
+				const targetGain = validateGain(args.velocity, modArgs.gain, args.config.gain)
 				try {
 					if (duration > 0) {
 						gainNode.gain.linearRampTo(targetGain, duration, startTime)
@@ -337,8 +344,8 @@ const playNoteInternal = async (args: {
 				}
 			}
 
-			if (modArgs.pan !== undefined) {
-				const targetPan = Math.max(-1, Math.min(1, modArgs.pan / 100))
+			if (modArgs.pan !== undefined && !isNaN(modArgs.pan)) {
+				const targetPan = validatePan(modArgs.pan)
 				try {
 					if (duration > 0) {
 						panNode.pan.linearRampTo(targetPan, duration, startTime)

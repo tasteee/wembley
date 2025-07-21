@@ -64,7 +64,7 @@ const autoFillDemoUrl = () => {
 	// This is a popular piano soundfont from the web
 	const demoUrl = 'https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-ogg.js'
 	const otherUrl = 'https://raw.githubusercontent.com/felixroos/felixroos.github.io/main/public/Earthbound_NEW.sf2'
-	document.getElementById('soundfontUrl').value = otherUrl
+	document.getElementById('soundfontUrl').value = demoUrl
 	showNotification('Filled!', 'info')
 }
 

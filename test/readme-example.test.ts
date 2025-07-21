@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'bun:test'
+import { describe, it, expect } from '@jest/globals'
 import wembley from '../src'
 
 describe('wembley default import (README example)', () => {
