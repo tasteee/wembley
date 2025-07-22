@@ -1,5 +1,5 @@
 import { to } from 'await-to-js'
-import { throwShit } from './throwShit'
+import { throwShit } from './throwShit.js'
 import { parse, SoundFont } from '@marmooo/soundfont-parser'
 
 export const fetchSoundfont = async (url: string): Promise<SoundFont> => {

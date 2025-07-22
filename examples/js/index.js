@@ -490,7 +490,7 @@ function to(promise, errorExt) {
   });
 }
 
-// src/refactor/throwShit.ts
+// src/throwShit.ts
 var THROW_MESSAGE_MAP = {
   "fetchSoundfont": "Error fetching soundfont",
   "parseSoundfont": "Error parsing soundfont",
@@ -2058,7 +2058,7 @@ var SoundFont = class {
   }
 };
 
-// src/refactor/fetch-soundfont.ts
+// src/fetch-soundfont.ts
 var fetchSoundfont = async (url) => {
   const [error, response] = await to(fetch(url));
   if (error) return throwShit("networkError", { error, url });
@@ -2069,7 +2069,7 @@ var fetchSoundfont = async (url) => {
   return soundFont;
 };
 
-// src/refactor/constants.ts
+// src/constants.ts
 var DEFAULT_SETTINGS = {
   velocity: 75,
   minVelocity: 60,
@@ -19227,7 +19227,7 @@ var Listener = getContext().listener;
 var Draw = getContext().draw;
 var context = getContext();
 
-// src/refactor/note-designer.ts
+// src/note-designer.ts
 var NoteDesigner = class {
   constructor(args) {
     this.note = "";
@@ -19350,7 +19350,7 @@ var NoteDesigner = class {
   }
 };
 
-// src/refactor/notes-designer.ts
+// src/notes-designer.ts
 var NotesDesigner = class {
   constructor(args) {
     this.notes = [];
@@ -20967,7 +20967,7 @@ function deprecate(original, alternative, fn) {
 }
 var isNamed = deprecate("isNamed", "isNamedPitch", isNamedPitch);
 
-// src/refactor/chord-designer.ts
+// src/chord-designer.ts
 var ChordDesigner = class {
   constructor(args) {
     this.chord = "";
@@ -21151,7 +21151,7 @@ var ChordDesigner = class {
   }
 };
 
-// src/refactor/audio-engine.ts
+// src/audio-engine.ts
 var createAudioEngine = () => {
   let audioContext = null;
   const getAudioContext = async () => {
@@ -21276,7 +21276,7 @@ var extractNameFromUrl = (url) => {
 };
 var audioEngine = createAudioEngine();
 
-// src/refactor/instrument.ts
+// src/instrument.ts
 var Instrument3 = class {
   constructor(loadResult, parent) {
     this.id = crypto.randomUUID();
@@ -21335,7 +21335,7 @@ var Instrument3 = class {
   }
 };
 
-// src/refactor/wembley.ts
+// src/wembley.ts
 var Gear = class {
   constructor(config, wembley2) {
     // Index signature for dynamic instrument properties

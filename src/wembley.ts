@@ -1,4 +1,4 @@
-import type { WembleyT, ConfigT, InitializeConfigT, StopTargetT, BaseSettingsT, GearT, InstrumentConfigT, NewSoundfontLoadConfigT } from '../types.js'
+import type { WembleyT, ConfigT, InitializeConfigT, StopTargetT, BaseSettingsT, GearT, InstrumentConfigT, NewSoundfontLoadConfigT } from './types.js'
 import { fetchSoundfont } from './fetch-soundfont.js'
 import { listerine } from 'listerine'
 import { DEFAULT_SETTINGS } from './constants.js'
