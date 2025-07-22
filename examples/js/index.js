@@ -20974,11 +20974,13 @@ var createAudioEngine = () => {
       if (getContext().state === "suspended") {
         await start();
       }
-      nativeContext = getContext().rawContext;
+      nativeContext = getContext().rawContext || getContext();
     }
-    const masterGain = nativeContext.createGain();
-    masterGain.connect(nativeContext.destination);
-    masterGain.gain.value = 0.7;
+    const masterGain = nativeContext.createGain ? nativeContext.createGain() : new Gain(0.7).toDestination();
+    if (nativeContext.createGain) {
+      masterGain.connect(nativeContext.destination);
+      masterGain.gain.value = 0.7;
+    }
     audioContext = {
       context: nativeContext,
       masterGain,
@@ -21124,18 +21126,18 @@ var audioEngine = createAudioEngine();
 
 // src/player.ts
 var createPlayer = (config) => {
-  const load = async (config2) => {
-    console.log("Loading soundfonts:", config2);
+  const load = async (soundfontLoadConfig) => {
+    console.log("Loading soundfonts:", soundfontLoadConfig);
     const instruments = {};
-    for (const [name2, url] of Object.entries(config2)) {
+    for (const [name2, url] of Object.entries(soundfontLoadConfig)) {
       console.log(`Loading ${name2} from ${url}...`);
       const soundfont = await audioEngine.loadSoundfont({ url });
-      const synth = audioEngine.createSynth({ soundfont, config: config2 });
+      const synth = audioEngine.createSynth({ soundfont, config });
       instruments[name2] = createInstrument({
         name: name2,
         synth,
         soundfontUrl: url,
-        config: config2
+        config
       });
       console.log(`\u2713 ${name2} loaded successfully`);
     }
