@@ -1,0 +1,17 @@
+.sheCard {
+	border-radius: var(--radius-md);
+	padding: 11px 18px 22px;
+	border: 1px solid var(--color-gray-400);
+	background: var(--color-gray-0);
+	box-shadow: 0px 1px 0px 2px #d9dce2;
+}
+
+.sheCardTitleText {
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+	color: var(--color-gray-600);
+	margin-bottom: 10px;
+	font-weight: 666;
+	letter-spacing: 1.5px;
+	font-size: 13px;
+}

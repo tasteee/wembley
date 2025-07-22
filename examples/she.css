@@ -1,0 +1,853 @@
+:root {
+	/* --color-gray-400: oklch(70.7% 0.022 261.325); */
+
+	/* --color-gray-50: oklch(0.9581468870268093 0 none); */
+	/* --color-gray-100: oklch(0.8914313457035393 0 none); */
+	/* --color-gray-200: oklch(0.7889206270075311 0 none); */
+	/* --color-gray-300: oklch(0.6960069354631117 0 none); */
+	/* --color-gray-400: oklch(0.6099864491391791 0 none); */
+	/* --color-gray-500: oklch(0.5277958377351308 0 none); */
+	/* --color-gray-600: oklch(0.44589784016473566 0 none); */
+	/* --color-gray-700: oklch(0.3676810553309044 0 none); */
+	/* --color-gray-800: oklch(0.2931284740914302 0 none); */
+	/* --color-gray-900: oklch(0.217786502463702 0 none); */
+	/* --color-gray-950: oklch(0.16841612499987832 0 none); */
+
+	/* --color-gray-50: oklch(0.9581468870268093 0 none); */
+	/* --color-gray-100: oklch(0.891718246901537 0.0013532386334791924 286.3721397483697); */
+	/* --color-gray-200: oklch(0.7869599130158195 0.005592889557528887 286.2704243124114); */
+	/* --color-gray-300: oklch(0.697556931408157 0.0072108169420606865 286.21124884226634); */
+	/* --color-gray-400: oklch(0.6088920371081311 0.01046054714671501 286.0849490497758); */
+	/* --color-gray-500: oklch(0.5270277241409224 0.012410829475538536 285.96620941287796); */
+	/* --color-gray-600: oklch(0.44838662606758584 0.01131090489630635 285.9347533485931); */
+	/* --color-gray-700: oklch(0.36992842752114263 0.01017709311383759 285.8917623105805); */
+	/* --color-gray-800: oklch(0.29150578038607783 0.010819740485426377 285.70941639917123); */
+	/* --color-gray-900: oklch(0.21906511086345992 0.005799555893147233 285.91128701188654); */
+	/* --color-gray-950: oklch(0.1407653343343911 0.0043859037049756066 285.8228513598597); */
+
+	/* SPACING SYSTEM - Using rem units for better readability */
+	/* Base spacing scale: 0.25rem increments */
+	--space-0: 0;
+	--space-1: 0.25rem;
+	/* 4px */
+	--space-2: 0.5rem;
+	/* 8px */
+	--space-3: 0.75rem;
+	/* 12px */
+	--space-4: 1rem;
+	/* 16px */
+	--space-5: 1.25rem;
+	/* 20px */
+	--space-6: 1.5rem;
+	/* 24px */
+	--space-7: 1.75rem;
+	/* 28px */
+	--space-8: 2rem;
+	/* 32px */
+	--space-9: 2.25rem;
+	/* 36px */
+	--space-10: 2.5rem;
+	/* 40px */
+	--space-12: 3rem;
+	/* 48px */
+	--space-14: 3.5rem;
+	/* 56px */
+	--space-16: 4rem;
+	/* 64px */
+	--space-18: 4.5rem;
+	/* 72px */
+	--space-20: 5rem;
+	/* 80px */
+	--space-24: 6rem;
+	/* 96px */
+	--space-32: 8rem;
+	/* 128px */
+	--space-40: 10rem;
+	/* 160px */
+	--space-48: 12rem;
+	/* 192px */
+	--space-56: 14rem;
+	/* 224px */
+	--space-64: 16rem;
+	/* 256px */
+
+	/* Font sizes - using rem for scalability */
+	--font-xs: 0.75rem;
+	/* 12px */
+	--font-sm: 0.875rem;
+	/* 14px */
+	--font-base: 1rem;
+	/* 16px */
+	--font-lg: 1.125rem;
+	/* 18px */
+	--font-xl: 1.25rem;
+	/* 20px */
+	--font-2xl: 1.5rem;
+	/* 24px */
+	--font-3xl: 1.875rem;
+	/* 30px */
+	--font-4xl: 2.25rem;
+	/* 36px */
+	--font-5xl: 3rem;
+	/* 48px */
+
+	/* Border radius scale */
+	--radius-sm: 0.25rem;
+	/* 4px */
+	--radius-md: 0.5rem;
+	/* 8px */
+	--radius-lg: 0.75rem;
+	/* 12px */
+	--radius-xl: 1rem;
+	/* 16px */
+	--radius-2xl: 1.25rem;
+	/* 20px */
+
+	/* colorS */
+
+	--color-action-40: #5cff82;
+	--color-action-50: #00ff3c;
+	--color-action-60: #16d343;
+
+	--color-action-alpha-0: rgba(0, 255, 115, 0);
+	--color-action-alpha-10: rgba(0, 255, 115, 0.1);
+	--color-action-alpha-30: rgba(0, 255, 115, 0.3);
+
+	--color-white-0: rgba(255, 255, 255, 0);
+	--color-white-7: rgba(255, 255, 255, 0.07);
+	--color-white-10: rgba(255, 255, 255, 0.1);
+	--color-white-20: rgba(255, 255, 255, 0.2);
+	--color-white-30: rgba(255, 255, 255, 0.3);
+	--color-white-40: rgba(255, 255, 255, 0.4);
+	--color-white-50: rgba(255, 255, 255, 0.5);
+
+	--color-black-10: rgba(0, 0, 0, 0.1);
+	--color-black-15: rgba(0, 0, 0, 0.15);
+	--color-black-30: rgba(0, 0, 0, 0.3);
+	--color-black-40: rgba(0, 0, 0, 0.4);
+	--color-black-80: rgba(0, 0, 0, 0.8);
+
+	--color-red-40: #ff714d;
+	--color-red-50: #ff3300;
+	--color-red-60: #d33c17;
+
+	--color-gray-50: oklch(95.871% 0.00276 285.763);
+	--color-gray-100: oklch(0.919728555565637 0.004031512965153428 286.3200946281029);
+	--color-gray-200: oklch(0.8407872852972006 0.008257240923229757 286.2207280802742);
+	--color-gray-300: oklch(0.7660175576167673 0.011281967115037405 286.1303507353832);
+	--color-gray-400: oklch(0.6959097591731513 0.014463945622088258 286.0178884888783);
+	--color-gray-500: oklch(0.624012074616164 0.017863850533868242 285.87070494427707);
+	--color-gray-600: oklch(0.5461944760959312 0.020035653474943977 285.7177210882191);
+	--color-gray-700: oklch(0.46474576344985513 0.019270671109074867 285.62599706405365);
+	--color-gray-800: oklch(0.3787252238668624 0.015208816731343661 285.65113024852667);
+	--color-gray-900: oklch(0.2910805931655503 0.00901035101653689 285.82669228988345);
+	--color-gray-1000: oklch(0.1925826091716295 0.005994531934625974 285.82342907472247);
+	--color-gray-1100: oklch(0 0 none);
+
+	--color-gray-0: #ffffff;
+	--color-gray-50: #fafafa;
+	--color-gray-100: #f5f6f8;
+	--color-gray-200: #e7e9ed;
+	--color-gray-300: #d3d6db;
+	--color-gray-400: #aeb3bb;
+	--color-gray-500: #868c97;
+	--color-gray-600: #5d6470;
+	--color-gray-700: #434955;
+	--color-gray-800: #23262d;
+	--color-gray-900: #15171b;
+	--color-gray-950: #0b0c0f;
+
+	--color-brand-600: #ff5d00;
+
+	--mix0: color-mix(in srgb, var(--color-brand-600) 60%, #0000ff 40%);
+}
+
+.sheNavLink {
+	font-size: var(--font-sm);
+	line-height: 1.2;
+	letter-spacing: 0;
+	font-family: var(--fontMain);
+	font-weight: 500;
+}
+
+/* Spinner */
+/* Spinner */
+/* Spinner */
+/* Spinner */
+
+.sheSpinner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.sheSpinnerIcon {
+	animation: spin 1s linear infinite;
+}
+
+/* Label */
+/* Label */
+/* Label */
+/* Label */
+
+.sheLabel {
+	transition: all 0.193s;
+
+	text-transform: uppercase;
+	font-family: var(--fontMain);
+
+	font-size: 13px;
+	font-weight: 1000;
+	color: var(--color-gray-500);
+	letter-spacing: 0.25px;
+}
+
+.sheInput .sheLabel {
+}
+
+.sheSlider:hover .sheLabel,
+.sheInput:hover .sheLabel {
+	color: var(--color-gray-800);
+}
+
+/* Slider */
+/* Slider */
+/* Slider */
+/* Slider */
+
+.sheSlider {
+	transition: all 0.193s;
+
+	user-select: none;
+	display: flex;
+	flex-direction: column;
+	height: 38px;
+}
+
+.sheSliderTop {
+	display: flex;
+	justify-content: space-between;
+	position: relative;
+	top: 5px;
+}
+
+.sheInput {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.sheSliderValue {
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--color-gray-600);
+}
+
+.sheSliderBottom {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.sheSliderBoundary {
+	font-size: 12px;
+	font-weight: 500;
+	font-family: var(--fontMain);
+	color: var(--color-gray-400);
+	transition: all 0.193s;
+}
+
+.sheSlider:hover .sheSliderBoundary {
+	color: var(--color-gray-700);
+}
+
+.sheSliderInput {
+	transition: all 0.193s;
+
+	position: relative;
+	-webkit-appearance: none;
+	appearance: none;
+	background: linear-gradient(to top, var(--color-gray-200), var(--color-gray-200));
+	height: 3px;
+	border-radius: var(--radius-sm);
+	width: 100%;
+	outline: none;
+	cursor: pointer;
+}
+
+.sheSlider:hover .sheSliderInput {
+	background: linear-gradient(to right, var(--color-gray-200), var(--color-gray-300));
+}
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+.sheSliderInput::-webkit-slider-track {
+	-webkit-appearance: none;
+	appearance: none;
+
+	height: 4px;
+	border-radius: var(--radius-sm);
+	border: none;
+	outline: none;
+}
+
+.sheSliderInput::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	background: var(--color-gray-700);
+	position: relative;
+	top: 2px;
+	height: 16px;
+	width: 16px;
+	border-radius: 50%;
+	cursor: pointer;
+	border: 2px solid #ffffff;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+	margin-top: -6px;
+}
+
+.sheSliderInput::-webkit-slider-thumb:hover {
+	background: var(--color-gray-800);
+	box-shadow: 0 3px 9px -1px rgba(0, 0, 0, 0.25);
+}
+
+html,
+body {
+	min-height: 100vh;
+	background: var(--color-gray-200);
+}
+
+body {
+	padding-top: 110px;
+}
+
+/* Select */
+/* Select */
+/* Select */
+/* Select */
+
+.sheSelect {
+	user-select: none;
+	position: relative;
+	display: inline-block;
+	width: 100%;
+}
+
+.sheSelect select {
+	width: 100%;
+	height: 38px;
+	padding: 8px 40px 8px 16px;
+	font-size: 13px;
+	font-weight: 600;
+	font-family: var(--fontMain);
+	background-color: var(--color-gray-100);
+	color: var(--color-gray-700);
+	border: 2px solid var(--color-gray-200);
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+	outline: none;
+	appearance: none;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.sheSelect select:hover {
+	background-color: var(--color-gray-200);
+	border-color: var(--color-gray-300);
+}
+
+.sheSelect select:focus {
+	border-color: var(--color-gray-500);
+	background-color: var(--color-gray-200);
+}
+
+.sheSelect::after {
+	content: '▼';
+	position: absolute;
+	right: 12px;
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--color-gray-500);
+	font-size: 12px;
+	pointer-events: none;
+}
+
+.sheSelect:hover::after {
+	color: var(--color-gray-700);
+}
+
+/* Switch */
+/* Switch */
+/* Switch */
+/* Switch */
+
+.sheSwitch {
+	user-select: none;
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	height: 38px;
+	cursor: pointer;
+}
+
+.sheSwitch input {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.sheSwitch .sheSwitchSlider {
+	position: relative;
+	display: block;
+	width: 54px;
+	height: 24px;
+	background-color: var(--color-gray-300);
+	border-radius: 12px;
+	transition: background-color 0.3s ease;
+}
+
+.sheSwitch .sheSwitchSlider::before {
+	content: '';
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 20px;
+	height: 20px;
+	background-color: white;
+	border-radius: 50%;
+	transition: transform 0.3s ease;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sheSwitch input:checked + .sheSwitchSlider {
+	background-color: var(--color-gray-700);
+}
+
+.sheSwitch input:checked + .sheSwitchSlider::before {
+	transform: translateX(30px);
+}
+
+.sheSwitch:hover .sheSwitchSlider {
+	background-color: var(--color-gray-400);
+}
+
+.sheSwitch:hover input:checked + .sheSwitchSlider {
+	background-color: var(--color-gray-800);
+}
+
+/* Checkbox */
+/* Checkbox */
+/* Checkbox */
+/* Checkbox */
+
+.sheCheckbox {
+	user-select: none;
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	height: 38px;
+	cursor: pointer;
+}
+
+.sheCheckbox input {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.sheCheckbox .checkbox-mark {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	background-color: var(--color-gray-100);
+	border: 2px solid var(--color-gray-300);
+	border-radius: var(--radius-sm);
+	transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.sheCheckbox .checkbox-mark::after {
+	content: '✓';
+	color: white;
+	font-size: 13px;
+	font-weight: 700;
+	opacity: 0;
+	transform: scale(0);
+	transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.sheCheckbox input:checked + .checkbox-mark {
+	background-color: var(--color-gray-700);
+	border-color: var(--color-gray-700);
+}
+
+.sheCheckbox input:checked + .checkbox-mark::after {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.sheCheckbox:hover .checkbox-mark {
+	background-color: var(--color-gray-200);
+	border-color: var(--color-gray-400);
+}
+
+.sheCheckbox:hover input:checked + .checkbox-mark {
+	background-color: var(--color-gray-800);
+	border-color: var(--color-gray-800);
+}
+
+/* Radio */
+/* Radio */
+/* Radio */
+/* Radio */
+
+.sheRadio {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	height: 38px;
+	cursor: pointer;
+	user-select: none;
+}
+
+.sheRadio input {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.sheRadio .radio-mark {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	background-color: var(--color-gray-100);
+	border: 2px solid var(--color-gray-300);
+	border-radius: 50%;
+	transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.sheRadio .radio-mark::after {
+	content: '';
+	width: 10px;
+	height: 10px;
+	background-color: white;
+	border-radius: 50%;
+	opacity: 0;
+	transform: scale(0);
+	transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.sheRadio input:checked + .radio-mark {
+	background-color: var(--color-gray-700);
+	border-color: var(--color-gray-700);
+}
+
+.sheRadio input:checked + .radio-mark::after {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.sheRadio:hover .radio-mark {
+	background-color: var(--color-gray-200);
+	border-color: var(--color-gray-400);
+}
+
+.sheRadio:hover input:checked + .radio-mark {
+	background-color: var(--color-gray-800);
+	border-color: var(--color-gray-800);
+}
+
+/* Tabs */
+/* Tabs */
+/* Tabs */
+/* Tabs */
+
+.sheTabs {
+	display: flex;
+	flex-direction: column;
+	border: 1px solid var(--color-gray-400);
+	border-radius: 5px;
+	user-select: none;
+}
+
+.sheTabs .tabs {
+	display: flex;
+	border-radius: var(--radius-sm);
+	padding: 0px 5px;
+	height: 38px;
+	align-items: center;
+	background: var(--color-gray-200);
+}
+
+.sheTabs .sheTab {
+	flex: 1;
+	padding: 0px 16px;
+	height: 30px;
+	font-size: 13px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+	font-family: var(--fontMain);
+	background-color: transparent;
+	color: var(--color-gray-700);
+	border: none;
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.sheTabs .sheTab:hover {
+	background-color: var(--color-gray-100);
+	color: var(--color-gray-700);
+}
+
+.sheTabs .sheTab.isActive {
+	background-color: var(--color-gray-800);
+	color: white;
+}
+
+.sheTabs .sheTabContents {
+	padding: 16px 0;
+}
+
+.sheTabs .sheTabPanel {
+	display: none;
+}
+
+.sheTabs .sheTabPanel.isActive {
+	display: block;
+}
+
+/* Toast */
+/* Toast */
+/* Toast */
+/* Toast */
+
+.sheToast {
+	position: fixed;
+	top: 20px;
+	right: 20px;
+	min-width: 300px;
+	padding: 12px 16px;
+	background-color: var(--color-gray-700);
+	color: white;
+	border-radius: var(--radius-sm);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	z-index: 1000;
+	transform: translateX(100%);
+	transition: transform 0.3s ease;
+}
+
+.sheToast.show {
+	transform: translateX(0);
+}
+
+.sheToast .sheToastContent {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.sheToast .sheToastMessage {
+	font-size: 13px;
+	font-weight: 600;
+	font-family: var(--fontMain);
+}
+
+.sheToast .sheToastCloser {
+	background: none;
+	border: none;
+	color: white;
+	font-size: 18px;
+	cursor: pointer;
+	padding: 0;
+	line-height: 1;
+}
+
+.sheToast .sheToastCloser:hover {
+	opacity: 0.7;
+}
+
+.sheToast.success {
+	background-color: var(--color-action-60);
+}
+
+.sheToast.error {
+	background-color: var(--color-red-50);
+}
+
+/* Input */
+/* Input */
+/* Input */
+/* Input */
+
+.sheInputInput {
+	width: 100%;
+	height: 38px;
+	padding: 8px 16px;
+	font-size: 13px;
+	font-weight: 600;
+	font-family: var(--fontMain);
+	background-color: var(--color-gray-100);
+	color: var(--color-gray-700);
+	border: 2px solid var(--color-gray-300);
+	border-radius: var(--radius-sm);
+	outline: none;
+	transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.sheInputInput:hover {
+	background-color: var(--color-gray-200);
+	border-color: var(--color-gray-300);
+}
+
+.sheInputInput:focus {
+	border-color: var(--color-gray-500);
+	background-color: var(--color-gray-50);
+}
+
+.sheInputInput::placeholder {
+	color: var(--color-gray-400);
+	font-weight: 500;
+}
+
+/* Number Input */
+/* Number Input */
+/* Number Input */
+/* Number Input */
+
+.sheNumberInput {
+	flex-direction: column;
+	position: relative;
+	display: flex;
+}
+
+.sheNumberInputBottom {
+	position: relative;
+	display: flex;
+	align-items: center;
+	width: 100%;
+}
+
+.sheNumberInputInput {
+	flex: 1;
+	height: 38px;
+	padding: 8px 16px;
+	font-size: 13px;
+	font-weight: 600;
+	font-family: var(--fontMain);
+	background-color: var(--color-gray-100);
+	color: var(--color-gray-700);
+	border: 2px solid var(--color-gray-200);
+	border-left: none;
+	border-right: none;
+	outline: none;
+	text-align: center;
+	transition: border-color 0.3s ease, background-color 0.3s ease;
+	appearance: textfield;
+	-moz-appearance: textfield;
+}
+
+.sheNumberInput input::-webkit-outer-spin-button,
+.sheNumberInput input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.sheNumberInput input:hover {
+	background-color: var(--color-gray-200);
+	border-top-color: var(--color-gray-300);
+	border-bottom-color: var(--color-gray-300);
+}
+
+.sheNumberInput input:focus {
+	border-top-color: var(--color-gray-500);
+	border-bottom-color: var(--color-gray-500);
+	background-color: var(--color-gray-200);
+}
+
+.sheNumberInput .sheNumberInputButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	height: 38px;
+	font-size: 16px;
+	font-weight: 700;
+	background-color: var(--color-gray-100);
+	color: var(--color-gray-600);
+	border: 2px solid var(--color-gray-200);
+	cursor: pointer;
+	transition: background-color 0.3s ease, color 0.3s ease;
+	user-select: none;
+}
+
+.sheNumberInput .sheNumberInputButton:hover {
+	background-color: var(--color-gray-200);
+	color: var(--color-gray-700);
+}
+
+.sheNumberInput .sheNumberInputButton:active {
+	background-color: var(--color-gray-300);
+}
+
+.sheNumberInput .minusButton {
+	border-radius: 3px 0 0 3px;
+}
+
+.sheNumberInput .plusButton {
+	border-radius: 0 3px 3px 0;
+}
+
+.sheNumberInput:hover input {
+	background-color: var(--color-gray-200);
+	border-top-color: var(--color-gray-300);
+	border-bottom-color: var(--color-gray-300);
+}
+
+.sheNumberInput:hover .sheNumberInputButton {
+	background-color: var(--color-gray-200);
+	border-color: var(--color-gray-300);
+	color: var(--color-gray-700);
+}
+
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
+	}
+
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.sheDotBg {
+	background-size: 3rem 3rem;
+	border-bottom-right-radius: var(--space-6);
+	border-bottom-left-radius: var(--space-6);
+	--dotBg: radial-gradient(var(--color-gray-300) var(--space-1), transparent var(--space-1));
+	background-image: linear-gradient(to top right, var(--color-gray-200) 65%, transparent), var(--dotBg);
+}
+
+.sheCard.sheTopBar {
+	background: var(--color-gray-0);
+	border: 2px solid var(--color-gray-300);
+	position: fixed;
+	top: var(--space-3);
+	left: var(--space-3);
+	right: var(--space-3);
+	padding: var(--space-5) var(--space-3);
+	border-radius: var(--radius-sm);
+	/* background-color: rgba(0, 0, 0, 1); */
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(32px);
+	z-index: 50;
+}

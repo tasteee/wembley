@@ -1,4 +1,4 @@
-import type { NoteT, PlayingNoteT, ConfigT, InstanceTrackerT } from './types.js'
+import type { NoteDesignerT, NoteInstanceT, ConfigT, InstanceTrackerT } from './types.js'
 import type { AudioSynthT, AudioVoiceT } from './audio-engine.js'
 import { noteToMidi } from './utils/note-parser.js'
 
@@ -26,7 +26,7 @@ export const createNote = (args: { note: string; synth: AudioSynthT; config: Con
     pan: 0
   }
 
-  const noteInstance: NoteT = {
+  const noteInstance: NoteDesignerT = {
     velocity: ((vel: number, maxVel?: number) => {
       if (maxVel !== undefined) {
         state.minVelocity = vel
@@ -37,7 +37,7 @@ export const createNote = (args: { note: string; synth: AudioSynthT; config: Con
         state.velocity = vel
       }
       return noteInstance
-    }) as NoteT['velocity'],
+    }) as NoteDesignerT['velocity'],
 
     after: (ms: number) => {
       state.afterMs = ms
@@ -136,7 +136,7 @@ const createPlayingNote = (args: { state: NoteStateT; synth: AudioSynthT; instan
   args.instanceTracker.noteInstances.get(args.state.note)!.add(voice)
   args.instanceTracker.allInstances.add(voice)
 
-  const playingNote: PlayingNoteT = {
+  const playingNote: NoteInstanceT = {
     after: (ms: number) => {
       playingState.afterMs = ms
       return playingNote

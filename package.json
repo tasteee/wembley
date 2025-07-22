@@ -57,7 +57,9 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "soundfont-player": "^0.12.0",
+    "@marmooo/soundfont-parser": "^0.1.1",
+    "await-to-js": "^3.0.0",
+    "listerine": "^1.0.1",
     "tonal": "^6.4.2",
     "tone": "^15.1.22"
   }

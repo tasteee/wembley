@@ -1,0 +1,162 @@
+.device-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 12px;
+  height: 100vh;
+  padding-inline: var(--space-3);
+  box-sizing: border-box;
+}
+
+.control-card {
+  background: white;
+  border: 2px solid #d1d5db;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.control-section {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.control-section:last-child {
+  border-bottom: none;
+}
+
+/* Piano Key Styles */
+.piano-key {
+  transition: all 0.1s ease;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: 'Outfit', sans-serif;
+  border-radius: 3px;
+  position: relative;
+  user-select: none;
+  cursor: pointer;
+}
+
+.piano-key.white {
+  background: white;
+  border: 2px solid #d1d5db;
+  color: #374151;
+  height: 40px;
+}
+
+.piano-key.black {
+  background: #1f2937;
+  border: 2px solid #111827;
+  color: white;
+  height: 26px;
+  margin: 0 -8px;
+  z-index: 2;
+}
+
+.piano-key:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.piano-key.pressed {
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.piano-key.white.pressed {
+  background: #f3f4f6;
+}
+
+.piano-key.black.pressed {
+  background: #111827;
+}
+
+.key-label {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 8px;
+  opacity: 0.7;
+}
+
+.compact-input {
+  font-size: 15px;
+  padding: 0px 12px;
+  height: 37px;
+  border: 1px solid var(--color-gray-300);
+  background: white;
+  border-radius: 3px;
+}
+
+.compact-btn {
+  font-size: 16px;
+  padding: 0 16px;
+  height: 37px;
+  font-weight: 600;
+  border-radius: 3px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.compact-select {
+  font-size: 11px;
+  padding: 4px 6px;
+  border: 1px solid #d1d5db;
+  border-radius: 3px;
+  background: white;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.status-ready {
+  background: #10b981;
+}
+
+.status-loading {
+  background: #f59e0b;
+  animation: pulse 2s infinite;
+}
+
+.status-error {
+  background: #ef4444;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.piano-container {
+  background: white;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  padding: 16px;
+  height: fit-content;
+}
+
+.octave-row {
+  display: flex;
+  margin-bottom: 4px;
+  position: relative;
+}
+
+.octave-label {
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: #6b7280;
+  font-weight: 600;
+}

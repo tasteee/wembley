@@ -3,336 +3,352 @@ import { wembley } from './js/index.js'
 globalThis.wembley = wembley
 
 const demoState = {
-	player: null,
-	gear: null,
-	selectedNote: null,
-	selectedChord: null,
-	isLoaded: false
+  player: null,
+  gear: null,
+  isLoaded: false
 }
 
 const getElement = (id) => document.getElementById(id)
 
 // Initialize demo when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-	console.log('🎹 Initializing Wembley Demo')
-	setupEventListeners()
-	updateSliderValues()
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('🎹 Initializing Wembley Demo')
+  setupEventListeners()
+  updateSliderValues()
 
-	// Configure wembley
-	demoState.player = wembley.configure({
-		gain: 70,
-		maxVelocity: 85,
-		minVelocity: 45,
-		voicings: {
-			jazzCluster: (notes) => notes.map((note) => note + '♭9'),
-			arpeggiated: (notes) => notes.sort()
-		}
-	})
+  // Configure wembley
+  demoState.player = wembley.configure({
+    gain: 70,
+    maxVelocity: 85,
+    minVelocity: 45,
+    voicings: {
+      jazzCluster: (notes) => notes.map((note) => note + '♭9'),
+      arpeggiated: (notes) => notes.sort()
+    }
+  })
 
-	console.log('✅ Wembley configured successfully')
+  console.log('✅ Wembley configured successfully')
+
+  // Auto-fill and load the demo soundfont immediately
+  const demoUrl = 'https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-ogg.js'
+  document.getElementById('soundfontUrl').value = demoUrl
+  await loadSoundfontAutomatically()
 })
 
 const setupEventListeners = () => {
-	document.getElementById('autoFillBtn').addEventListener('click', autoFillDemoUrl)
-	document.getElementById('loadBtn').addEventListener('click', loadSoundfont)
+  document.getElementById('loadBtn').addEventListener('click', loadSoundfont)
 
-	document.querySelectorAll('[data-note]').forEach((btn) => {
-		btn.addEventListener('click', (e) => selectNote(e.target.dataset.note, e.target))
-	})
+  // Piano key listeners (both mouse and keyboard)
+  setupPianoKeys()
 
-	document.querySelectorAll('[data-chord]').forEach((btn) => {
-		btn.addEventListener('click', (e) => selectChord(e.target.dataset.chord, e.target))
-	})
+  // Sliders
+  document.getElementById('velocitySlider').addEventListener('input', updateSliderValues)
+  document.getElementById('panSlider').addEventListener('input', updateSliderValues)
+  document.getElementById('durationSlider').addEventListener('input', updateSliderValues)
 
-	// Sliders
-	document.getElementById('velocitySlider').addEventListener('input', updateSliderValues)
-	document.getElementById('panSlider').addEventListener('input', updateSliderValues)
-	document.getElementById('durationSlider').addEventListener('input', updateSliderValues)
+  // Transport controls (will be enabled after loading)
+  const demoBtn = document.getElementById('demoSequenceBtn')
+  const progressionBtn = document.getElementById('chordProgressionBtn')
+  const stopBtn = document.getElementById('stopAllBtn')
 
-	// Play controls
-	document.getElementById('playNoteBtn').addEventListener('click', playSelectedNote)
-	document.getElementById('playChordBtn').addEventListener('click', playSelectedChord)
-	document.getElementById('stopAllBtn').addEventListener('click', stopAllNotes)
+  if (demoBtn) demoBtn.addEventListener('click', playDemoSequence)
+  if (progressionBtn) progressionBtn.addEventListener('click', playChordProgression)
+  if (stopBtn) stopBtn.addEventListener('click', stopAllNotes)
 
-	// Demo sequences
-	document.getElementById('demoSequenceBtn').addEventListener('click', playDemoSequence)
-	document.getElementById('chordProgressionBtn').addEventListener('click', playChordProgression)
+  // Keyboard event listeners for piano keys
+  document.addEventListener('keydown', handleKeyDown)
+  document.addEventListener('keyup', handleKeyUp)
 }
 
-const autoFillDemoUrl = () => {
-	// Use a well-known public soundfont URL
-	// This is a popular piano soundfont from the web
-	const demoUrl = 'https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-ogg.js'
-	const otherUrl = 'https://raw.githubusercontent.com/felixroos/felixroos.github.io/main/public/Earthbound_NEW.sf2'
-	document.getElementById('soundfontUrl').value = demoUrl
-	showNotification('Filled!', 'info')
+const setupPianoKeys = () => {
+  document.querySelectorAll('.piano-key').forEach((key) => {
+    key.addEventListener('mousedown', (e) => {
+      const note = e.target.dataset.note
+      if (note) playNote(note)
+      e.target.classList.add('pressed')
+    })
+
+    key.addEventListener('mouseup', (e) => {
+      e.target.classList.remove('pressed')
+    })
+
+    key.addEventListener('mouseleave', (e) => {
+      e.target.classList.remove('pressed')
+    })
+  })
 }
 
-const loadSoundfont = async () => {
-	const url = document.getElementById('soundfontUrl').value.trim()
-	if (!url) return showNotification('Please enter a soundfont URL', 'error')
-	showLoadingState()
+// Key mapping for piano
+const keyMap = {
+  // Octave 5 (numbers row)
+  '1': 'C5', '!': 'C#5', '2': 'D5', '@': 'D#5', '3': 'E5',
+  '4': 'F5', '$': 'F#5', '5': 'G5', '%': 'G#5', '6': 'A5',
+  '^': 'A#5', '7': 'B5', '8': 'C6', '*': 'C#6', '9': 'D6',
 
-	try {
-		console.log('🔄 Loading soundfont from:', url)
-		demoState.gear = await demoState.player.load({piano: url})
-		console.log('✅ Soundfont loaded successfully!')
-		showSuccessState()
-		enableControls()
-		demoState.isLoaded = true
-	} catch (error) {
-		console.error('❌ Failed to load soundfont:', error)
-		showErrorState()
-		showNotification('Failed to load soundfont. Please check the URL and try again.', 'error')
-	}
+  // Octave 4 (QWERTY row)
+  'q': 'C4', 'w': 'C#4', 'e': 'D4', 'r': 'D#4', 't': 'E4',
+  'y': 'F4', 'u': 'F#4', 'i': 'G4', 'o': 'G#4', 'p': 'A4',
+  '[': 'B4', ']': 'C5',
+
+  // Octave 3 (ASDF row)
+  'a': 'C3', 's': 'C#3', 'd': 'D3', 'f': 'D#3', 'g': 'E3',
+  'h': 'F3', 'j': 'F#3', 'k': 'G3', 'l': 'G#3', ';': 'A3',
+  "'": 'B3',
+
+  // Octave 2 (ZXCV row)
+  'z': 'C2', 'x': 'C#2', 'c': 'D2', 'v': 'D#2', 'b': 'E2',
+  'n': 'F2', 'm': 'F#2', ',': 'G2', '.': 'G#2', '/': 'A2'
 }
 
-const showLoadingState = () => {
-	const status = document.getElementById('loadingStatus')
-	const spinner = document.getElementById('spinner')
-	const success = document.getElementById('success')
-	const error = document.getElementById('error')
-	status.classList.remove('hidden')
-	spinner.classList.remove('hidden')
-	success.classList.add('hidden')
-	error.classList.add('hidden')
-	document.getElementById('loadBtn').disabled = true
+const activeKeys = new Set()
+
+const handleKeyDown = (e) => {
+  if (activeKeys.has(e.key.toLowerCase())) return // Prevent key repeat
+
+  const note = keyMap[e.key.toLowerCase()]
+  if (note && demoState.isLoaded) {
+    activeKeys.add(e.key.toLowerCase())
+    playNote(note)
+    highlightKey(e.key.toLowerCase(), true)
+  }
 }
 
-const showSuccessState = () => {
-	const spinner = document.getElementById('spinner')
-	const success = document.getElementById('success')
-	spinner.classList.add('hidden')
-	success.classList.remove('hidden')
-	document.getElementById('loadBtn').disabled = false
-
-	setTimeout(() => {
-		document.getElementById('loadingStatus').classList.add('hidden')
-	}, 3000)
+const handleKeyUp = (e) => {
+  activeKeys.delete(e.key.toLowerCase())
+  highlightKey(e.key.toLowerCase(), false)
 }
 
-const showErrorState = () => {
-	const spinner = document.getElementById('spinner')
-	const error = document.getElementById('error')
-	spinner.classList.add('hidden')
-	error.classList.remove('hidden')
-	document.getElementById('loadBtn').disabled = false
-
-	setTimeout(() => {
-		document.getElementById('loadingStatus').classList.add('hidden')
-	}, 5000)
+const highlightKey = (key, pressed) => {
+  const keyElement = document.querySelector(`[data-key="${key}"]`)
+  if (keyElement) {
+    if (pressed) {
+      keyElement.classList.add('pressed')
+    } else {
+      keyElement.classList.remove('pressed')
+    }
+  }
 }
 
-const enableControls = () => {
-	document.getElementById('controlsSection').classList.remove('hidden')
-	document.getElementById('showcaseSection').classList.remove('hidden')
+const playNote = (note) => {
+  if (!demoState.gear || !note) return
 
-	// Enable play buttons when notes/chords are selected
-	updatePlayButtonStates()
-}
+  const velocity = parseInt(document.getElementById('velocitySlider').value)
+  const pan = parseInt(document.getElementById('panSlider').value)
+  const duration = parseInt(document.getElementById('durationSlider').value)
 
-const selectNote = (note, button) => {
-	// Clear previous selection
-	document.querySelectorAll('[data-note]').forEach((btn) => {
-		btn.classList.remove('active')
-	})
-
-	// Select new note
-	button.classList.add('active')
-	demoState.selectedNote = note
-
-	updatePlayButtonStates()
-	showNotification(`Selected note: ${note}`, 'info')
-}
-
-const selectChord = (chord, button) => {
-	// Clear previous selection
-	document.querySelectorAll('[data-chord]').forEach((btn) => {
-		btn.classList.remove('active')
-	})
-
-	// Select new chord
-	button.classList.add('active')
-	demoState.selectedChord = chord
-
-	updatePlayButtonStates()
-	showNotification(`Selected chord: ${chord}`, 'info')
+  try {
+    console.log(`🎵 Playing note: ${note}`)
+    demoState.gear.piano.note(note).velocity(velocity).pan(pan).duration(duration).play()
+  } catch (error) {
+    console.error('Error playing note:', error)
+  }
 }
 
 const updateSliderValues = () => {
-	const velocity = document.getElementById('velocitySlider').value
-	const pan = document.getElementById('panSlider').value
-	const duration = document.getElementById('durationSlider').value
+  const velocity = document.getElementById('velocitySlider').value
+  const pan = document.getElementById('panSlider').value
+  const duration = document.getElementById('durationSlider').value
 
-	document.getElementById('velocityValue').textContent = velocity
-	document.getElementById('panValue').textContent = pan
-	document.getElementById('durationValue').textContent = `${duration}ms`
-}
-
-const updatePlayButtonStates = () => {
-	const noteBtn = document.getElementById('playNoteBtn')
-	const chordBtn = document.getElementById('playChordBtn')
-	const stopBtn = document.getElementById('stopAllBtn')
-	const demoBtn = document.getElementById('demoSequenceBtn')
-	const progressionBtn = document.getElementById('chordProgressionBtn')
-
-	const isLoaded = demoState.isLoaded
-
-	noteBtn.disabled = !isLoaded || !demoState.selectedNote
-	chordBtn.disabled = !isLoaded || !demoState.selectedChord
-	stopBtn.disabled = !isLoaded
-	demoBtn.disabled = !isLoaded
-	progressionBtn.disabled = !isLoaded
-}
-
-const playSelectedNote = () => {
-	if (!demoState.selectedNote || !demoState.gear) return
-
-	const velocity = parseInt(document.getElementById('velocitySlider').value)
-	const pan = parseInt(document.getElementById('panSlider').value)
-	const duration = parseInt(document.getElementById('durationSlider').value)
-
-	// Validate all parameters to prevent null/NaN values
-	if (isNaN(velocity) || isNaN(pan) || isNaN(duration)) {
-		showNotification('Invalid slider values detected', 'error')
-		console.error('Invalid values:', { velocity, pan, duration })
-		return
-	}
-
-	try {
-		console.log(`🎵 Playing note: ${demoState.selectedNote}`)
-		console.log(`Parameters: velocity=${velocity}, pan=${pan}, duration=${duration}`)
-
-		demoState.gear.piano.note(demoState.selectedNote).velocity(velocity).pan(pan).duration(duration).play()
-
-		showNotification(`Playing ${demoState.selectedNote} (velocity: ${velocity}, pan: ${pan})`, 'success')
-	} catch (error) {
-		console.error('Error playing note:', error)
-		showNotification('Error playing note', 'error')
-	}
-}
-
-const playSelectedChord = () => {
-	if (!demoState.selectedChord || !demoState.gear) return
-
-	const velocity = parseInt(document.getElementById('velocitySlider').value)
-	const pan = parseInt(document.getElementById('panSlider').value)
-	const duration = parseInt(document.getElementById('durationSlider').value)
-	const voicing = document.getElementById('voicingSelect').value
-	const octave = parseInt(document.getElementById('octaveSelect').value)
-
-	try {
-		console.log(`🎵 Playing chord: ${demoState.selectedChord}`)
-
-		demoState.gear.piano
-			.chord(demoState.selectedChord)
-			.velocity(velocity)
-			.pan(pan)
-			.duration(duration)
-			.voicing(voicing)
-			.octave(octave)
-			.play()
-
-		showNotification(`Playing ${demoState.selectedChord} chord (${voicing} voicing, octave ${octave})`, 'success')
-	} catch (error) {
-		console.error('Error playing chord:', error)
-		showNotification('Error playing chord', 'error')
-	}
+  document.getElementById('velocityValue').textContent = velocity
+  document.getElementById('panValue').textContent = pan
+  document.getElementById('durationValue').textContent = `${duration}ms`
 }
 
 const stopAllNotes = () => {
-	try {
-		// Use the actual stop functionality
-		if (demoState.gear) {
-			demoState.gear.stop()
-			console.log('🛑 Stopped all notes using gear.stop()')
-		} else {
-			console.log('🛑 No gear loaded - nothing to stop')
-		}
-		showNotification('All notes stopped', 'info')
-	} catch (error) {
-		console.error('Error stopping notes:', error)
-		showNotification('Error stopping notes', 'error')
-	}
+  try {
+    // Use the actual stop functionality
+    if (demoState.gear) {
+      demoState.gear.stop()
+      console.log('🛑 Stopped all notes using gear.stop()')
+    } else {
+      console.log('🛑 No gear loaded - nothing to stop')
+    }
+    showNotification('All notes stopped', 'info')
+  } catch (error) {
+    console.error('Error stopping notes:', error)
+    showNotification('Error stopping notes', 'error')
+  }
 }
 
 const playDemoSequence = async () => {
-	if (!demoState.gear) return
+  if (!demoState.gear) return
 
-	try {
-		showNotification('Playing demo sequence...', 'info')
+  try {
+    showNotification('Playing demo sequence...', 'info')
 
-		const notes = ['C4', 'E4', 'G4', 'C5']
+    const notes = ['C4', 'E4', 'G4', 'C5']
 
-		for (let i = 0; i < notes.length; i++) {
-			setTimeout(() => {
-				demoState.gear.piano.note(notes[i]).velocity(70).duration(400).play()
-			}, i * 500)
-		}
-	} catch (error) {
-		console.error('Error playing demo sequence:', error)
-		showNotification('Error playing demo sequence', 'error')
-	}
+    for (let i = 0; i < notes.length; i++) {
+      setTimeout(() => {
+        demoState.gear.piano.note(notes[i]).velocity(70).duration(400).play()
+      }, i * 500)
+    }
+  } catch (error) {
+    console.error('Error playing demo sequence:', error)
+    showNotification('Error playing demo sequence', 'error')
+  }
+}
+
+const autoFillDemoUrl = () => {
+  // Use a well-known public soundfont URL
+  // This is a popular piano soundfont from the web
+  const demoUrl = 'https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/acoustic_grand_piano-ogg.js'
+  const otherUrl = 'https://raw.githubusercontent.com/felixroos/felixroos.github.io/main/public/Earthbound_NEW.sf2'
+  document.getElementById('soundfontUrl').value = demoUrl
+  showNotification('Filled!', 'info')
+}
+
+const loadSoundfont = async () => {
+  const url = document.getElementById('soundfontUrl').value.trim()
+  if (!url) return showNotification('Please enter a soundfont URL', 'error')
+  showLoadingState()
+
+  try {
+    console.log('🔄 Loading soundfont from:', url)
+    demoState.gear = await demoState.player.load({ piano: url })
+    console.log('✅ Soundfont loaded successfully!')
+    showSuccessState()
+    enableControls()
+    demoState.isLoaded = true
+  } catch (error) {
+    console.error('❌ Failed to load soundfont:', error)
+    showErrorState()
+    showNotification('Failed to load soundfont. Please check the URL and try again.', 'error')
+  }
+}
+
+const loadSoundfontAutomatically = async () => {
+  const url = document.getElementById('soundfontUrl').value.trim()
+  if (!url) return
+
+  try {
+    console.log('🔄 Auto-loading soundfont from:', url)
+    demoState.gear = await demoState.player.load({ piano: url })
+    console.log('✅ Soundfont auto-loaded successfully!')
+    enableControls()
+    demoState.isLoaded = true
+    showNotification('Soundfont loaded and ready to play!', 'success')
+  } catch (error) {
+    console.error('❌ Failed to auto-load soundfont:', error)
+    showNotification('Failed to auto-load soundfont. You can try loading manually.', 'warning')
+  }
+}
+
+const showLoadingState = () => {
+  const status = document.getElementById('loadingStatus')
+  const spinner = document.getElementById('spinner')
+  const success = document.getElementById('success')
+  const error = document.getElementById('error')
+  status.classList.remove('hidden')
+  spinner.classList.remove('hidden')
+  success.classList.add('hidden')
+  error.classList.add('hidden')
+  document.getElementById('loadBtn').disabled = true
+}
+
+const showSuccessState = () => {
+  const spinner = document.getElementById('spinner')
+  const success = document.getElementById('success')
+  spinner.classList.add('hidden')
+  success.classList.remove('hidden')
+  document.getElementById('loadBtn').disabled = false
+
+  setTimeout(() => {
+    document.getElementById('loadingStatus').classList.add('hidden')
+  }, 3000)
+}
+
+const showErrorState = () => {
+  const spinner = document.getElementById('spinner')
+  const error = document.getElementById('error')
+  spinner.classList.add('hidden')
+  error.classList.remove('hidden')
+  document.getElementById('loadBtn').disabled = false
+
+  setTimeout(() => {
+    document.getElementById('loadingStatus').classList.add('hidden')
+  }, 5000)
+}
+
+const enableControls = () => {
+  // Show the piano interface and control cards
+  document.getElementById('pianoSection').classList.remove('hidden')
+  document.getElementById('parametersCard').classList.remove('hidden')
+  document.getElementById('chordCard').classList.remove('hidden')
+
+  // Enable transport buttons
+  updateTransportButtons()
+}
+
+const updateTransportButtons = () => {
+  const demoBtn = document.getElementById('demoSequenceBtn')
+  const progressionBtn = document.getElementById('chordProgressionBtn')
+  const stopBtn = document.getElementById('stopAllBtn')
+
+  if (demoBtn) demoBtn.disabled = !demoState.isLoaded
+  if (progressionBtn) progressionBtn.disabled = !demoState.isLoaded
+  if (stopBtn) stopBtn.disabled = !demoState.isLoaded
 }
 
 const playChordProgression = async () => {
-	if (!demoState.gear) return
+  if (!demoState.gear) return
 
-	try {
-		showNotification('Playing chord progression...', 'info')
+  try {
+    showNotification('Playing chord progression...', 'info')
 
-		const chords = ['C', 'Am', 'F', 'G']
+    const chords = ['C', 'Am', 'F', 'G']
+    const voicing = document.getElementById('voicingSelect')?.value || 'open'
+    const octave = parseInt(document.getElementById('octaveSelect')?.value || '4')
 
-		for (let i = 0; i < chords.length; i++) {
-			setTimeout(() => {
-				demoState.gear.piano.chord(chords[i]).velocity(65).duration(800).voicing('open').play()
-			}, i * 1000)
-		}
-	} catch (error) {
-		console.error('Error playing chord progression:', error)
-		showNotification('Error playing chord progression', 'error')
-	}
+    for (let i = 0; i < chords.length; i++) {
+      setTimeout(() => {
+        demoState.gear.piano.chord(chords[i]).velocity(65).duration(800).voicing(voicing).octave(octave).play()
+      }, i * 1000)
+    }
+  } catch (error) {
+    console.error('Error playing chord progression:', error)
+    showNotification('Error playing chord progression', 'error')
+  }
 }
 
 const showNotification = (message, type = 'info') => {
-	// Create notification element
-	const notification = document.createElement('div')
-	notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-full`
+  // Create notification element
+  const notification = document.createElement('div')
+  notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-x-full`
 
-	// Style based on type
-	const typeStyles = {
-		info: 'bg-blue-500 text-white',
-		success: 'bg-green-500 text-white',
-		error: 'bg-red-500 text-white',
-		warning: 'bg-yellow-500 text-black'
-	}
+  // Style based on type
+  const typeStyles = {
+    info: 'bg-blue-500 text-white',
+    success: 'bg-green-500 text-white',
+    error: 'bg-red-500 text-white',
+    warning: 'bg-yellow-500 text-black'
+  }
 
-	notification.className += ` ${typeStyles[type] || typeStyles.info}`
-	notification.textContent = message
+  notification.className += ` ${typeStyles[type] || typeStyles.info}`
+  notification.textContent = message
 
-	// Add to DOM
-	document.body.appendChild(notification)
+  // Add to DOM
+  document.body.appendChild(notification)
 
-	// Slide in
-	setTimeout(() => {
-		notification.classList.remove('translate-x-full')
-	}, 10)
+  // Slide in
+  setTimeout(() => {
+    notification.classList.remove('translate-x-full')
+  }, 10)
 
-	// Auto remove after 4 seconds
-	setTimeout(() => {
-		notification.classList.add('translate-x-full')
-		setTimeout(() => {
-			if (notification.parentNode) {
-				notification.parentNode.removeChild(notification)
-			}
-		}, 300)
-	}, 4000)
+  // Auto remove after 4 seconds
+  setTimeout(() => {
+    notification.classList.add('translate-x-full')
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification)
+      }
+    }, 300)
+  }, 4000)
 }
 
 // Export for global access if needed
 window.wembleyDemo = {
-	demoState,
-	playSelectedNote,
-	playSelectedChord,
-	stopAllNotes
+  demoState,
+  playNote,
+  stopAllNotes
 }

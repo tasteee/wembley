@@ -1,0 +1,54 @@
+/* Button */
+/* Button */
+/* Button */
+/* Button */
+/* Button */
+
+.sheButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 8px 16px;
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 2px;
+	height: 38px;
+	text-transform: uppercase;
+	border-radius: var(--radius-sm);
+	font-family: 'Outfit', 'Outfit', sans-serif;
+	background-color: var(--color-gray-100);
+	color: var(--color-gray-700);
+	border: none;
+	cursor: pointer;
+	transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.sheButton:hover {
+	background-color: var(--color-gray-200);
+}
+
+.sheButton:active {
+	background: var(--color-gray-300);
+}
+
+.sheButton:disabled {
+	background-color: var(--color-gray-300);
+	color: var(--color-gray-500);
+	cursor: not-allowed;
+	opacity: 0.7;
+}
+
+.sheButton.sheBoldButton {
+	font-weight: 600;
+	background: var(--color-gray-950);
+	color: var(--color-gray-0);
+}
+
+.sheButton.sheBoldButton:hover {
+	background: var(--color-gray-800);
+}
+
+.sheButton.sheBoldButton:active {
+	background: var(--color-gray-700);
+}
