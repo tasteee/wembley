@@ -21125,6 +21125,46 @@ var extractNameFromUrl = (url) => {
 var audioEngine = createAudioEngine();
 
 // src/player.ts
+var loadInstrumentsWithNewFormat = async (instrumentsConfig, globalConfig) => {
+  console.log("Loading instruments with new format:", instrumentsConfig);
+  const instruments = {};
+  for (const [name2, instrumentConfig] of Object.entries(instrumentsConfig)) {
+    console.log(`Loading ${name2} from ${instrumentConfig.url}...`);
+    const mergedConfig = {
+      ...globalConfig,
+      ...instrumentConfig.gain !== void 0 && { gain: instrumentConfig.gain },
+      ...instrumentConfig.minVelocity !== void 0 && { minVelocity: instrumentConfig.minVelocity },
+      ...instrumentConfig.maxVelocity !== void 0 && { maxVelocity: instrumentConfig.maxVelocity },
+      ...instrumentConfig.pan !== void 0 && { pan: instrumentConfig.pan }
+    };
+    const soundfont = await audioEngine.loadSoundfont({ url: instrumentConfig.url });
+    const synth = audioEngine.createSynth({ soundfont, config: mergedConfig });
+    instruments[name2] = createInstrument({
+      name: name2,
+      synth,
+      soundfontUrl: instrumentConfig.url,
+      config: mergedConfig
+    });
+    console.log(`\u2713 ${name2} loaded successfully`);
+  }
+  return instruments;
+};
+var createEnhancedGear = (initialInstruments, globalConfig) => {
+  let allInstruments = { ...initialInstruments };
+  const load = async (newInstrumentsConfig) => {
+    const newInstruments = await loadInstrumentsWithNewFormat(newInstrumentsConfig, globalConfig);
+    allInstruments = { ...allInstruments, ...newInstruments };
+    Object.assign(gear, newInstruments);
+    return gear;
+  };
+  const stop = () => {
+    console.log("Stopping all sounds from all instruments");
+    const instruments = Object.values(allInstruments);
+    instruments.forEach((instrument) => instrument.stop());
+  };
+  const gear = { ...allInstruments, load, stop };
+  return gear;
+};
 var createPlayer = (config) => {
   const load = async (soundfontLoadConfig) => {
     console.log("Loading soundfonts:", soundfontLoadConfig);
@@ -21166,7 +21206,20 @@ var createWembley = () => {
       ...config
     });
   };
-  const wembley2 = { configure };
+  const initialize = async (config) => {
+    const globalConfig = {
+      gain: 70,
+      maxVelocity: 85,
+      minVelocity: 45,
+      pan: 0,
+      voicings: {},
+      ...config
+    };
+    const instrumentsConfig = config.instruments || {};
+    const initialInstruments = await loadInstrumentsWithNewFormat(instrumentsConfig, globalConfig);
+    return createEnhancedGear(initialInstruments, globalConfig);
+  };
+  const wembley2 = { configure, initialize };
   return wembley2;
 };
 

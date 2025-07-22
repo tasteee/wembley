@@ -27,10 +27,30 @@ export type ConfigT = {
   gain?: number
   maxVelocity?: number
   minVelocity?: number
+  pan?: number
   voicings?: Record<string, VoicingFunctionT>
 }
 
 export type SoundfontLoadConfigT = Record<string, string>
+
+export type InstrumentConfigT = {
+  url: string
+  gain?: number
+  minVelocity?: number
+  maxVelocity?: number
+  pan?: number
+}
+
+export type NewSoundfontLoadConfigT = Record<string, InstrumentConfigT>
+
+export type InitializeConfigT = {
+  gain?: number
+  minVelocity?: number
+  maxVelocity?: number
+  pan?: number
+  voicings?: Record<string, VoicingFunctionT>
+  instruments?: Record<string, InstrumentConfigT>
+}
 
 export type NoteT = {
   velocity: ((vel: number) => NoteT) & ((minVel: number, maxVel: number) => NoteT)
@@ -99,6 +119,7 @@ export type InstrumentT = {
 }
 
 export type GearT = {
+  load: (config: NewSoundfontLoadConfigT) => Promise<GearT>
   stop: () => void
 } & Record<string, InstrumentT>
 
@@ -108,4 +129,5 @@ export type PlayerT = {
 
 export type WembleyT = {
   configure: (config?: ConfigT) => PlayerT
+  initialize: (config: InitializeConfigT) => Promise<GearT>
 }
