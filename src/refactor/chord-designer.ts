@@ -4,6 +4,7 @@ import type { NoteInstanceT, VoicingT, VoicingFunctionT } from '../types.js'
 
 type ChordDesignerArgsT = {
 	chord: string
+	octave?: number
 	instrument: any
 }
 
@@ -36,6 +37,10 @@ export class ChordDesigner {
 	constructor(args: ChordDesignerArgsT) {
 		this.chord = args.chord
 		this.instrument = args.instrument
+		// Set default octave if provided
+		if (args.octave !== undefined) {
+			this.settings.octave = args.octave
+		}
 	}
 
 	after = (milliseconds: number) => {

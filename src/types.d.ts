@@ -100,7 +100,7 @@ export type InitializeConfigT = {
 // up until play() or stop() is invoked. Its sole
 // purpose is to design a note for playback.
 export type NoteDesignerT = {
-	velocity: (velocity: number) => NoteDesignerT
+	velocity: (velocity: number, maxVelocity?: number) => NoteDesignerT
 	minVelocity: (velocity: number) => NoteDesignerT
 	maxVelocity: (velocity: number) => NoteDesignerT
 	after: (milliseconds: number) => NoteDesignerT
@@ -120,7 +120,7 @@ export type NoteDesignerT = {
 export type NotesDesignerT = {
 	minVelocity: (velocity: number) => NotesDesignerT
 	maxVelocity: (velocity: number) => NotesDesignerT
-	velocity: (velocity: number) => NotesDesignerT
+	velocity: (velocity: number, maxVelocity?: number) => NotesDesignerT
 	after: (milliseconds: number) => NotesDesignerT
 	duration: (milliseconds: number) => NotesDesignerT
 	stagger: (milliseconds: number) => NotesDesignerT
@@ -130,7 +130,7 @@ export type NotesDesignerT = {
 	gain: (gain: number) => NotesDesignerT
 	pan: (pan: number) => NotesDesignerT
 	play: () => NoteInstanceT[]
-	stop: (note?: string) => void
+	stop: () => void
 }
 
 // ChordDesignerT is an object with chained methods
@@ -142,7 +142,7 @@ export type NotesDesignerT = {
 // rules of music theory, we can also offer to handle
 // things like setting an inversion, voicing, etc.
 export type ChordDesignerT = {
-	velocity: (velocity: number) => ChordDesignerT
+	velocity: (velocity: number, maxVelocity?: number) => ChordDesignerT
 	minVelocity: (velocity: number) => ChordDesignerT
 	maxVelocity: (velocity: number) => ChordDesignerT
 	after: (milliseconds: number) => ChordDesignerT
@@ -278,7 +278,7 @@ export type InstrumentT = {
 	// begin designing a notes playback.
 	notes: (notes: string[]) => NotesDesignerT
 	// begin designing a chord playback.
-	chord: (chord: string) => ChordDesignerT
+	chord: (chord: string, octave?: number) => ChordDesignerT
 	// stop one, many, or all notes that the instrument is playing.
 	stop: (target?: StopTargetT) => any
 }

@@ -72,8 +72,8 @@ export class Instrument implements InstrumentT {
 		return new NotesDesigner({ notes, instrument: this })
 	}
 
-	chord = (chord: string) => {
-		return new ChordDesigner({ chord, instrument: this })
+	chord = (chord: string, octave?: number) => {
+		return new ChordDesigner({ chord, octave, instrument: this })
 	}
 
 	// stop() // stop all notes played by instrument

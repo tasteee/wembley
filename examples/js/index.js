@@ -19470,12 +19470,8 @@ var NotesDesigner = class {
       });
       return noteInstances;
     };
-    this.stop = (note2) => {
-      if (note2) {
-        this.instrument.stop(note2);
-      } else {
-        this.notes.forEach((n) => this.instrument.stop(n));
-      }
+    this.stop = () => {
+      this.notes.forEach((n) => this.instrument.stop(n));
     };
     this.calculateVelocityFromRange = () => {
       const min = this.settings.minVelocity || this.instrument.settings.minVelocity || 60;
@@ -21149,6 +21145,9 @@ var ChordDesigner = class {
     };
     this.chord = args.chord;
     this.instrument = args.instrument;
+    if (args.octave !== void 0) {
+      this.settings.octave = args.octave;
+    }
   }
 };
 
@@ -21293,8 +21292,8 @@ var Instrument3 = class {
     this.notes = (notes2) => {
       return new NotesDesigner({ notes: notes2, instrument: this });
     };
-    this.chord = (chord2) => {
-      return new ChordDesigner({ chord: chord2, instrument: this });
+    this.chord = (chord2, octave2) => {
+      return new ChordDesigner({ chord: chord2, octave: octave2, instrument: this });
     };
     // stop() // stop all notes played by instrument
     // stop('C3') // stop one note played by instrument

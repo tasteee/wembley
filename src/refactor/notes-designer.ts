@@ -177,13 +177,9 @@ export class NotesDesigner {
 		return noteInstances
 	}
 
-	stop = (note?: string) => {
-		if (note) {
-			this.instrument.stop(note)
-		} else {
-			// Stop all notes in this collection
-			this.notes.forEach(n => this.instrument.stop(n))
-		}
+	stop = () => {
+		// Stop all notes in this collection
+		this.notes.forEach(n => this.instrument.stop(n))
 	}
 
 	private calculateVelocityFromRange = (): number => {
