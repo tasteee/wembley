@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>She Design System - Component Demo</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+			rel="stylesheet"
+		/>
+		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+		<link rel="stylesheet" href="./other.css" />
+		<link rel="stylesheet" href="./she.css" />
+		<link rel="stylesheet" href="./she-text.css" />
+		<link rel="stylesheet" href="./she-button.css" />
+		<link rel="stylesheet" href="./she-card.css" />
+		<link rel="stylesheet" href="./she-layout.css" />
+	</head>
+
+	<body class="min-h-screen sheDotBg withBorder16">
+		<div class="max-w-6xl mx-auto space-y-8">
+			<!-- Header -->
+			<div class="sheColumn gap-2 text-center mb-12">
+				<h1 class="sheTitleText mb-2">She Design System</h1>
+				<p class="sheSubtitleText">Ravishing. Marvelous. Elegant.</p>
+			</div>
+
+			<!-- Typography Section -->
+			<div class="sheCard">
+				<div class="sheColumn gap-6">
+					<h2 class="sheCardTitleText">Typography</h2>
+
+					<!-- Hero & Display Text -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Display & Hero Text</h3>
+						<div class="sheColumn gap-2">
+							<div class="sheMassiveText">Big Text</div>
+							<div class="sheHugeText">Medium Text</div>
+							<!-- <div class="sheHeroText">Hero Text</div> -->
+							<div class="sheHeroText">Sidekick Text</div>
+							<div class="sheSourceText">Source Text</div>
+						</div>
+					</div>
+
+					<!-- Title & Subtitle -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Titles & Subtitles</h3>
+						<div class="sheColumn gap-2">
+							<div class="sheTitleText">Title Text</div>
+							<div class="sheSubtitleText">Subtitle Text</div>
+							<div class="sheCardTitleText">Card Title Text</div>
+						</div>
+					</div>
+
+					<!-- Body Text -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Body Text</h3>
+						<div class="sheColumn gap-2">
+							<div class="sheBodyText">
+								This is primary body text. It's perfect for main content, descriptions, and longer passages of text.
+							</div>
+							<div class="sheBodyTextAlt">
+								This is alternative body text. It's slightly smaller and great for secondary information.
+							</div>
+						</div>
+					</div>
+
+					<!-- Small Text -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Small Text</h3>
+						<div class="sheColumn gap-2">
+							<div class="sheCaptionText">Caption text for small details and meta information</div>
+							<div class="sheTinyText">Tiny text for the smallest content</div>
+						</div>
+					</div>
+
+					<!-- Font Weights -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Font Weights</h3>
+						<div class="sheColumn gap-2">
+							<div class="sheBodyText sheExtraThin">Extra Thin (100)</div>
+							<div class="sheBodyText sheThin">Thin (200)</div>
+							<div class="sheBodyText sheLight">Light (300)</div>
+							<div class="sheBodyText">Normal (400)</div>
+							<div class="sheBodyText sheKindabold">Kinda Bold (500)</div>
+							<div class="sheBodyText sheSemibold">Semibold (600)</div>
+							<div class="sheBodyText sheBold">Bold (700)</div>
+							<div class="sheBodyText sheExtrabold">Extrabold (800)</div>
+							<div class="sheBodyText sheBlackbold">Black Bold (900)</div>
+						</div>
+					</div>
+
+					<!-- Italic Text -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Italic Text</h3>
+						<div class="sheColumn gap-2">
+							<div class="sheBodyText sheItalic">This text uses italic styling</div>
+							<div class="sheBodyText sheBold sheItalic">Bold italic text combination</div>
+						</div>
+					</div>
+
+					<!-- Font Families -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Font Families</h3>
+						<div class="sheColumn gap-2">
+							<div class="fontA sheBodyText">AlphazetVariable with Inter fallback</div>
+							<div class="fontOutfit sheBodyText">AlphazetVariable with Outfit fallback</div>
+							<div class="fontInter sheBodyText">AlphazetVariable with Inter fallback</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Buttons Section -->
+			<div class="sheCard">
+				<div class="sheColumn gap-4">
+					<h2 class="sheCardTitleText">Buttons</h2>
+					<div class="sheRow gap-4 sheWrap">
+						<button class="sheButton">Default Button</button>
+						<button class="sheButton sheBoldButton">Bold Button</button>
+						<button class="sheButton" disabled>Disabled Button</button>
+						<button class="sheButton">
+							<i class="fas fa-download"></i>
+							With Icon
+						</button>
+						<button class="sheButton sheBoldButton greedyX">Full Width Button</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- Form Elements Section -->
+			<div class="sheCard">
+				<div class="sheColumn gap-6">
+					<h2 class="sheCardTitleText">Form Elements</h2>
+
+					<!-- Text Inputs -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Text Inputs</h3>
+						<div class="sheRow gap-4 sheWrap">
+							<div class="sheInput" style="min-width: 200px">
+								<label class="sheLabel" for="demo-input">Email Address</label>
+								<input class="sheInputInput" type="email" id="demo-input" placeholder="Enter your email" />
+							</div>
+							<div class="sheInput" style="min-width: 200px">
+								<label class="sheLabel" for="demo-input2">Full Name</label>
+								<input class="sheInputInput" type="text" id="demo-input2" value="John Doe" />
+							</div>
+						</div>
+					</div>
+
+					<!-- Selects -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Select Dropdowns</h3>
+						<div class="sheRow gap-4 sheWrap">
+							<div class="sheColumn gap-2" style="min-width: 200px">
+								<label class="sheLabel" for="demo-select">Choose Option</label>
+								<div class="sheSelect">
+									<select id="demo-select">
+										<option value="">Select an option</option>
+										<option value="option1">Option 1</option>
+										<option value="option2">Option 2</option>
+										<option value="option3">Option 3</option>
+									</select>
+								</div>
+							</div>
+							<div class="sheColumn gap-2" style="min-width: 200px">
+								<label class="sheLabel" for="demo-select2">Category</label>
+								<div class="sheSelect">
+									<select id="demo-select2">
+										<option value="design">Design</option>
+										<option value="development">Development</option>
+										<option value="marketing">Marketing</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Number Inputs -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Number Inputs</h3>
+						<div class="sheRow gap-4 sheWrap">
+							<div class="sheNumberInput" style="min-width: 200px">
+								<label class="sheLabel" for="quantity">Quantity</label>
+								<div class="sheNumberInputBottom">
+									<div class="sheNumberInputButton minusButton" onclick="decrementNumber('quantity')">−</div>
+									<input class="sheNumberInputInput" type="number" id="quantity" value="5" min="0" max="100" />
+									<div class="sheNumberInputButton plusButton" onclick="incrementNumber('quantity')">+</div>
+								</div>
+							</div>
+							<div class="sheNumberInput" style="min-width: 200px">
+								<label class="sheLabel" for="price">Price ($)</label>
+								<div class="sheNumberInputBottom">
+									<div class="sheNumberInputButton minusButton" onclick="decrementNumber('price')">−</div>
+									<input class="sheNumberInputInput" type="number" id="price" value="29.99" min="0" step="0.01" />
+									<div class="sheNumberInputButton plusButton" onclick="incrementNumber('price')">+</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Sliders -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Sliders</h3>
+						<div class="sheRow gap-4 sheWrap">
+							<div class="sheColumn gap-3" style="min-width: 250px">
+								<div class="sheSlider">
+									<div class="sheSliderTop">
+										<label class="sheLabel">Volume</label>
+										<span class="sheSliderValue" id="volume-value">75</span>
+									</div>
+									<div class="sheSliderBottom">
+										<span class="sheSliderBoundary">0</span>
+										<input
+											class="sheSliderInput"
+											type="range"
+											id="volume-slider"
+											min="0"
+											max="100"
+											value="75"
+											oninput="updateSliderValue('volume-slider', 'volume-value')"
+										/>
+										<span class="sheSliderBoundary">100</span>
+									</div>
+								</div>
+
+								<div class="sheSlider">
+									<div class="sheSliderTop">
+										<label class="sheLabel">Brightness</label>
+										<span class="sheSliderValue" id="brightness-value">50</span>
+									</div>
+									<div class="sheSliderBottom">
+										<span class="sheSliderBoundary">0</span>
+										<input
+											class="sheSliderInput"
+											type="range"
+											id="brightness-slider"
+											min="0"
+											max="100"
+											value="50"
+											oninput="updateSliderValue('brightness-slider', 'brightness-value')"
+										/>
+										<span class="sheSliderBoundary">100</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Selection Elements Section -->
+			<div class="sheCard">
+				<div class="sheColumn gap-6">
+					<h2 class="sheCardTitleText">Selection Elements</h2>
+
+					<!-- Switches -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Switches</h3>
+						<div class="sheColumn gap-3">
+							<label class="sheSwitch">
+								<input type="checkbox" />
+								<span class="switch-slider"></span>
+								<span class="ml-3" class="sheLabel" style="text-transform: none; font-weight: 500">Enable notifications</span>
+							</label>
+							<label class="sheSwitch">
+								<input type="checkbox" checked />
+								<span class="switch-slider"></span>
+								<span class="ml-3" class="sheLabel" style="text-transform: none; font-weight: 500">Auto-save enabled</span>
+							</label>
+							<label class="sheSwitch">
+								<input type="checkbox" />
+								<span class="switch-slider"></span>
+								<span class="ml-3" class="sheLabel" style="text-transform: none; font-weight: 500">Dark mode</span>
+							</label>
+						</div>
+					</div>
+
+					<!-- Checkboxes -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Checkboxes</h3>
+						<div class="sheColumn gap-3">
+							<label class="sheCheckbox">
+								<input type="checkbox" />
+								<span class="checkbox-mark"></span>
+								<span class="ml-3" class="sheLabel" style="text-transform: none; font-weight: 500">I agree to terms</span>
+							</label>
+							<label class="sheCheckbox">
+								<input type="checkbox" checked />
+								<span class="checkbox-mark"></span>
+								<span class="ml-3" class="sheLabel" style="text-transform: none; font-weight: 500">Subscribe to newsletter</span>
+							</label>
+							<label class="sheCheckbox">
+								<input type="checkbox" />
+								<span class="checkbox-mark"></span>
+								<span class="ml-3" class="sheLabel" style="text-transform: none; font-weight: 500">Remember me</span>
+							</label>
+						</div>
+					</div>
+
+					<!-- Radio Buttons -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Radio Buttons</h3>
+						<div class="sheColumn gap-3">
+							<label class="sheRadio">
+								<input type="radio" name="payment" value="card" />
+								<span class="radio-mark"></span>
+								<span class="ml-3" class="sheLabel" style="text-transform: none; font-weight: 500">Credit Card</span>
+							</label>
+							<label class="sheRadio">
+								<input type="radio" name="payment" value="paypal" checked />
+								<span class="radio-mark"></span>
+								<span class="ml-3" class="sheLabel" style="text-transform: none; font-weight: 500">PayPal</span>
+							</label>
+							<label class="sheRadio">
+								<input type="radio" name="payment" value="crypto" />
+								<span class="radio-mark"></span>
+								<span class="ml-3" class="sheLabel" style="text-transform: none; font-weight: 500">Cryptocurrency</span>
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Layout Components Section -->
+			<div class="sheCard">
+				<div class="sheColumn gap-6">
+					<h2 class="sheCardTitleText">Layout Components</h2>
+
+					<!-- Cards -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Cards</h3>
+						<div class="sheRow gap-4 sheWrap">
+							<div class="sheCard" style="min-width: 200px">
+								<div class="sheColumn gap-2">
+									<div class="sheCardTitleText">Sample Card</div>
+									<div class="sheBodyTextAlt">This is a sample card with some content inside.</div>
+									<button class="sheButton">Action</button>
+								</div>
+							</div>
+							<div class="sheCard" style="min-width: 200px">
+								<div class="sheColumn gap-2">
+									<div class="sheCardTitleText">Another Card</div>
+									<div class="sheBodyTextAlt">Cards provide structured content areas.</div>
+									<button class="sheButton sheBoldButton">Primary Action</button>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Layout Examples -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Layout Examples</h3>
+						<div class="sheColumn gap-3">
+							<div class="sheCard">
+								<div class="sheColumn gap-2">
+									<div class="sheCaptionText">Row Layout (sheRow)</div>
+									<div class="sheRow gap-2">
+										<div class="sheButton">Item 1</div>
+										<div class="sheButton">Item 2</div>
+										<div class="sheButton">Item 3</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="sheCard">
+								<div class="sheColumn gap-2">
+									<div class="sheCaptionText">Column Layout (sheColumn)</div>
+									<div class="sheColumn gap-2" style="max-width: 200px">
+										<div class="sheButton">Item A</div>
+										<div class="sheButton">Item B</div>
+										<div class="sheButton">Item C</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Interactive Components Section -->
+			<div class="sheCard">
+				<div class="sheColumn gap-6">
+					<h2 class="sheCardTitleText">Interactive Components</h2>
+
+					<!-- Tabs -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheMassiveText">Tabs</h3>
+						<div class="sheTabs">
+							<div class="tabs">
+								<button class="sheTab isActive" onclick="showTab(event, 'tab1')">Profile</button>
+								<button class="sheTab" onclick="showTab(event, 'tab2')">Settings</button>
+								<button class="sheTab" onclick="showTab(event, 'tab3')">History</button>
+								<button class="sheTab" onclick="showTab(event, 'tab4')">Advanced</button>
+							</div>
+						</div>
+						<div class="sheTabContents">
+							<div id="tab1" class="sheTabPanel isActive">
+								<div class="sheColumn gap-3">
+									<div class="sheBodyTextAlt">Profile information and details go here...</div>
+									<div class="sheRow gap-2">
+										<button class="sheButton">Edit Profile</button>
+										<button class="sheButton">Change Avatar</button>
+									</div>
+								</div>
+							</div>
+							<div id="tab2" class="sheTabPanel">
+								<div class="sheColumn gap-3">
+									<div class="sheBodyTextAlt">Settings and preferences can be configured here...</div>
+									<label class="sheSwitch">
+										<input type="checkbox" checked />
+										<span class="switch-slider"></span>
+										<span class="ml-3" class="sheLabel" style="text-transform: none; font-weight: 500">Enable notifications</span>
+									</label>
+								</div>
+							</div>
+							<div id="tab3" class="sheTabPanel">
+								<div class="sheColumn gap-3">
+									<div class="sheBodyTextAlt">History and activity logs are displayed here...</div>
+									<div class="sheCaptionText">Last activity: 2 hours ago</div>
+								</div>
+							</div>
+							<div id="tab4" class="sheTabPanel">
+								<div class="sheColumn gap-3">
+									<div class="sheBodyTextAlt">Advanced settings and configuration options...</div>
+									<div class="sheRow gap-2">
+										<button class="sheButton">Export Data</button>
+										<button class="sheButton sheBoldButton">Reset Settings</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Toast Demo -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Toast Notifications</h3>
+						<div class="sheRow gap-4 sheWrap">
+							<button class="sheButton" onclick="showToast('Success! Operation completed.', 'success')">Show Success Toast</button>
+							<button class="sheButton" onclick="showToast('Error! Something went wrong.', 'error')">Show Error Toast</button>
+							<button class="sheButton" onclick="showToast('Information message here.')">Show Default Toast</button>
+							<button
+								class="sheButton"
+								onclick="showToast('This is a longer toast message that demonstrates how the component handles more text content.')"
+							>
+								Show Long Toast
+							</button>
+						</div>
+					</div>
+
+					<!-- Loading States -->
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Loading States</h3>
+						<div class="sheRow gap-4 sheWrap">
+							<div class="sheSpinner">
+								<i class="sheSpinner" class="fas fa-spinner text-gray-600"></i>
+								<span class="ml-1">Loading...</span>
+							</div>
+							<div class="sheRow gap-2">
+								<button class="sheButton">
+									<i class="sheSpinner" class="fas fa-spinner"></i>
+									Processing...
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Color Palette Section -->
+			<div class="sheCard">
+				<div class="sheColumn gap-6">
+					<h2 class="sheCardTitleText">Color Palette</h2>
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Gray Scale</h3>
+						<div class="sheRow gap-2 sheWrap">
+							<div class="sheColumn gap-1" style="min-width: 100px">
+								<div
+									style="width: 80px; height: 40px; background: var(--color-gray-0); border: 1px solid #ccc; border-radius: 4px"
+								></div>
+								<div class="sheTinyText">gray-0</div>
+							</div>
+							<div class="sheColumn gap-1" style="min-width: 100px">
+								<div style="width: 80px; height: 40px; background: var(--color-gray-100); border-radius: 4px"></div>
+								<div class="sheTinyText">gray-100</div>
+							</div>
+							<div class="sheColumn gap-1" style="min-width: 100px">
+								<div style="width: 80px; height: 40px; background: var(--color-gray-200); border-radius: 4px"></div>
+								<div class="sheTinyText">gray-200</div>
+							</div>
+							<div class="sheColumn gap-1" style="min-width: 100px">
+								<div style="width: 80px; height: 40px; background: var(--color-gray-300); border-radius: 4px"></div>
+								<div class="sheTinyText">gray-300</div>
+							</div>
+							<div class="sheColumn gap-1" style="min-width: 100px">
+								<div style="width: 80px; height: 40px; background: var(--color-gray-400); border-radius: 4px"></div>
+								<div class="sheTinyText">gray-400</div>
+							</div>
+							<div class="sheColumn gap-1" style="min-width: 100px">
+								<div style="width: 80px; height: 40px; background: var(--color-gray-500); border-radius: 4px"></div>
+								<div class="sheTinyText">gray-500</div>
+							</div>
+							<div class="sheColumn gap-1" style="min-width: 100px">
+								<div style="width: 80px; height: 40px; background: var(--color-gray-600); border-radius: 4px"></div>
+								<div class="sheTinyText">gray-600</div>
+							</div>
+							<div class="sheColumn gap-1" style="min-width: 100px">
+								<div style="width: 80px; height: 40px; background: var(--color-gray-700); border-radius: 4px"></div>
+								<div class="sheTinyText">gray-700</div>
+							</div>
+							<div class="sheColumn gap-1" style="min-width: 100px">
+								<div style="width: 80px; height: 40px; background: var(--color-gray-800); border-radius: 4px"></div>
+								<div class="sheTinyText">gray-800</div>
+							</div>
+							<div class="sheColumn gap-1" style="min-width: 100px">
+								<div style="width: 80px; height: 40px; background: var(--color-gray-900); border-radius: 4px"></div>
+								<div class="sheTinyText">gray-900</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="sheColumn gap-4">
+						<h3 class="sheBodyText">Accent Colors</h3>
+						<div class="sheRow gap-2 sheWrap">
+							<div class="sheColumn gap-1" style="min-width: 100px">
+								<div style="width: 80px; height: 40px; background: var(--color-action-50); border-radius: 4px"></div>
+								<div class="sheTinyText">action-50</div>
+							</div>
+							<div class="sheColumn gap-1" style="min-width: 100px">
+								<div style="width: 80px; height: 40px; background: var(--color-red-50); border-radius: 4px"></div>
+								<div class="sheTinyText">red-50</div>
+							</div>
+							<div class="sheColumn gap-1" style="min-width: 100px">
+								<div style="width: 80px; height: 40px; background: var(--color-brand-600); border-radius: 4px"></div>
+								<div class="sheTinyText">brand-600</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Toast Container -->
+		<div id="toast-container"></div>
+
+		<script>
+			// Tab functionality
+			function showTab(evt, tabName) {
+				const tabContents = document.getElementsByClassName('sheTabPanel')
+				const tabButtons = document.getElementsByClassName('sheTab')
+
+				for (let i = 0; i < tabContents.length; i++) {
+					tabContents[i].classList.remove('isActive')
+				}
+
+				for (let i = 0; i < tabButtons.length; i++) {
+					tabButtons[i].classList.remove('isActive')
+				}
+
+				document.getElementById(tabName).classList.add('isActive')
+				evt.currentTarget.classList.add('isActive')
+			}
+
+			// Number input functionality
+			function incrementNumber(inputId) {
+				const input = document.getElementById(inputId)
+				const step = parseFloat(input.step) || 1
+				const max = parseFloat(input.max)
+				const current = parseFloat(input.value) || 0
+				const newValue = current + step
+
+				if (isNaN(max) || newValue <= max) {
+					input.value = newValue
+				}
+			}
+
+			function decrementNumber(inputId) {
+				const input = document.getElementById(inputId)
+				const step = parseFloat(input.step) || 1
+				const min = parseFloat(input.min)
+				const current = parseFloat(input.value) || 0
+				const newValue = current - step
+
+				if (isNaN(min) || newValue >= min) {
+					input.value = newValue
+				}
+			}
+
+			// Slider functionality
+			function updateSliderValue(sliderId, valueId) {
+				const slider = document.getElementById(sliderId)
+				const valueSpan = document.getElementById(valueId)
+				valueSpan.textContent = slider.value
+			}
+
+			// Toast functionality
+			function showToast(message, type = '') {
+				const container = document.getElementById('toast-container')
+
+				const toast = document.createElement('div')
+				toast.setAttribute('data-she-toast', '')
+				if (type) toast.classList.add(type)
+
+				toast.innerHTML = `
+        <div class="sheToastContent">
+          <div class="sheToastMessage">${message}</div>
+          <button class="sheToastCloser" onclick="hideToast(this)">&times;</button>
+        </div>
+      `
+
+				container.appendChild(toast)
+
+				// Trigger animation
+				setTimeout(() => toast.classList.add('show'), 10)
+
+				// Auto-hide after 4 seconds
+				setTimeout(() => hideToast(toast.querySelector('.sheToastCloser')), 4000)
+			}
+
+			function hideToast(button) {
+				const toast = button.closest('[data-she-toast]')
+				toast.classList.remove('show')
+				setTimeout(() => toast.remove(), 300)
+			}
+
+			// Initialize slider event listeners on page load
+			document.addEventListener('DOMContentLoaded', function () {
+				// Set up volume slider
+				const volumeSlider = document.getElementById('volume-slider')
+				if (volumeSlider) {
+					volumeSlider.addEventListener('input', () => updateSliderValue('volume-slider', 'volume-value'))
+				}
+
+				// Set up brightness slider
+				const brightnessSlider = document.getElementById('brightness-slider')
+				if (brightnessSlider) {
+					brightnessSlider.addEventListener('input', () => updateSliderValue('brightness-slider', 'brightness-value'))
+				}
+
+				// Set up any other sliders that might be added dynamically
+				const allSliders = document.querySelectorAll('[class="sheSliderInput"]')
+				allSliders.forEach((slider) => {
+					const sliderId = slider.id
+					const valueId = sliderId.replace('-slider', '-value')
+					const valueSpan = document.getElementById(valueId)
+					if (valueSpan && !slider.hasAttribute('data-listener-added')) {
+						slider.addEventListener('input', () => updateSliderValue(sliderId, valueId))
+						slider.setAttribute('data-listener-added', 'true')
+					}
+				})
+			})
+		</script>
+	</body>
+</html>

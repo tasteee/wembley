@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Typography System Demo - Vertical Rhythm</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="stylesheet" href="./she.css" />
+		<link rel="stylesheet" href="./she-text.css" />
+		<style>
+			body {
+				max-width: 800px;
+				margin: 120px auto 60px;
+				padding: 16px 24px;
+				background: var(--color-gray-100);
+				border-radius: 16px;
+			}
+
+			.demo-section {
+				margin-bottom: 24px;
+				padding: 32px;
+				background: white;
+				border-radius: 8px;
+				border: 1px solid var(--color-gray-300);
+			}
+
+			.baseline-grid * {
+				color: var(--color-gray-800);
+				z-index: 2500;
+				position: relative;
+			}
+			.baseline-grid:hover * {
+				color: var(--color-gray-0);
+				transition: 0.98;
+			}
+
+			.baseline-grid {
+				transition: all 1.27s;
+				position: relative;
+				background: repeating-linear-gradient(
+						to bottom,
+						transparent 0,
+						transparent 3px,
+						color-mix(in srgb, var(--color-gray-200) 30%, transparent 160%) 3px,
+						color-mix(in srgb, var(--color-gray-200) 30%, transparent 160%) 4px
+					),
+					var(--color-gray-0);
+				background-size: 100% 4px;
+			}
+
+			.baseline-grid:hover {
+				background: repeating-linear-gradient(
+						to bottom,
+						transparent 0,
+						transparent 3px,
+						color-mix(in srgb, var(--color-gray-200) 30%, transparent 60%) 3px,
+						color-mix(in srgb, var(--color-gray-200) 30%, transparent 60%) 4px
+					),
+					var(--color-gray-800);
+			}
+
+			.baseline-grid::after {
+				z-index: 2105;
+				transition: all 2.53s;
+			}
+
+			.baseline-grid::before {
+				z-index: 2100;
+				transition: all 3.83s;
+			}
+
+			.baseline-grid::before,
+			.baseline-grid::after {
+				content: '';
+				position: absolute;
+				bottom: 0;
+				right: 0;
+				width: 100%;
+				height: 100%;
+				opacity: 0;
+				background: linear-gradient(to top left, color-mix(in srgb, var(--color-gray-900) 0%, transparent 100%), transparent);
+			}
+
+			.baseline-grid:hover::after,
+			.baseline-grid:hover::before {
+				opacity: 1;
+			}
+
+			.baseline-grid:hover::after {
+				background: linear-gradient(to top left, color-mix(in srgb, var(--color-gray-0) 5%, transparent 98%) -50%, transparent),
+					linear-gradient(to top left, color-mix(in srgb, var(--color-gray-0) 100% transparent 50%), transparent);
+			}
+
+			.baseline-grid:hover::before {
+				background: linear-gradient(to top left, color-mix(in srgb, var(--color-gray-900) 100%, transparent 0%), #23262d55);
+			}
+
+			.sample-content {
+				opacity: 1;
+				margin-top: 24px;
+			}
+
+			.font-info {
+				font-size: 11px;
+				color: var(--color-gray-400);
+				font-weight: 500;
+				margin-top: 4px;
+				font-family: 'Courier New', monospace;
+			}
+
+			.size-comparison {
+				display: flex;
+				flex-direction: column;
+				gap: 16px;
+				margin-top: 24px;
+			}
+
+			.text-sample {
+				display: flex;
+				flex-direction: column;
+				gap: 4px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="demo-section">
+			<h1 class="titleText">Typography System Overview</h1>
+			<div class="font-info">Based on 15px body text preference, 4px baseline grid</div>
+			<p class="regularText">
+				This demonstrates the complete typography scale with proper vertical rhythm. Each text size has been carefully calculated
+				to align with a 4px baseline grid while maintaining readability and hierarchy.
+			</p>
+		</div>
+
+		<div class="demo-section baseline-grid">
+			<h2 class="subtitleText">Hero & Display Sizes</h2>
+			<div class="size-comparison">
+				<div class="text-sample">
+					<div class="massiveText">Massive Hero</div>
+					<div class="font-info">64px-128px responsive • 1.05 line-height • -0.03em letter-spacing</div>
+				</div>
+				<div class="text-sample">
+					<div class="hugeText">Huge Display</div>
+					<div class="font-info">40px-64px responsive • 1.1 line-height • -0.025em letter-spacing</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="demo-section baseline-grid">
+			<h2 class="subtitleText">Content Hierarchy</h2>
+			<div class="size-comparison">
+				<div class="text-sample">
+					<div class="titleText">Title Text</div>
+					<div class="font-info">32px • 1.25 line-height (40px) • -0.02em letter-spacing</div>
+				</div>
+				<div class="text-sample">
+					<div class="subtitleText">Subtitle Text</div>
+					<div class="font-info">24px • 1.33 line-height (32px) • -0.015em letter-spacing</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="demo-section baseline-grid">
+			<h2 class="subtitleText">Application Text Sizes</h2>
+			<div class="size-comparison">
+				<div class="text-sample">
+					<div class="bigText">Big Text for Important UI Elements</div>
+					<div class="font-info">18px • 1.33 line-height (24px) • -0.01em letter-spacing</div>
+				</div>
+				<div class="text-sample">
+					<div class="mediumText">Medium Text for Secondary Elements</div>
+					<div class="font-info">15px • 1.47 line-height (22px) • 0 letter-spacing</div>
+				</div>
+				<div class="text-sample">
+					<div class="regularText">
+						Regular body text for paragraphs and general content. This is your preferred 15px size that works well for extended
+						reading while maintaining a comfortable visual density.
+					</div>
+					<div class="font-info">15px • 1.47 line-height (22px) • 0 letter-spacing</div>
+				</div>
+				<div class="text-sample">
+					<div class="smallText">Small text for labels, buttons, and compact UI elements</div>
+					<div class="font-info">13px • 1.38 line-height (18px) • 0 letter-spacing</div>
+				</div>
+				<div class="text-sample">
+					<div class="captionText">Caption text for metadata, timestamps, and fine print</div>
+					<div class="font-info">12px • 1.33 line-height (16px) • 0.01em letter-spacing</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="demo-section baseline-grid">
+			<h2 class="subtitleText">Sample Content Layout</h2>
+			<div class="sample-content">
+				<h3 class="titleText">Design System Best Practices</h3>
+				<p class="regularText">
+					Typography forms the foundation of any design system. By establishing a consistent vertical rhythm and harmonious scale,
+					we create visual coherence across all interfaces and content.
+				</p>
+
+				<h4 class="bigText">Key Principles</h4>
+				<p class="regularText">
+					Each text size serves a specific purpose and maintains proper relationships with other sizes. The 4px baseline grid
+					ensures consistent spacing and alignment throughout the design.
+				</p>
+
+				<div class="smallText">UI Element Example</div>
+				<p class="captionText">Last updated: July 22, 2025</p>
+			</div>
+		</div>
+
+		<div class="demo-section">
+			<h2 class="subtitleText">Usage Guidelines</h2>
+			<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 16px">
+				<div>
+					<div class="bigText" style="margin-bottom: 12px">Display & Hero</div>
+					<div class="smallText" style="margin-bottom: 8px">• massiveText - Main hero headlines</div>
+					<div class="smallText">• hugeText - Secondary hero content</div>
+				</div>
+				<div>
+					<div class="bigText" style="margin-bottom: 12px">Content Hierarchy</div>
+					<div class="smallText" style="margin-bottom: 8px">• titleText - Main section headings</div>
+					<div class="smallText">• subtitleText - Secondary headings</div>
+				</div>
+				<div>
+					<div class="bigText" style="margin-bottom: 12px">Application UI</div>
+					<div class="smallText" style="margin-bottom: 8px">• bigText - Important UI elements</div>
+					<div class="smallText" style="margin-bottom: 8px">• mediumText - Secondary UI text</div>
+					<div class="smallText">• regularText - Body content</div>
+				</div>
+				<div>
+					<div class="bigText" style="margin-bottom: 12px">Utility Text</div>
+					<div class="smallText" style="margin-bottom: 8px">• smallText - Labels, buttons, cards</div>
+					<div class="smallText">• captionText - Metadata, fine print</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

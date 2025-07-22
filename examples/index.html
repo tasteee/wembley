@@ -1,303 +1,339 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wembley - Live Demo</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Wembley - Live Demo</title>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
 
-    <style>
-        .font-outfit { font-family: 'Outfit', sans-serif; }
-        .font-inter { font-family: 'Inter', sans-serif; }
-        
-        .spinner {
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        .note-btn {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .note-btn:hover {
-            transform: translateY(-1px);
-        }
-        .note-btn.active {
-            background: #000;
-            color: white;
-        }
-        
-        /* Custom slider styles */
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            background: transparent;
-        }
-        input[type="range"]::-webkit-slider-track {
-            background: #e5e7eb;
-            height: 6px;
-            border-radius: 3px;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            background: #000;
-            height: 18px;
-            width: 18px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        input[type="range"]::-moz-range-track {
-            background: #e5e7eb;
-            height: 6px;
-            border-radius: 3px;
-        }
-        input[type="range"]::-moz-range-thumb {
-            background: #000;
-            height: 18px;
-            width: 18px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: none;
-        }
-    </style>
-</head>
-<body class="bg-gray-50 min-h-screen font-inter text-gray-900 antialiased">
-    <div class="container mx-auto px-4 py-8 max-w-6xl">
-        <!-- Header -->
-        <header class="text-center mb-12">
-            <div class="mb-6">
-                <h1 class="text-5xl font-black mb-2 text-black font-outfit tracking-tight">
-                    🎹 Wembley
-                </h1>
-                <p class="text-lg text-gray-600 mb-6 font-inter font-medium max-w-2xl mx-auto">
-                    A delightful, DX-obsessed soundfont sequencer for the web
-                </p>
-                <a href="https://github.com/tasteee/wembley" target="_blank" 
-                   class="inline-flex items-center px-6 py-3 bg-black text-white rounded-md hover:bg-gray-800 transition-colors font-outfit font-medium">
-                    <i class="fab fa-github mr-2"></i>
-                    View Source Code
-                </a>
-            </div>
-        </header>
+		<link
+			href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+			rel="stylesheet"
+		/>
 
-        <!-- Soundfont Loading Section -->
-        <section class="mb-8">
-            <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8 mb-8">
-                <h2 class="text-2xl font-bold mb-6 text-center text-black font-outfit">Load Soundfont</h2>
-                
-                <div class="grid md:grid-cols-3 gap-4 mb-6">
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium mb-2 text-gray-700 font-inter">Soundfont URL:</label>
-                        <input type="text" id="soundfontUrl" 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-inter text-gray-900"
-                               placeholder="Enter soundfont URL (.sf2)">
-                    </div>
-                    <div class="flex flex-col justify-end space-y-2">
-                        <button id="autoFillBtn" 
-                                class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-md transition-colors font-outfit font-medium border border-gray-300">
-                            <i class="fas fa-magic mr-2"></i>
-                            Auto Fill Demo URL
-                        </button>
-                        <button id="loadBtn" 
-                                class="px-4 py-3 bg-black hover:bg-gray-800 text-white rounded-md font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-outfit">
-                            <span id="loadBtnText">
-                                <i class="fas fa-download mr-2"></i>
-                                Load Soundfont
-                            </span>
-                        </button>
-                    </div>
-                </div>
+		<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+		<link rel="stylesheet" href="./other.css" />
+		<link rel="stylesheet" href="./she.css" />
+		<link rel="stylesheet" href="./she-text.css" />
+		<link rel="stylesheet" href="./she-button.css" />
+		<link rel="stylesheet" href="./she-card.css" />
+		<link rel="stylesheet" href="./she-layout.css" />
+	</head>
 
-                <div id="loadingStatus" class="text-center hidden">
-                    <div id="spinner" class="inline-block">
-                        <i class="fas fa-spinner spinner text-2xl text-gray-600"></i>
-                        <span class="ml-2 font-inter text-gray-700">Loading soundfont...</span>
-                    </div>
-                    <div id="success" class="hidden">
-                        <i class="fas fa-check-circle text-2xl text-green-600"></i>
-                        <span class="ml-2 font-inter text-gray-700">Soundfont loaded successfully!</span>
-                    </div>
-                    <div id="error" class="hidden">
-                        <i class="fas fa-exclamation-triangle text-2xl text-red-600"></i>
-                        <span class="ml-2 font-inter text-gray-700">Failed to load soundfont</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+	<body class="min-h-screen sheDotBg withBorder16">
+		<!-- Header Bar -->
+		<div class="sheCard sheTopBar">
+			<div class="flex justify-between items-center">
+				<div class="flex items-center space-x-4">
+					<h1 class="text-xl font-black text-black fontOutfit tracking-tight">🎹 Wembley</h1>
+					<span class="text-sm text-gray-600 fontInter"> Soundfont Sequencer </span>
+				</div>
+				<a href="https://github.com/tasteee/wembley" target="_blank" class="sheButton sheBoldButton">
+					<i class="fab fa-github mr-1"></i>
+					Source
+				</a>
+			</div>
+		</div>
 
-        <!-- Controls Section -->
-        <section id="controlsSection" class="hidden">
-            <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
-                <h2 class="text-2xl font-bold mb-6 text-center text-black font-outfit">API Demo Controls</h2>
-                
-                <!-- Note Selection -->
-                <div class="grid md:grid-cols-2 gap-8 mb-8">
-                    <div>
-                        <h3 class="text-lg font-semibold mb-4 text-gray-900 font-outfit">Single Notes</h3>
-                        <div class="grid grid-cols-7 gap-2 mb-4">
-                            <button class="note-btn bg-white border border-gray-300 text-gray-900 py-2 px-3 rounded-md font-medium hover:bg-gray-50 font-outfit" data-note="C4">C</button>
-                            <button class="note-btn bg-gray-100 border border-gray-300 text-gray-900 py-2 px-3 rounded-md font-medium hover:bg-gray-200 font-outfit" data-note="C#4">C#</button>
-                            <button class="note-btn bg-white border border-gray-300 text-gray-900 py-2 px-3 rounded-md font-medium hover:bg-gray-50 font-outfit" data-note="D4">D</button>
-                            <button class="note-btn bg-gray-100 border border-gray-300 text-gray-900 py-2 px-3 rounded-md font-medium hover:bg-gray-200 font-outfit" data-note="D#4">D#</button>
-                            <button class="note-btn bg-white border border-gray-300 text-gray-900 py-2 px-3 rounded-md font-medium hover:bg-gray-50 font-outfit" data-note="E4">E</button>
-                            <button class="note-btn bg-white border border-gray-300 text-gray-900 py-2 px-3 rounded-md font-medium hover:bg-gray-50 font-outfit" data-note="F4">F</button>
-                            <button class="note-btn bg-gray-100 border border-gray-300 text-gray-900 py-2 px-3 rounded-md font-medium hover:bg-gray-200 font-outfit" data-note="F#4">F#</button>
-                        </div>
-                        <div class="grid grid-cols-5 gap-2">
-                            <button class="note-btn bg-white border border-gray-300 text-gray-900 py-2 px-3 rounded-md font-medium hover:bg-gray-50 font-outfit" data-note="G4">G</button>
-                            <button class="note-btn bg-gray-100 border border-gray-300 text-gray-900 py-2 px-3 rounded-md font-medium hover:bg-gray-200 font-outfit" data-note="G#4">G#</button>
-                            <button class="note-btn bg-white border border-gray-300 text-gray-900 py-2 px-3 rounded-md font-medium hover:bg-gray-50 font-outfit" data-note="A4">A</button>
-                            <button class="note-btn bg-gray-100 border border-gray-300 text-gray-900 py-2 px-3 rounded-md font-medium hover:bg-gray-200 font-outfit" data-note="A#4">A#</button>
-                            <button class="note-btn bg-white border border-gray-300 text-gray-900 py-2 px-3 rounded-md font-medium hover:bg-gray-50 font-outfit" data-note="B4">B</button>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h3 class="text-lg font-semibold mb-4 text-gray-900 font-outfit">Chord Selection</h3>
-                        <div class="grid grid-cols-3 gap-2 mb-4">
-                            <button class="note-btn bg-black text-white py-2 px-3 rounded-md font-medium hover:bg-gray-800 font-outfit" data-chord="C">C</button>
-                            <button class="note-btn bg-black text-white py-2 px-3 rounded-md font-medium hover:bg-gray-800 font-outfit" data-chord="Dm">Dm</button>
-                            <button class="note-btn bg-black text-white py-2 px-3 rounded-md font-medium hover:bg-gray-800 font-outfit" data-chord="Em">Em</button>
-                            <button class="note-btn bg-black text-white py-2 px-3 rounded-md font-medium hover:bg-gray-800 font-outfit" data-chord="F">F</button>
-                            <button class="note-btn bg-black text-white py-2 px-3 rounded-md font-medium hover:bg-gray-800 font-outfit" data-chord="G">G</button>
-                            <button class="note-btn bg-black text-white py-2 px-3 rounded-md font-medium hover:bg-gray-800 font-outfit" data-chord="Am">Am</button>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2">
-                            <button class="note-btn bg-gray-800 text-white py-2 px-3 rounded-md font-medium hover:bg-gray-700 font-outfit" data-chord="Cmaj7">Cmaj7</button>
-                            <button class="note-btn bg-gray-800 text-white py-2 px-3 rounded-md font-medium hover:bg-gray-700 font-outfit" data-chord="Dm7">Dm7</button>
-                            <button class="note-btn bg-gray-800 text-white py-2 px-3 rounded-md font-medium hover:bg-gray-700 font-outfit" data-chord="G7">G7</button>
-                        </div>
-                    </div>
-                </div>
+		<div class="device-grid">
+			<!-- Left Control Panel -->
+			<div class="flex flex-col space-y-3">
+				<!-- Soundfont Card -->
+				<div class="sheCard">
+					<div class="sheColumn">
+						<div class="sheCardTitleText">Soundfont</div>
+						<div class="sheColumn gap-2">
+							<div class="sheInput" style="min-width: 200px">
+								<label class="sheLabel" for="soundfontUrl">URL</label>
+								<input class="sheInputInput" type="text" id="soundfontUrl" placeholder="Enter soundfont URL" />
+							</div>
+							<button id="loadBtn" class="sheButton sheBoldButton greedyX">Load</button>
+						</div>
+						<div id="loadingStatus" class="mt-3 text-center text-xs hidden">
+							<div id="spinner" class="sheSpinner">
+								<i class="sheSpinner" -icon class="fas fa-spinner text-gray-600"></i>
+								<span class="ml-1">Loading...</span>
+							</div>
+							<div id="success" class="hidden text-green-600">
+								<i class="fas fa-check-circle"></i>
+								<span class="ml-1">Loaded!</span>
+							</div>
+							<div id="error" class="hidden text-red-600">
+								<i class="fas fa-exclamation-triangle"></i>
+								<span class="ml-1">Error</span>
+							</div>
+						</div>
+					</div>
+				</div>
 
-                <!-- Parameter Controls -->
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-700 font-inter">Velocity:</label>
-                        <input type="range" id="velocitySlider" min="1" max="100" value="70" 
-                               class="w-full h-2 bg-gray-200 rounded-lg cursor-pointer">
-                        <div class="flex justify-between text-sm text-gray-500 mt-1 font-inter">
-                            <span>1</span>
-                            <span id="velocityValue">70</span>
-                            <span>100</span>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-700 font-inter">Pan:</label>
-                        <input type="range" id="panSlider" min="-100" max="100" value="0" 
-                               class="w-full h-2 bg-gray-200 rounded-lg cursor-pointer">
-                        <div class="flex justify-between text-sm text-gray-500 mt-1 font-inter">
-                            <span>L</span>
-                            <span id="panValue">0</span>
-                            <span>R</span>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-700 font-inter">Duration (ms):</label>
-                        <input type="range" id="durationSlider" min="100" max="2000" value="500" 
-                               class="w-full h-2 bg-gray-200 rounded-lg cursor-pointer">
-                        <div class="flex justify-between text-sm text-gray-500 mt-1 font-inter">
-                            <span>100ms</span>
-                            <span id="durationValue">500ms</span>
-                            <span>2s</span>
-                        </div>
-                    </div>
-                </div>
+				<!-- Parameters Card -->
+				<div id="parametersCard" class="sheCard hidden">
+					<div class="sheColumn">
+						<div class="sheCardTitleText">Parameters</div>
+						<div class="sheColumn gap-2">
+							<!-- VELOCITY SLIDER -->
+							<div class="sheSlider">
+								<div class="sheSliderTop">
+									<label for="velocitySlider" class="sheLabel"> VELOCITY </label>
+									<span id="velocityValue" class="sheSliderValue">70</span>
+								</div>
+								<div class="sheSliderBottom">
+									<span class="sheSliderBoundary">1</span>
+									<input id="velocitySlider" type="range" value="70" min="1" max="100" class="sheSliderInput" />
+									<span class="sheSliderBoundary">100</span>
+								</div>
+							</div>
 
-                <!-- Chord Options -->
-                <div class="grid md:grid-cols-2 gap-6 mb-8">
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-700 font-inter">Voicing:</label>
-                        <select id="voicingSelect" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-inter text-gray-900 bg-white">
-                            <option value="open">Open</option>
-                            <option value="closed">Closed</option>
-                            <option value="drop2">Drop 2</option>
-                            <option value="drop3">Drop 3</option>
-                            <option value="drop2and4">Drop 2&4</option>
-                            <option value="rootless">Rootless</option>
-                            <option value="spread">Spread</option>
-                            <option value="cluster">Cluster</option>
-                            <option value="shell">Shell</option>
-                            <option value="pianistic">Pianistic</option>
-                            <option value="guitaristic">Guitaristic</option>
-                            <option value="orchestral">Orchestral</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-gray-700 font-inter">Octave:</label>
-                        <select id="octaveSelect" 
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent font-inter text-gray-900 bg-white">
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4" selected>4</option>
-                            <option value="5">5</option>
-                            <option value="6">6</option>
-                        </select>
-                    </div>
-                </div>
+							<!-- PAN SLIDER -->
+							<div class="sheSlider">
+								<div class="sheSliderTop">
+									<label for="panSlider" class="sheLabel"> PAN </label>
+									<span id="panValue" class="sheSliderValue">0</span>
+								</div>
+								<div class="sheSliderBottom">
+									<span class="sheSliderBoundary">-100</span>
+									<input id="panSlider" type="range" value="0" min="-100" max="100" class="sheSliderInput" />
+									<span class="sheSliderBoundary">100</span>
+								</div>
+							</div>
 
-                <!-- Play Controls -->
-                <div class="flex flex-wrap justify-center gap-4">
-                    <button id="playNoteBtn" disabled
-                            class="px-6 py-3 bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors font-outfit">
-                        <i class="fas fa-play mr-2"></i>
-                        Play Selected Note
-                    </button>
-                    
-                    <button id="playChordBtn" disabled
-                            class="px-6 py-3 bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors font-outfit">
-                        <i class="fas fa-play mr-2"></i>
-                        Play Selected Chord
-                    </button>
-                    
-                    <button id="stopAllBtn" disabled
-                            class="px-6 py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors font-outfit">
-                        <i class="fas fa-stop mr-2"></i>
-                        Stop All
-                    </button>
-                </div>
-            </div>
-        </section>
+							<!-- DURATION SLIDER -->
+							<div class="sheSlider">
+								<div class="sheSliderTop">
+									<label for="durationSlider" class="sheLabel"> DURATION (MS) </label>
+									<span id="durationValue" class="sheSliderValue">500</span>
+								</div>
+								<div class="sheSliderBottom">
+									<span class="sheSliderBoundary">100</span>
+									<input id="durationSlider" type="range" value="500" min="100" max="2000" class="sheSliderInput" />
+									<span class="sheSliderBoundary">2000</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 
-        <!-- API Showcase Section -->
-        <section id="showcaseSection" class="hidden mt-8">
-            <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-8">
-                <h2 class="text-2xl font-bold mb-6 text-center text-black font-outfit">API Showcase</h2>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <button id="demoSequenceBtn" disabled
-                            class="px-6 py-4 bg-black hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors font-outfit">
-                        <i class="fas fa-music mr-2"></i>
-                        Play Demo Sequence
-                    </button>
-                    
-                    <button id="chordProgressionBtn" disabled
-                            class="px-6 py-4 bg-gray-800 hover:bg-gray-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-md font-medium transition-colors font-outfit">
-                        <i class="fas fa-play-circle mr-2"></i>
-                        Chord Progression Demo
-                    </button>
-                </div>
-            </div>
-        </section>
+				<!-- Chord Settings Card -->
+				<div id="chordCard" class="sheCard hidden">
+					<div class="sheColumn gap-4">
+						<div class="sheCardTitleText">Chord Settings</div>
+						<div class="sheColumn gap-3">
+							<div>
+								<label class="sheLabel" for="voicingSelect">Voicing</label>
+								<div class="sheSelect">
+									<select id="voicingSelect">
+										<option value="open">Open</option>
+										<option value="closed">Closed</option>
+										<option value="drop2">Drop 2</option>
+										<option value="drop3">Drop 3</option>
+										<option value="rootless">Rootless</option>
+										<option value="shell">Shell</option>
+									</select>
+								</div>
+							</div>
+							<div>
+								<label class="sheLabel" for="octaveSelect">Octave</label>
+								<div class="sheSelect">
+									<select id="octaveSelect">
+										<option value="2">2</option>
+										<option value="3">3</option>
+										<option value="4" selected>4</option>
+										<option value="5">5</option>
+										<option value="6">6</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-        <!-- Footer -->
-        <footer class="text-center mt-12 text-gray-500">
-            <p class="font-inter">&copy; 2024 Wembley - Built with ❤️ for the web audio community</p>
-        </footer>
-    </div>
+			<!-- Main Piano Interface -->
+			<div id="pianoSection" class="piano-container hidden">
+				<div class="mb-4">
+					<div class="sheCardTitleText mb-2">Piano Keyboard</div>
+					<div class="text-xs text-gray-600 mb-4">
+						Use your computer keyboard to play:
+						<span class="font-mono bg-gray-100 px-1 rounded">1-9</span>,
+						<span class="font-mono bg-gray-100 px-1 rounded">Q-P</span>,
+						<span class="font-mono bg-gray-100 px-1 rounded">A-L</span>,
+						<span class="font-mono bg-gray-100 px-1 rounded">Z-M</span>
+					</div>
+				</div>
 
-    <!-- Scripts -->
-    <script type="module" src="demo.js"></script>
-</body>
+				<!-- Octave 5 -->
+				<div class="octave-row">
+					<span class="octave-label">5</span>
+					<div class="piano-key white" data-note="C5" data-key="1">
+						<span class="key-label">1</span>
+					</div>
+					<div class="piano-key black" data-note="C#5" data-key="!">
+						<span class="key-label">!</span>
+					</div>
+					<div class="piano-key white" data-note="D5" data-key="2">
+						<span class="key-label">2</span>
+					</div>
+					<div class="piano-key black" data-note="D#5" data-key="@">
+						<span class="key-label">@</span>
+					</div>
+					<div class="piano-key white" data-note="E5" data-key="3">
+						<span class="key-label">3</span>
+					</div>
+					<div class="piano-key white" data-note="F5" data-key="4">
+						<span class="key-label">4</span>
+					</div>
+					<div class="piano-key black" data-note="F#5" data-key="$">
+						<span class="key-label">$</span>
+					</div>
+					<div class="piano-key white" data-note="G5" data-key="5">
+						<span class="key-label">5</span>
+					</div>
+					<div class="piano-key black" data-note="G#5" data-key="%">
+						<span class="key-label">%</span>
+					</div>
+					<div class="piano-key white" data-note="A5" data-key="6">
+						<span class="key-label">6</span>
+					</div>
+					<div class="piano-key black" data-note="A#5" data-key="^">
+						<span class="key-label">^</span>
+					</div>
+					<div class="piano-key white" data-note="B5" data-key="7">
+						<span class="key-label">7</span>
+					</div>
+					<div class="piano-key white" data-note="C6" data-key="8">
+						<span class="key-label">8</span>
+					</div>
+					<div class="piano-key black" data-note="C#6" data-key="*">
+						<span class="key-label">*</span>
+					</div>
+					<div class="piano-key white" data-note="D6" data-key="9">
+						<span class="key-label">9</span>
+					</div>
+				</div>
+
+				<!-- Octave 4 -->
+				<div class="octave-row">
+					<span class="octave-label">4</span>
+					<div class="piano-key white" data-note="C4" data-key="q">
+						<span class="key-label">Q</span>
+					</div>
+					<div class="piano-key black" data-note="C#4" data-key="w">
+						<span class="key-label">W</span>
+					</div>
+					<div class="piano-key white" data-note="D4" data-key="e">
+						<span class="key-label">E</span>
+					</div>
+					<div class="piano-key black" data-note="D#4" data-key="r">
+						<span class="key-label">R</span>
+					</div>
+					<div class="piano-key white" data-note="E4" data-key="t">
+						<span class="key-label">T</span>
+					</div>
+					<div class="piano-key white" data-note="F4" data-key="y">
+						<span class="key-label">Y</span>
+					</div>
+					<div class="piano-key black" data-note="F#4" data-key="u">
+						<span class="key-label">U</span>
+					</div>
+					<div class="piano-key white" data-note="G4" data-key="i">
+						<span class="key-label">I</span>
+					</div>
+					<div class="piano-key black" data-note="G#4" data-key="o">
+						<span class="key-label">O</span>
+					</div>
+					<div class="piano-key white" data-note="A4" data-key="p">
+						<span class="key-label">P</span>
+					</div>
+					<div class="piano-key white" data-note="B4" data-key="[">
+						<span class="key-label">[</span>
+					</div>
+					<div class="piano-key white" data-note="C5" data-key="]">
+						<span class="key-label">]</span>
+					</div>
+				</div>
+
+				<!-- Octave 3 -->
+				<div class="octave-row">
+					<span class="octave-label">3</span>
+					<div class="piano-key white" data-note="C3" data-key="a">
+						<span class="key-label">A</span>
+					</div>
+					<div class="piano-key black" data-note="C#3" data-key="s">
+						<span class="key-label">S</span>
+					</div>
+					<div class="piano-key white" data-note="D3" data-key="d">
+						<span class="key-label">D</span>
+					</div>
+					<div class="piano-key black" data-note="D#3" data-key="f">
+						<span class="key-label">F</span>
+					</div>
+					<div class="piano-key white" data-note="E3" data-key="g">
+						<span class="key-label">G</span>
+					</div>
+					<div class="piano-key white" data-note="F3" data-key="h">
+						<span class="key-label">H</span>
+					</div>
+					<div class="piano-key black" data-note="F#3" data-key="j">
+						<span class="key-label">J</span>
+					</div>
+					<div class="piano-key white" data-note="G3" data-key="k">
+						<span class="key-label">K</span>
+					</div>
+					<div class="piano-key black" data-note="G#3" data-key="l">
+						<span class="key-label">L</span>
+					</div>
+					<div class="piano-key white" data-note="A3" data-key=";">
+						<span class="key-label">;</span>
+					</div>
+					<div class="piano-key white" data-note="B3" data-key="'">
+						<span class="key-label">'</span>
+					</div>
+				</div>
+
+				<!-- Octave 2 -->
+				<div class="octave-row">
+					<span class="octave-label">2</span>
+					<div class="piano-key white" data-note="C2" data-key="z">
+						<span class="key-label">Z</span>
+					</div>
+					<div class="piano-key black" data-note="C#2" data-key="x">
+						<span class="key-label">X</span>
+					</div>
+					<div class="piano-key white" data-note="D2" data-key="c">
+						<span class="key-label">C</span>
+					</div>
+					<div class="piano-key black" data-note="D#2" data-key="v">
+						<span class="key-label">V</span>
+					</div>
+					<div class="piano-key white" data-note="E2" data-key="b">
+						<span class="key-label">B</span>
+					</div>
+					<div class="piano-key white" data-note="F2" data-key="n">
+						<span class="key-label">N</span>
+					</div>
+					<div class="piano-key black" data-note="F#2" data-key="m">
+						<span class="key-label">M</span>
+					</div>
+					<div class="piano-key white" data-note="G2" data-key=",">
+						<span class="key-label">,</span>
+					</div>
+					<div class="piano-key black" data-note="G#2" data-key=".">
+						<span class="key-label">.</span>
+					</div>
+					<div class="piano-key white" data-note="A2" data-key="/">
+						<span class="key-label">/</span>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Scripts -->
+		<script type="module" src="demo.js"></script>
+	</body>
 </html>

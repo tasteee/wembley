@@ -1,0 +1,112 @@
+.sheRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.sheRow.sheCenterX {
+  justify-content: center;
+}
+
+.sheRow.sheStartX {
+  justify-content: flex-start;
+}
+
+.sheRow.sheEndX {
+  justify-content: flex-end;
+}
+
+.sheRow.sheBetweenX {
+  justify-content: space-between;
+}
+
+.sheRow.sheEvenX {
+  justify-content: space-evenly;
+}
+
+.sheRow.sheCenterY {
+  align-items: center;
+}
+
+.sheRow.sheStartY {
+  align-items: flex-start;
+}
+
+.sheRow.sheEndY {
+  align-items: flex-end;
+}
+
+.sheRow.sheBetweenY {
+  align-items: stretch;
+}
+
+.sheRow.sheEvenY {
+  /* No direct CSS equivalent for "evenly" on align-items, using center as fallback */
+  align-items: center;
+}
+
+.sheColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.sheColumn.sheCenterX {
+  align-items: center;
+}
+
+.sheColumn.sheStartX {
+  align-items: flex-start;
+}
+
+.sheColumn.sheEndX {
+  align-items: flex-end;
+}
+
+.sheColumn.sheBetweenX {
+  align-items: stretch;
+}
+
+.sheColumn.sheEvenX {
+  /* No direct CSS equivalent for "evenly" on align-items, using center as fallback */
+  align-items: center;
+}
+
+.sheColumn.sheCenterY {
+  justify-content: center;
+}
+
+.sheColumn.sheStartY {
+  justify-content: flex-start;
+}
+
+.sheColumn.sheEndY {
+  justify-content: flex-end;
+}
+
+.sheColumn.sheBetweenY {
+  justify-content: space-between;
+}
+
+.sheColumn.sheEvenY {
+  justify-content: space-evenly;
+}
+
+.sheWrap {
+  flex-wrap: wrap;
+}
+
+.sheWrapText {
+  white-space: inherit;
+}
+
+.sheNoWrapText {
+  white-space: nowrap;
+}
+
+/* Full width. */
+.greedyX {
+  width: 100%;
+}
+
+.greedyY {
+  height: 100%;
+}

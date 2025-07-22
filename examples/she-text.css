@@ -1,0 +1,369 @@
+:root {
+	--fontDM: 'DM Sans', sans-serif;
+	--fontMain: var(--fontDM);
+}
+
+@font-face {
+	font-family: 'AlphazetVariable';
+	src: url('./public/fonts/AlphazetVariable.woff2') format('woff2'),
+		url('./public/fonts/AlphazetVariable.ttf') format('truetype');
+	font-weight: 100 900;
+	font-display: swap;
+}
+
+/* ITALIC style */
+@font-face {
+	font-family: 'AlphazetVariable';
+	src: url('./public/fonts/AlphazetVariable.woff2') format('woff2'),
+		url('./public/fonts/AlphazetVariable.ttf') format('truetype');
+	font-weight: 100 900;
+	font-style: italic;
+	font-display: swap;
+	font-variation-settings: 'ital' 1;
+}
+
+@font-face {
+	font-family: 'Alphazet';
+	src: url('./public/fonts/AlphazetVariable.woff2') format('woff2'),
+		url('./public/fonts/AlphazetVariable.ttf') format('truetype');
+	font-weight: 100 900;
+}
+
+.fontDM {
+	font-family: 'DM Sans', sans-serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	font-variation-settings: 'wght' 400, 'ital' 0;
+}
+
+.fontA {
+	font-family: 'AlphazetVariable', 'Inter', 'Geist', sans-serif;
+}
+
+.fontOutfit {
+	font-family: 'Outfit', sans-serif;
+}
+
+.fontInter {
+	font-family: 'Inter', 'Inter', sans-serif;
+}
+
+/* Typography Scale - Based on 15px body text preference */
+/* Vertical rhythm with consistent baseline of 4px (0.25rem) */
+
+.massiveText {
+	font-size: clamp(4rem, 12vw, 8rem); /* 64px - 128px responsive */
+	line-height: 1.05;
+	letter-spacing: -0.03em;
+	font-weight: 800;
+	color: var(--color-gray-800);
+	font-family: var(--fontMain);
+}
+
+.hugeText {
+	font-size: clamp(2.5rem, 8vw, 4rem); /* 40px - 64px responsive */
+	line-height: 1.1;
+	letter-spacing: -0.025em;
+	font-weight: 700;
+	color: var(--color-gray-800);
+	font-family: var(--fontMain);
+}
+
+.titleText {
+	font-size: 2rem; /* 32px - largest for non-hero content */
+	line-height: 1.25; /* 40px line height = 10 * 4px baseline */
+	letter-spacing: -0.02em;
+	font-weight: 600;
+	color: var(--color-gray-800);
+	font-family: var(--fontMain);
+}
+
+.subtitleText {
+	font-size: 1.5rem; /* 24px - secondary headings */
+	line-height: 1.33; /* 32px line height = 8 * 4px baseline */
+	letter-spacing: -0.015em;
+	font-weight: 500;
+	color: var(--color-gray-700);
+	font-family: var(--fontMain);
+}
+
+.bigText {
+	font-size: 1.125rem; /* 18px - largest for app UI */
+	line-height: 1.33; /* 24px line height = 6 * 4px baseline */
+	letter-spacing: -0.01em;
+	font-weight: 500;
+	color: var(--color-gray-700);
+	font-family: var(--fontMain);
+}
+
+.mediumText {
+	font-size: 0.9375rem; /* 15px - your preferred body size */
+	line-height: 1.47; /* 22px line height = 5.5 * 4px baseline */
+	letter-spacing: 0;
+	font-weight: 400;
+	color: var(--color-gray-700);
+	font-family: var(--fontMain);
+}
+
+.regularText {
+	font-size: 0.9375rem; /* 15px - your preferred body text */
+	line-height: 1.47; /* 22px line height for good readability */
+	letter-spacing: 0;
+	font-weight: 400;
+	color: var(--color-gray-600);
+	font-family: var(--fontMain);
+}
+
+.smallText {
+	font-size: 0.8125rem; /* 13px - your UI element preference */
+	line-height: 1.38; /* 18px line height = 4.5 * 4px baseline */
+	letter-spacing: 0;
+	font-weight: 400;
+	color: var(--color-gray-600);
+	font-family: var(--fontMain);
+}
+
+.captionText {
+	font-size: 0.75rem; /* 12px - small labels and captions */
+	line-height: 1.33; /* 16px line height = 4 * 4px baseline */
+	letter-spacing: 0.01em;
+	font-weight: 400;
+	color: var(--color-gray-500);
+	font-family: var(--fontMain);
+}
+
+/* Legacy classes for backward compatibility */
+.sheTitleText {
+	font-size: var(--font-5xl);
+	line-height: 1.1;
+	letter-spacing: -0.025em;
+	font-weight: 666;
+	color: var(--color-gray-800);
+}
+
+.sheSubtitleText {
+	font-size: var(--font-4xl);
+	line-height: 1.2;
+	letter-spacing: -0.025em;
+	color: var(--color-gray-700);
+}
+
+.sheHeroText {
+	/* font-size: 86px;
+	letter-spacing: 0;
+	font-variation-settings: 'wght' 500, 'ital' 0;
+	color: var(--color-gray-800); */
+	font-variation-settings: 'wght' 975, 'ital' 0;
+	font-size: 57px;
+	letter-spacing: -1px;
+	color: var(--color-gray-800);
+}
+
+.sheBodyText {
+	font-size: var(--font-2xl);
+	line-height: 1.4;
+	font-weight: 400;
+	color: var(--color-gray-700);
+}
+
+.sheBodyTextAlt {
+	font-size: var(--font-base);
+	line-height: 1.3;
+	color: var(--color-gray-700);
+}
+
+.sheExtraThin {
+	font-weight: 100;
+}
+
+.sheThin {
+	font-weight: 200;
+}
+
+.sheLight {
+	font-weight: 300;
+}
+
+.sheKindabold {
+	font-weight: 500;
+}
+
+.sheSemibold {
+	font-weight: 600;
+}
+
+.sheBold {
+	font-weight: 700;
+}
+
+.sheExtrabold {
+	font-weight: 800;
+}
+
+.sheBlackbold {
+	font-weight: 900;
+}
+
+.sheItalic {
+	font-variation-settings: 'ital' 1;
+}
+
+.sheCaptionText {
+	font-size: var(--font-xs);
+	line-height: 1.4;
+	letter-spacing: 0;
+	font-family: var(--fontBody);
+	font-weight: 400;
+}
+
+.sheTinyText {
+	font-size: 0.625rem;
+	/* 10px */
+	line-height: 1.2;
+	letter-spacing: 0;
+	font-family: var(--fontBody);
+	font-weight: 400;
+}
+
+.sheMassiveText {
+	font-size: clamp(4rem, 12vw, 8rem);
+	line-height: 1.1;
+	letter-spacing: -11px;
+	font-family: var(--fontMain);
+	font-weight: 1000;
+	position: relative;
+	color: var(--color-gray-800);
+	position: relative;
+}
+
+.sheMassiveText.isBaselined::before {
+	content: '';
+	position: absolute;
+	top: 0.5rem;
+	left: 0;
+	width: 100%;
+	height: 30px;
+	border-top: var(--color-gray-400) 1px dashed;
+	border-bottom: var(--color-gray-400) 2px dashed;
+	z-index: 99;
+}
+
+.sheMassiveText.isBaselined::after {
+	content: '';
+	position: absolute;
+	bottom: 0.5rem;
+	left: 0;
+	width: 100%;
+	height: 30px;
+	border-top: var(--color-gray-400) 2px dashed;
+	border-bottom: var(--color-gray-400) 1px dashed;
+	z-index: 99;
+}
+
+.sheHugeText {
+	font-size: clamp(3rem, 8vw, 6rem);
+	/* Responsive between 48px and 96px */
+	line-height: 1.1;
+	letter-spacing: -0.025em;
+	font-family: var(--fontBody);
+	font-weight: 500;
+	color: var(--color-gray-700);
+	position: relative;
+}
+
+.sheSourceText {
+	font-variation-settings: 'wght' 359, 'ital' 0;
+	font-size: 40px;
+	letter-spacing: 0.5px;
+	color: var(--color-gray-800);
+}
+
+html,
+body {
+	font-family: var(--fontMain);
+	color: var(--color-gray-600);
+}
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+	vertical-align: baseline;
+}

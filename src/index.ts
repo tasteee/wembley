@@ -1,4 +1,4 @@
-import { createWembley } from './wembley.js'
+import { createWembley } from './refactor/wembley.js'
 
 // Create and export the main wembley instance
 const wembley = createWembley()
@@ -11,20 +11,18 @@ export { wembley }
 
 // Export types for consumers
 export type {
-  VoicingT,
-  VoicingFunctionT,
-  ConfigT,
-  SoundfontLoadConfigT,
-  InstrumentConfigT,
-  NewSoundfontLoadConfigT,
-  InitializeConfigT,
-  NoteT,
-  NotesT,
-  ChordT,
-  PlayingNoteT,
-  PlayingNotesT,
-  InstrumentT,
-  GearT,
-  PlayerT,
-  WembleyT
+	VoicingT,
+	VoicingFunctionT,
+	ConfigT,
+	SoundfontLoadConfigT,
+	InstrumentConfigT,
+	NewSoundfontLoadConfigT,
+	InitializeConfigT,
+	NoteDesignerT as NoteT,
+	NotesDesignerT as NotesT,
+	ChordDesignerT as ChordT,
+	NoteInstanceT as PlayingNoteT,
+	InstrumentT,
+	GearT,
+	WembleyT
 } from './types.js'
