@@ -129,7 +129,7 @@ export type NotesDesignerT = {
 	release: (milliseconds: number) => NotesDesignerT
 	gain: (gain: number) => NotesDesignerT
 	pan: (pan: number) => NotesDesignerT
-	play: () => NoteInstanceMap
+	play: () => NoteInstanceT[]
 	stop: (note?: string) => void
 }
 
@@ -157,7 +157,7 @@ export type ChordDesignerT = {
 	release: (milliseconds: number) => ChordDesignerT
 	gain: (gain: number) => ChordDesignerT
 	pan: (pan: number) => ChordDesignerT
-	play: () => NoteInstanceMap
+	play: () => NoteInstanceT[]
 	stop: () => void
 }
 
@@ -204,6 +204,7 @@ type StopFeaturesT = {
 	duration: (milliseconds: number) => StopFeaturesT
 	gain: (gain: number) => StopFeaturesT
 	pan: (pan: number) => StopFeaturesT
+	stop: () => void
 }
 
 type NoteInstanceMap = {
@@ -264,7 +265,7 @@ type InstrumentSettingsT = {
 	minVelocity: number
 	maxVelocity: number
 	duration: number
-	soundfont: AudioVoiceT
+	soundfont: any // The actual soundfont object
 	originalConfig: NewSoundfontLoadConfigT
 }
 
@@ -279,7 +280,7 @@ export type InstrumentT = {
 	// begin designing a chord playback.
 	chord: (chord: string) => ChordDesignerT
 	// stop one, many, or all notes that the instrument is playing.
-	stop: (target?: StopTargetT) => NoteInstanceMap
+	stop: (target?: StopTargetT) => any
 }
 
 export type GearT = Record<string, InstrumentT> & {
@@ -287,7 +288,8 @@ export type GearT = Record<string, InstrumentT> & {
 	// build an instrument object centered around the soundfont.
 	// this will return the instrument but also apply it to gear
 	loadInstrument: (config: NewSoundfontLoadConfigT) => Promise<InstrumentT>
-	stop: (target?: StopTargetT) => NoteInstanceMap
+	load: (config: NewSoundfontLoadConfigT) => Promise<InstrumentT>
+	stop: (target?: StopTargetT) => any
 }
 
 export type WembleyT = {

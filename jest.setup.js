@@ -20,25 +20,6 @@ global.AudioContext = class MockAudioContext {
   resume() { return Promise.resolve() }
 }
 
-// Mock soundfont-player
-jest.mock('soundfont-player', () => ({
-  __esModule: true,
-  default: {
-    instrument: (context, instrumentName, options) => {
-      console.log(`[Mock] Loading soundfont: ${instrumentName}`)
-      return Promise.resolve({
-        play: (note, time, options) => {
-          console.log(`[Mock] Playing soundfont note: ${note} at ${time}`)
-          return {
-            stop: (time) => console.log(`[Mock] Stopping soundfont note at ${time}`)
-          }
-        },
-        stop: () => console.log(`[Mock] Stopping all soundfont notes`)
-      })
-    }
-  }
-}))
-
 // Mock Tone.js completely for tests
 jest.mock('tone', () => ({
   getContext: () => ({ 

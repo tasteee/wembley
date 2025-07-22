@@ -1,40 +1,98 @@
-// TODO: Replace instrument.ts with this file.
+import { NoteDesigner } from './note-designer.js'
+import { NotesDesigner } from './notes-designer.js'
+import { ChordDesigner } from './chord-designer.js'
+import { InstrumentT, StopTargetT, InstrumentConfigT, NewSoundfontLoadConfigT } from '../types.js'
+import { audioEngine } from './audio-engine.js'
+import type { AudioSynthT, AudioFontT } from './audio-engine.js'
 
-import { NoteDesigner } from './note-designer'
-import { BaseSettingsT, StopTargetT } from '../types'
+type InstrumentLoadResultT = {
+	name: string
+	soundfont: AudioFontT
+	config: InstrumentConfigT
+}
 
-export class Instrument {
+type InstrumentSettingsT = {
+	id: string
+	name: string
+	url: string
+	pan: number
+	gain: number
+	velocity: number
+	minVelocity: number
+	maxVelocity: number
+	duration: number
+	soundfont: any
+	originalConfig: NewSoundfontLoadConfigT
+}
+
+export class Instrument implements InstrumentT {
 	id = crypto.randomUUID()
 	parent = null
 	name = ''
 
-	originalConfig = {}
-	soundfont = null
-	settings = {} as BaseSettingsT
+	originalConfig = {} as InstrumentConfigT
+	soundfont = null as AudioFontT | null
+	synth = null as AudioSynthT | null
+	settings = {} as InstrumentSettingsT
 
-	constructor(loadResult, parent) {
+	constructor(loadResult: InstrumentLoadResultT, parent: any) {
 		this.id = crypto.randomUUID()
 		this.parent = parent
 		this.name = loadResult.name
 		this.soundfont = loadResult.soundfont
 		this.originalConfig = loadResult.config
-		this.settings.minVelocity = loadResult.config.minVelocity
-		this.settings.maxVelocity = loadResult.config.maxVelocity
-		this.settings.velocity = loadResult.config.velocity
-		this.settings.gain = loadResult.config.gain
-		this.settings.pan = loadResult.config.pan
+		
+		// Initialize settings with defaults and config overrides
+		this.settings = {
+			id: this.id,
+			name: loadResult.name,
+			url: loadResult.config.url,
+			minVelocity: loadResult.config.minVelocity || parent?.settings?.minVelocity || 60,
+			maxVelocity: loadResult.config.maxVelocity || parent?.settings?.maxVelocity || 80,
+			velocity: parent?.settings?.velocity || 75,
+			gain: loadResult.config.gain || parent?.settings?.gain || 50,
+			pan: loadResult.config.pan || parent?.settings?.pan || 0,
+			duration: 1000, // Default duration
+			soundfont: loadResult.soundfont,
+			originalConfig: { [loadResult.name]: loadResult.config }
+		}
+
+		// Create synth for this instrument
+		this.synth = audioEngine.createSynth({ 
+			soundfont: this.soundfont, 
+			config: this.settings 
+		})
 	}
 
-	note = (note: string | number) => {
-		return new NoteDesigner(note)
+	note = (note: string) => {
+		return new NoteDesigner({ note, instrument: this })
+	}
+
+	notes = (notes: string[]) => {
+		return new NotesDesigner({ notes, instrument: this })
+	}
+
+	chord = (chord: string) => {
+		return new ChordDesigner({ chord, instrument: this })
 	}
 
 	// stop() // stop all notes played by instrument
 	// stop('C3') // stop one note played by instrument
 	// stop(['C3', 'D3']) // stop multiple notes played by instrument
 	// stop('Cmin', 3) // stop multiple notes played by instrument
-	stop = (target: StopTargetT, octave?: number) => {
+	stop = (target?: StopTargetT): any => {
 		console.log(`[Instrument.stop target]:`, target)
-		// TODO...
+		if (!this.synth) return []
+
+		if (!target) {
+			// Stop all notes from this instrument
+			this.synth.stopAllNotes()
+			return []
+		}
+
+		// TODO: Implement selective stopping based on target
+		// For now, just stop all notes
+		this.synth.stopAllNotes()
+		return []
 	}
 }
