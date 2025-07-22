@@ -1,6 +1,6 @@
 import { Chord } from 'tonal'
 import { NotesDesigner } from './notes-designer.js'
-import type { NoteInstanceT, VoicingT, VoicingFunctionT } from '../types.js'
+import type { NoteInstanceT, VoicingT, VoicingFunctionT } from './types.js'
 
 type ChordDesignerArgsT = {
 	chord: string

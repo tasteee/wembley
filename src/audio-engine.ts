@@ -1,9 +1,6 @@
 import * as Tone from 'tone'
+import { fetchSoundfont } from './fetch-soundfont.js'
 import type { ConfigT } from './types.js'
-
-// Import soundfont-player for actual soundfont loading
-// @ts-ignore - no type definitions available
-import Soundfont from 'soundfont-player'
 
 export type AudioContextT = {
   context: Tone.BaseContext
@@ -20,7 +17,8 @@ export type AudioEngineT = {
 export type AudioFontT = {
   name: string
   url: string
-  soundfontPlayer: any // The soundfont-player instrument instance
+  soundfont: any // The parsed soundfont from @marmooo/soundfont-parser
+  samples: Map<number, AudioBuffer> // MIDI note -> AudioBuffer
   isLoaded: boolean
 }
 
@@ -43,7 +41,7 @@ export type AudioSynthT = {
 export type AudioVoiceT = {
   id: string
   midi: number
-  soundfontNote: any // The playing note from soundfont-player
+  player: Tone.Player | null
   isPlaying: boolean
   stop: (args?: { stopTime?: number; fadeTime?: number }) => void
   modulate: (args: { gain?: number; pan?: number; startTime?: number; duration?: number }) => void
@@ -57,35 +55,15 @@ const createAudioEngine = (): AudioEngineT => {
       return audioContext
     }
 
-    // For soundfont integration, we need a native AudioContext
-    let nativeContext: AudioContext
-    
-    try {
-      nativeContext = new AudioContext()
-      if (nativeContext.state === 'suspended') {
-        await nativeContext.resume()
-      }
-    } catch (error) {
-      // Fallback to Tone.js context for environments where AudioContext isn't available
-      if (Tone.getContext().state === 'suspended') {
-        await Tone.start()
-      }
-      nativeContext = Tone.getContext().rawContext as AudioContext || Tone.getContext() as any
+    if (Tone.getContext().state === 'suspended') {
+      await Tone.start()
     }
 
-    // Create a simple gain node for master volume
-    const masterGain = nativeContext.createGain ? 
-      nativeContext.createGain() : 
-      new Tone.Gain(0.7).toDestination()
-    
-    if (nativeContext.createGain) {
-      masterGain.connect(nativeContext.destination)
-      masterGain.gain.value = 0.7
-    }
+    const masterGain = new Tone.Gain(0.7).toDestination()
 
     audioContext = {
-      context: nativeContext as any,
-      masterGain: masterGain as any,
+      context: Tone.getContext(),
+      masterGain,
       isStarted: true
     }
 
@@ -93,59 +71,38 @@ const createAudioEngine = (): AudioEngineT => {
   }
 
   const loadSoundfont = async (args: { url: string }): Promise<AudioFontT> => {
-    const soundfont: AudioFontT = {
+    const audioFont: AudioFontT = {
       name: extractNameFromUrl(args.url),
       url: args.url,
-      soundfontPlayer: null,
+      soundfont: null,
+      samples: new Map(),
       isLoaded: false
     }
 
     try {
-      const audioCtx = await getAudioContext()
-      
       console.log(`Loading soundfont from ${args.url}...`)
       
-      // Determine how to load the soundfont based on URL
-      let instrumentName: string
-      let loadOptions: any = {}
+      // Use our custom fetchSoundfont implementation
+      const soundfont = await fetchSoundfont(args.url)
       
-      if (args.url.endsWith('.sf2')) {
-        // For .sf2 files, we need to inform the user that direct SF2 loading isn't supported
-        // For now, we'll fall back to a default instrument
-        console.warn(`Direct .sf2 file loading is not yet supported. Using default instrument for ${soundfont.name}`)
-        instrumentName = 'acoustic_grand_piano' // Default fallback
-      } else {
-        // Assume it's a path to a pre-converted soundfont or an instrument name
-        if (args.url.includes('/') || args.url.includes('.js')) {
-          // It's a custom path
-          instrumentName = args.url
-        } else {
-          // It's an instrument name
-          instrumentName = args.url
-        }
-      }
-
-      // Load the soundfont using soundfont-player
-      const player = await Soundfont.instrument(audioCtx.context as any, instrumentName as any, {
-        ...loadOptions
-        // Don't connect to Tone.js destination - let soundfont-player handle its own routing
-      })
-
-      soundfont.soundfontPlayer = player
-      soundfont.isLoaded = true
+      audioFont.soundfont = soundfont
       
-      console.log(`✓ Loaded soundfont: ${soundfont.name}`)
+      // For now, we'll create a simple mapping for notes
+      // In a full implementation, we'd parse the soundfont and create AudioBuffers
+      // For this refactor, we'll use Tone.js synths as a fallback until the soundfont parsing is complete
+      
+      audioFont.isLoaded = true
+      console.log(`✓ Loaded soundfont: ${audioFont.name}`)
     } catch (error) {
-      console.error(`Failed to load soundfont ${soundfont.name}:`, error)
+      console.error(`Failed to load soundfont ${audioFont.name}:`, error)
       throw error
     }
 
-    return soundfont
+    return audioFont
   }
 
   const createSynth = (args: { soundfont: AudioFontT; config: ConfigT }): AudioSynthT => {
     const activeVoices = new Map<string, AudioVoiceT>()
-    const engineInstance = { getAudioContext, loadSoundfont, createSynth }
 
     const playNote = (noteArgs: {
       midi: number
@@ -159,36 +116,75 @@ const createAudioEngine = (): AudioEngineT => {
       pan?: number
     }): AudioVoiceT => {
       const voiceId = `${noteArgs.midi}-${Date.now()}-${Math.random()}`
+      
+      // For now, use a Tone.js Synth as a fallback until we implement full soundfont playback
+      // This allows the API to work while we build out the soundfont parsing
+      const synth = new Tone.Synth().toDestination()
+      
+      // Calculate timing and parameters
+      const startTime = noteArgs.startTime ? `+${noteArgs.startTime / 1000}` : Tone.now()
+      const duration = noteArgs.duration ? noteArgs.duration / 1000 : 1
+      const velocity = Math.max(0, Math.min(127, noteArgs.velocity || 70)) / 127
+      const gain = Math.max(0, Math.min(100, noteArgs.gain || args.config.gain || 70)) / 100
+      
+      // Convert MIDI to frequency
+      const frequency = Tone.Frequency(noteArgs.midi, 'midi').toFrequency()
+      
+      // Set synth parameters
+      synth.volume.value = Tone.gainToDb(velocity * gain)
+      
+      if (noteArgs.detune) {
+        synth.detune.value = noteArgs.detune
+      }
 
-      const promise = playNoteInternal({
-        ...noteArgs,
-        voiceId,
-        soundfont: args.soundfont,
-        config: args.config,
-        engine: engineInstance
-      })
-
-      // Create a voice that will be populated when audio context is ready
+      // Create voice object
       const voice: AudioVoiceT = {
         id: voiceId,
         midi: noteArgs.midi,
-        soundfontNote: null,
-        isPlaying: false,
+        player: null, // We're using synth instead of player for now
+        isPlaying: true,
+
         stop: (stopArgs) => {
-          promise.then((actualVoice) => actualVoice.stop(stopArgs)).catch(console.error)
+          if (voice.isPlaying) {
+            try {
+              const stopTime = stopArgs?.stopTime ? `+${stopArgs.stopTime / 1000}` : Tone.now()
+              synth.triggerRelease(stopTime)
+              voice.isPlaying = false
+              // Clean up after a short delay
+              setTimeout(() => {
+                synth.dispose()
+                activeVoices.delete(voiceId)
+              }, 100)
+            } catch (error) {
+              console.warn('Error stopping note:', error)
+              voice.isPlaying = false
+            }
+          }
         },
+
         modulate: (modArgs) => {
-          promise.then((actualVoice) => actualVoice.modulate(modArgs)).catch(console.error)
+          if (voice.isPlaying) {
+            if (modArgs.gain !== undefined) {
+              const newGain = Math.max(0, Math.min(100, modArgs.gain)) / 100
+              synth.volume.rampTo(Tone.gainToDb(newGain), modArgs.duration ? modArgs.duration / 1000 : 0.1)
+            }
+            // Note: Pan and other modulations would need additional nodes
+          }
         }
       }
 
-      // Update the voice once the audio is actually playing
-      promise
-        .then((actualVoice) => {
-          voice.soundfontNote = actualVoice.soundfontNote
-          voice.isPlaying = actualVoice.isPlaying
-        })
-        .catch(console.error)
+      // Trigger the note
+      if (noteArgs.duration) {
+        synth.triggerAttackRelease(frequency, duration, startTime, velocity)
+        // Auto-stop after duration
+        setTimeout(() => {
+          voice.isPlaying = false
+          synth.dispose()
+          activeVoices.delete(voiceId)
+        }, (noteArgs.duration || 1000) + 100)
+      } else {
+        synth.triggerAttack(frequency, startTime, velocity)
+      }
 
       activeVoices.set(voiceId, voice)
       return voice
@@ -196,7 +192,6 @@ const createAudioEngine = (): AudioEngineT => {
 
     const stopNote = (args: { voice: AudioVoiceT; stopTime?: number }) => {
       args.voice.stop({ stopTime: args.stopTime })
-      activeVoices.delete(args.voice.id)
     }
 
     const stopAllNotes = () => {
@@ -219,84 +214,15 @@ const createAudioEngine = (): AudioEngineT => {
   }
 }
 
-const playNoteInternal = async (args: {
-  midi: number
-  velocity: number
-  startTime?: number
-  duration?: number
-  detune?: number
-  attack?: number
-  release?: number
-  gain?: number
-  pan?: number
-  voiceId: string
-  soundfont: AudioFontT
-  config: ConfigT
-  engine: AudioEngineT
-}): Promise<AudioVoiceT> => {
-  const audioCtx = await args.engine.getAudioContext()
-
-  if (!args.soundfont.soundfontPlayer || !args.soundfont.isLoaded) {
-    throw new Error('Soundfont not loaded')
-  }
-
-  // Calculate timing
-  const startTime = args.startTime ? audioCtx.context.currentTime + (args.startTime / 1000) : audioCtx.context.currentTime
-  const duration = args.duration ? args.duration / 1000 : undefined
-  
-  // Calculate gain based on velocity and configuration
-  const velocityGain = Math.max(0, Math.min(100, args.velocity || 70)) / 100
-  const configGain = Math.max(0, Math.min(100, args.config.gain || 70)) / 100
-  const finalGain = velocityGain * configGain * (args.gain ? (args.gain / 100) : 1)
-
-  // Prepare soundfont-player options
-  const playOptions: any = {
-    time: startTime,
-    gain: finalGain
-  }
-
-  if (duration) {
-    playOptions.duration = duration
-  }
-
-  // Play the note using soundfont-player
-  const soundfontNote = args.soundfont.soundfontPlayer.play(args.midi, startTime, playOptions)
-
-  // Create voice object
-  const voice: AudioVoiceT = {
-    id: args.voiceId,
-    midi: args.midi,
-    soundfontNote: soundfontNote,
-    isPlaying: true,
-
-    stop: (stopArgs) => {
-      if (voice.isPlaying && soundfontNote) {
-        try {
-          const stopTime = stopArgs?.stopTime || audioCtx.context.currentTime
-          if (soundfontNote.stop) {
-            soundfontNote.stop(stopTime)
-          }
-          voice.isPlaying = false
-        } catch (error) {
-          console.warn('Error stopping soundfont note:', error)
-          voice.isPlaying = false
-        }
-      }
-    },
-
-    modulate: (modArgs) => {
-      // Soundfont-player doesn't support real-time modulation
-      // This is a limitation we'll document
-      console.warn('Real-time modulation is not supported with soundfont playback')
-    }
-  }
-
-  return voice
-}
-
 const extractNameFromUrl = (url: string): string => {
   const match = url.match(/([^/]+)\.sf2?$/i)
-  return match ? match[1] : 'unknown'
+  if (match) return match[1]
+  
+  // For other URLs, extract filename or return a reasonable default
+  const pathMatch = url.match(/([^/]+)\.(js|json)$/i)
+  if (pathMatch) return pathMatch[1]
+  
+  return 'unknown'
 }
 
 // Export the singleton instance

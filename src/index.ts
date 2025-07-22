@@ -1,4 +1,4 @@
-import { createWembley } from './refactor/wembley.js'
+import { createWembley } from './wembley.js'
 
 // Create and export the main wembley instance
 const wembley = createWembley()

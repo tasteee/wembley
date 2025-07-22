@@ -1,5 +1,5 @@
 import { Frequency } from 'tone'
-import type { NoteInstanceT } from '../types.js'
+import type { NoteInstanceT } from './types.js'
 
 type NotesDesignerArgsT = {
 	notes: (string | number)[]
