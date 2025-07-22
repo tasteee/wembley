@@ -4,8 +4,8 @@ module.exports = {
   testMatch: ['**/test/**/*.test.ts'],
   testPathIgnorePatterns: [
     '/node_modules/',
-    '**/test/**/*.spec.ts', // Ignore Playwright spec files
-    '**/browser.spec.ts'    // Specifically ignore browser tests
+    '.*\\.spec\\.ts$', // Ignore Playwright spec files
+    'browser\\.spec\\.ts$'    // Specifically ignore browser tests
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   transform: {

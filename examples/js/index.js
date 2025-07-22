@@ -4,26 +4,20 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require : typeof Proxy !== "undefined" ? new Proxy(x, {
-  get: (a, b) => (typeof require !== "undefined" ? require : a)[b]
-}) : x)(function(x) {
-  if (typeof require !== "undefined") return require.apply(this, arguments);
-  throw Error('Dynamic require of "' + x + '" is not supported');
-});
-var __commonJS = (cb, mod2) => function __require2() {
+var __commonJS = (cb, mod2) => function __require() {
   return mod2 || (0, cb[__getOwnPropNames(cb)[0]])((mod2 = { exports: {} }).exports, mod2), mod2.exports;
 };
 var __export = (target, all4) => {
   for (var name2 in all4)
     __defProp(target, name2, { get: all4[name2], enumerable: true });
 };
-var __copyProps = (to, from, except, desc) => {
+var __copyProps = (to2, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
     for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+      if (!__hasOwnProp.call(to2, key) && key !== except)
+        __defProp(to2, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
   }
-  return to;
+  return to2;
 };
 var __toESM = (mod2, isNodeMode, target) => (target = mod2 != null ? __create(__getProtoOf(mod2)) : {}, __copyProps(
   // If the importer is in node compatibility mode or this is not an ESM
@@ -201,8 +195,8 @@ var require_createClass = __commonJS({
 // node_modules/automation-events/build/es5/bundle.js
 var require_bundle = __commonJS({
   "node_modules/automation-events/build/es5/bundle.js"(exports, module) {
-    (function(global2, factory) {
-      typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require_slicedToArray(), require_classCallCheck(), require_createClass()) : typeof define === "function" && define.amd ? define(["exports", "@babel/runtime/helpers/slicedToArray", "@babel/runtime/helpers/classCallCheck", "@babel/runtime/helpers/createClass"], factory) : (global2 = typeof globalThis !== "undefined" ? globalThis : global2 || self, factory(global2.automationEvents = {}, global2._slicedToArray, global2._classCallCheck, global2._createClass));
+    (function(global, factory) {
+      typeof exports === "object" && typeof module !== "undefined" ? factory(exports, require_slicedToArray(), require_classCallCheck(), require_createClass()) : typeof define === "function" && define.amd ? define(["exports", "@babel/runtime/helpers/slicedToArray", "@babel/runtime/helpers/classCallCheck", "@babel/runtime/helpers/createClass"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.automationEvents = {}, global._slicedToArray, global._classCallCheck, global._createClass));
     })(exports, function(exports2, _slicedToArray, _classCallCheck, _createClass) {
       "use strict";
       var createExtendedExponentialRampToValueAutomationEvent = function createExtendedExponentialRampToValueAutomationEvent2(value, endTime, insertTime) {
@@ -484,3333 +478,1604 @@ var require_bundle = __commonJS({
   }
 });
 
-// node_modules/audio-loader/lib/base64.js
-var require_base64 = __commonJS({
-  "node_modules/audio-loader/lib/base64.js"(exports, module) {
-    "use strict";
-    function b64ToUint6(nChr) {
-      return nChr > 64 && nChr < 91 ? nChr - 65 : nChr > 96 && nChr < 123 ? nChr - 71 : nChr > 47 && nChr < 58 ? nChr + 4 : nChr === 43 ? 62 : nChr === 47 ? 63 : 0;
+// node_modules/await-to-js/dist/await-to-js.es5.js
+function to(promise, errorExt) {
+  return promise.then(function(data) {
+    return [null, data];
+  }).catch(function(err) {
+    if (errorExt) {
+      Object.assign(err, errorExt);
     }
-    function decode(sBase64, nBlocksSize) {
-      var sB64Enc = sBase64.replace(/[^A-Za-z0-9\+\/]/g, "");
-      var nInLen = sB64Enc.length;
-      var nOutLen = nBlocksSize ? Math.ceil((nInLen * 3 + 1 >> 2) / nBlocksSize) * nBlocksSize : nInLen * 3 + 1 >> 2;
-      var taBytes = new Uint8Array(nOutLen);
-      for (var nMod3, nMod4, nUint24 = 0, nOutIdx = 0, nInIdx = 0; nInIdx < nInLen; nInIdx++) {
-        nMod4 = nInIdx & 3;
-        nUint24 |= b64ToUint6(sB64Enc.charCodeAt(nInIdx)) << 18 - 6 * nMod4;
-        if (nMod4 === 3 || nInLen - nInIdx === 1) {
-          for (nMod3 = 0; nMod3 < 3 && nOutIdx < nOutLen; nMod3++, nOutIdx++) {
-            taBytes[nOutIdx] = nUint24 >>> (16 >>> nMod3 & 24) & 255;
-          }
-          nUint24 = 0;
-        }
-      }
-      return taBytes;
-    }
-    module.exports = { decode };
-  }
-});
-
-// node_modules/audio-loader/lib/fetch.js
-var require_fetch = __commonJS({
-  "node_modules/audio-loader/lib/fetch.js"(exports, module) {
-    "use strict";
-    module.exports = function(url, type) {
-      return new Promise(function(done, reject) {
-        var req = new XMLHttpRequest();
-        if (type) req.responseType = type;
-        req.open("GET", url);
-        req.onload = function() {
-          req.status === 200 ? done(req.response) : reject(Error(req.statusText));
-        };
-        req.onerror = function() {
-          reject(Error("Network Error"));
-        };
-        req.send();
-      });
-    };
-  }
-});
-
-// node_modules/audio-loader/lib/index.js
-var require_lib = __commonJS({
-  "node_modules/audio-loader/lib/index.js"(exports, module) {
-    "use strict";
-    var base64 = require_base64();
-    var fetch2 = require_fetch();
-    function fromRegex(r) {
-      return function(o) {
-        return typeof o === "string" && r.test(o);
-      };
-    }
-    function prefix(pre, name2) {
-      return typeof pre === "string" ? pre + name2 : typeof pre === "function" ? pre(name2) : name2;
-    }
-    function load(ac, source, options, defVal) {
-      var loader = (
-        // Basic audio loading
-        isArrayBuffer(source) ? loadArrayBuffer : isAudioFileName(source) ? loadAudioFile : isPromise(source) ? loadPromise : isArray2(source) ? loadArrayData : isObject2(source) ? loadObjectData : isJsonFileName(source) ? loadJsonFile : isBase64Audio(source) ? loadBase64Audio : isJsFileName(source) ? loadMidiJSFile : null
-      );
-      var opts = options || {};
-      return loader ? loader(ac, source, opts) : defVal ? Promise.resolve(defVal) : Promise.reject("Source not valid (" + source + ")");
-    }
-    load.fetch = fetch2;
-    function isArrayBuffer(o) {
-      return o instanceof ArrayBuffer;
-    }
-    function loadArrayBuffer(ac, array, options) {
-      return new Promise(function(done, reject) {
-        ac.decodeAudioData(
-          array,
-          function(buffer) {
-            done(buffer);
-          },
-          function() {
-            reject("Can't decode audio data (" + array.slice(0, 30) + "...)");
-          }
-        );
-      });
-    }
-    var isAudioFileName = fromRegex(/\.(mp3|wav|ogg)(\?.*)?$/i);
-    function loadAudioFile(ac, name2, options) {
-      var url = prefix(options.from, name2);
-      return load(ac, load.fetch(url, "arraybuffer"), options);
-    }
-    function isPromise(o) {
-      return o && typeof o.then === "function";
-    }
-    function loadPromise(ac, promise, options) {
-      return promise.then(function(value) {
-        return load(ac, value, options);
-      });
-    }
-    var isArray2 = Array.isArray;
-    function loadArrayData(ac, array, options) {
-      return Promise.all(array.map(function(data) {
-        return load(ac, data, options, data);
-      }));
-    }
-    function isObject2(o) {
-      return o && typeof o === "object";
-    }
-    function loadObjectData(ac, obj, options) {
-      var dest = {};
-      var promises = Object.keys(obj).map(function(key) {
-        if (options.only && options.only.indexOf(key) === -1) return null;
-        var value = obj[key];
-        return load(ac, value, options, value).then(function(audio) {
-          dest[key] = audio;
-        });
-      });
-      return Promise.all(promises).then(function() {
-        return dest;
-      });
-    }
-    var isJsonFileName = fromRegex(/\.json(\?.*)?$/i);
-    function loadJsonFile(ac, name2, options) {
-      var url = prefix(options.from, name2);
-      return load(ac, load.fetch(url, "text").then(JSON.parse), options);
-    }
-    var isBase64Audio = fromRegex(/^data:audio/);
-    function loadBase64Audio(ac, source, options) {
-      var i = source.indexOf(",");
-      return load(ac, base64.decode(source.slice(i + 1)).buffer, options);
-    }
-    var isJsFileName = fromRegex(/\.js(\?.*)?$/i);
-    function loadMidiJSFile(ac, name2, options) {
-      var url = prefix(options.from, name2);
-      return load(ac, load.fetch(url, "text").then(midiJsToJson), options);
-    }
-    function midiJsToJson(data) {
-      var begin = data.indexOf("MIDI.Soundfont.");
-      if (begin < 0) throw Error("Invalid MIDI.js Soundfont format");
-      begin = data.indexOf("=", begin) + 2;
-      var end = data.lastIndexOf(",");
-      return JSON.parse(data.slice(begin, end) + "}");
-    }
-    if (typeof module === "object" && module.exports) module.exports = load;
-    if (typeof window !== "undefined") window.loadAudio = load;
-  }
-});
-
-// node_modules/adsr/index.js
-var require_adsr = __commonJS({
-  "node_modules/adsr/index.js"(exports, module) {
-    module.exports = ADSR;
-    function ADSR(audioContext) {
-      var node = audioContext.createGain();
-      var voltage = node._voltage = getVoltage(audioContext);
-      var value = scale(voltage);
-      var startValue = scale(voltage);
-      var endValue = scale(voltage);
-      node._startAmount = scale(startValue);
-      node._endAmount = scale(endValue);
-      node._multiplier = scale(value);
-      node._multiplier.connect(node);
-      node._startAmount.connect(node);
-      node._endAmount.connect(node);
-      node.value = value.gain;
-      node.startValue = startValue.gain;
-      node.endValue = endValue.gain;
-      node.startValue.value = 0;
-      node.endValue.value = 0;
-      Object.defineProperties(node, props);
-      return node;
-    }
-    var props = {
-      attack: { value: 0, writable: true },
-      decay: { value: 0, writable: true },
-      sustain: { value: 1, writable: true },
-      release: { value: 0, writable: true },
-      getReleaseDuration: {
-        value: function() {
-          return this.release;
-        }
-      },
-      start: {
-        value: function(at) {
-          var target = this._multiplier.gain;
-          var startAmount = this._startAmount.gain;
-          var endAmount = this._endAmount.gain;
-          this._voltage.start(at);
-          this._decayFrom = this._decayFrom = at + this.attack;
-          this._startedAt = at;
-          var sustain = this.sustain;
-          target.cancelScheduledValues(at);
-          startAmount.cancelScheduledValues(at);
-          endAmount.cancelScheduledValues(at);
-          endAmount.setValueAtTime(0, at);
-          if (this.attack) {
-            target.setValueAtTime(0, at);
-            target.linearRampToValueAtTime(1, at + this.attack);
-            startAmount.setValueAtTime(1, at);
-            startAmount.linearRampToValueAtTime(0, at + this.attack);
-          } else {
-            target.setValueAtTime(1, at);
-            startAmount.setValueAtTime(0, at);
-          }
-          if (this.decay) {
-            target.setTargetAtTime(sustain, this._decayFrom, getTimeConstant(this.decay));
-          }
-        }
-      },
-      stop: {
-        value: function(at, isTarget) {
-          if (isTarget) {
-            at = at - this.release;
-          }
-          var endTime = at + this.release;
-          if (this.release) {
-            var target = this._multiplier.gain;
-            var startAmount = this._startAmount.gain;
-            var endAmount = this._endAmount.gain;
-            target.cancelScheduledValues(at);
-            startAmount.cancelScheduledValues(at);
-            endAmount.cancelScheduledValues(at);
-            var expFalloff = getTimeConstant(this.release);
-            if (this.attack && at < this._decayFrom) {
-              var valueAtTime = getValue(0, 1, this._startedAt, this._decayFrom, at);
-              target.linearRampToValueAtTime(valueAtTime, at);
-              startAmount.linearRampToValueAtTime(1 - valueAtTime, at);
-              startAmount.setTargetAtTime(0, at, expFalloff);
-            }
-            endAmount.setTargetAtTime(1, at, expFalloff);
-            target.setTargetAtTime(0, at, expFalloff);
-          }
-          this._voltage.stop(endTime);
-          return endTime;
-        }
-      },
-      onended: {
-        get: function() {
-          return this._voltage.onended;
-        },
-        set: function(value) {
-          this._voltage.onended = value;
-        }
-      }
-    };
-    var flat = new Float32Array([1, 1]);
-    function getVoltage(context2) {
-      var voltage = context2.createBufferSource();
-      var buffer = context2.createBuffer(1, 2, context2.sampleRate);
-      buffer.getChannelData(0).set(flat);
-      voltage.buffer = buffer;
-      voltage.loop = true;
-      return voltage;
-    }
-    function scale(node) {
-      var gain = node.context.createGain();
-      node.connect(gain);
-      return gain;
-    }
-    function getTimeConstant(time) {
-      return Math.log(time + 1) / Math.log(100);
-    }
-    function getValue(start2, end, fromTime, toTime, at) {
-      var difference = end - start2;
-      var time = toTime - fromTime;
-      var truncateTime = at - fromTime;
-      var phase = truncateTime / time;
-      var value = start2 + phase * difference;
-      if (value <= start2) {
-        value = start2;
-      }
-      if (value >= end) {
-        value = end;
-      }
-      return value;
-    }
-  }
-});
-
-// node_modules/sample-player/lib/player.js
-var require_player = __commonJS({
-  "node_modules/sample-player/lib/player.js"(exports, module) {
-    "use strict";
-    var ADSR = require_adsr();
-    var EMPTY = {};
-    var DEFAULTS = {
-      gain: 1,
-      attack: 0.01,
-      decay: 0.1,
-      sustain: 0.9,
-      release: 0.3,
-      loop: false,
-      cents: 0,
-      loopStart: 0,
-      loopEnd: 0
-    };
-    function SamplePlayer(ac, source, options) {
-      var connected = false;
-      var nextId = 0;
-      var tracked = {};
-      var out = ac.createGain();
-      out.gain.value = 1;
-      var opts = Object.assign({}, DEFAULTS, options);
-      var player = { context: ac, out, opts };
-      if (source instanceof AudioBuffer) player.buffer = source;
-      else player.buffers = source;
-      player.start = function(name2, when, options2) {
-        if (player.buffer && name2 !== null) return player.start(null, name2, when);
-        var buffer = name2 ? player.buffers[name2] : player.buffer;
-        if (!buffer) {
-          console.warn("Buffer " + name2 + " not found.");
-          return;
-        } else if (!connected) {
-          console.warn("SamplePlayer not connected to any node.");
-          return;
-        }
-        var opts2 = options2 || EMPTY;
-        when = Math.max(ac.currentTime, when || 0);
-        player.emit("start", when, name2, opts2);
-        var node = createNode(name2, buffer, opts2);
-        node.id = track(name2, node);
-        node.env.start(when);
-        node.source.start(when);
-        player.emit("started", when, node.id, node);
-        if (opts2.duration) node.stop(when + opts2.duration);
-        return node;
-      };
-      player.play = function(name2, when, options2) {
-        return player.start(name2, when, options2);
-      };
-      player.stop = function(when, ids) {
-        var node;
-        ids = ids || Object.keys(tracked);
-        return ids.map(function(id) {
-          node = tracked[id];
-          if (!node) return null;
-          node.stop(when);
-          return node.id;
-        });
-      };
-      player.connect = function(dest) {
-        connected = true;
-        out.connect(dest);
-        return player;
-      };
-      player.emit = function(event, when, obj, opts2) {
-        if (player.onevent) player.onevent(event, when, obj, opts2);
-        var fn = player["on" + event];
-        if (fn) fn(when, obj, opts2);
-      };
-      return player;
-      function track(name2, node) {
-        node.id = nextId++;
-        tracked[node.id] = node;
-        node.source.onended = function() {
-          var now = ac.currentTime;
-          node.source.disconnect();
-          node.env.disconnect();
-          node.disconnect();
-          player.emit("ended", now, node.id, node);
-        };
-        return node.id;
-      }
-      function createNode(name2, buffer, options2) {
-        var node = ac.createGain();
-        node.gain.value = 0;
-        node.connect(out);
-        node.env = envelope(ac, options2, opts);
-        node.env.connect(node.gain);
-        node.source = ac.createBufferSource();
-        node.source.buffer = buffer;
-        node.source.connect(node);
-        node.source.loop = options2.loop || opts.loop;
-        node.source.playbackRate.value = centsToRate(options2.cents || opts.cents);
-        node.source.loopStart = options2.loopStart || opts.loopStart;
-        node.source.loopEnd = options2.loopEnd || opts.loopEnd;
-        node.stop = function(when) {
-          var time = when || ac.currentTime;
-          player.emit("stop", time, name2);
-          var stopAt = node.env.stop(time);
-          node.source.stop(stopAt);
-        };
-        return node;
-      }
-    }
-    function isNum(x) {
-      return typeof x === "number";
-    }
-    var PARAMS = ["attack", "decay", "sustain", "release"];
-    function envelope(ac, options, opts) {
-      var env = ADSR(ac);
-      var adsr = options.adsr || opts.adsr;
-      PARAMS.forEach(function(name2, i) {
-        if (adsr) env[name2] = adsr[i];
-        else env[name2] = options[name2] || opts[name2];
-      });
-      env.value.value = isNum(options.gain) ? options.gain : isNum(opts.gain) ? opts.gain : 1;
-      return env;
-    }
-    function centsToRate(cents) {
-      return cents ? Math.pow(2, cents / 1200) : 1;
-    }
-    module.exports = SamplePlayer;
-  }
-});
-
-// node_modules/sample-player/lib/events.js
-var require_events = __commonJS({
-  "node_modules/sample-player/lib/events.js"(exports, module) {
-    module.exports = function(player) {
-      player.on = function(event, cb) {
-        if (arguments.length === 1 && typeof event === "function") return player.on("event", event);
-        var prop = "on" + event;
-        var old = player[prop];
-        player[prop] = old ? chain(old, cb) : cb;
-        return player;
-      };
-      return player;
-    };
-    function chain(fn1, fn2) {
-      return function(a, b, c, d) {
-        fn1(a, b, c, d);
-        fn2(a, b, c, d);
-      };
-    }
-  }
-});
-
-// node_modules/sample-player/node_modules/note-parser/index.js
-var require_note_parser = __commonJS({
-  "node_modules/sample-player/node_modules/note-parser/index.js"(exports, module) {
-    "use strict";
-    var REGEX5 = /^([a-gA-G])(#{1,}|b{1,}|x{1,}|)(-?\d*)\s*(.*)\s*$/;
-    function regex() {
-      return REGEX5;
-    }
-    var SEMITONES = [0, 2, 4, 5, 7, 9, 11];
-    function parse4(str, isTonic, tuning) {
-      if (typeof str !== "string") return null;
-      var m = REGEX5.exec(str);
-      if (!m || !isTonic && m[4]) return null;
-      var p = { letter: m[1].toUpperCase(), acc: m[2].replace(/x/g, "##") };
-      p.pc = p.letter + p.acc;
-      p.step = (p.letter.charCodeAt(0) + 3) % 7;
-      p.alt = p.acc[0] === "b" ? -p.acc.length : p.acc.length;
-      p.chroma = SEMITONES[p.step] + p.alt;
-      if (m[3]) {
-        p.oct = +m[3];
-        p.midi = p.chroma + 12 * (p.oct + 1);
-        p.freq = midiToFreq2(p.midi, tuning);
-      }
-      if (isTonic) p.tonicOf = m[4];
-      return p;
-    }
-    function midiToFreq2(midi2, tuning) {
-      return Math.pow(2, (midi2 - 69) / 12) * (tuning || 440);
-    }
-    var parser = { parse: parse4, regex, midiToFreq: midiToFreq2 };
-    var FNS = ["letter", "acc", "pc", "step", "alt", "chroma", "oct", "midi", "freq"];
-    FNS.forEach(function(name2) {
-      parser[name2] = function(src) {
-        var p = parse4(src);
-        return p && typeof p[name2] !== "undefined" ? p[name2] : null;
-      };
-    });
-    module.exports = parser;
-  }
-});
-
-// node_modules/sample-player/lib/notes.js
-var require_notes = __commonJS({
-  "node_modules/sample-player/lib/notes.js"(exports, module) {
-    "use strict";
-    var note2 = require_note_parser();
-    var isMidi2 = function(n) {
-      return n !== null && n !== [] && n >= 0 && n < 129;
-    };
-    var toMidi2 = function(n) {
-      return isMidi2(n) ? +n : note2.midi(n);
-    };
-    module.exports = function(player) {
-      if (player.buffers) {
-        var map = player.opts.map;
-        var toKey = typeof map === "function" ? map : toMidi2;
-        var mapper = function(name2) {
-          return name2 ? toKey(name2) || name2 : null;
-        };
-        player.buffers = mapBuffers(player.buffers, mapper);
-        var start2 = player.start;
-        player.start = function(name2, when, options) {
-          var key = mapper(name2);
-          var dec = key % 1;
-          if (dec) {
-            key = Math.floor(key);
-            options = Object.assign(options || {}, { cents: Math.floor(dec * 100) });
-          }
-          return start2(key, when, options);
-        };
-      }
-      return player;
-    };
-    function mapBuffers(buffers, toKey) {
-      return Object.keys(buffers).reduce(function(mapped, name2) {
-        mapped[toKey(name2)] = buffers[name2];
-        return mapped;
-      }, {});
-    }
-  }
-});
-
-// node_modules/sample-player/lib/scheduler.js
-var require_scheduler = __commonJS({
-  "node_modules/sample-player/lib/scheduler.js"(exports, module) {
-    "use strict";
-    var isArr = Array.isArray;
-    var isObj = function(o) {
-      return o && typeof o === "object";
-    };
-    var OPTS = {};
-    module.exports = function(player) {
-      player.schedule = function(time, events) {
-        var now = player.context.currentTime;
-        var when = time < now ? now : time;
-        player.emit("schedule", when, events);
-        var t, o, note2, opts;
-        return events.map(function(event) {
-          if (!event) return null;
-          else if (isArr(event)) {
-            t = event[0];
-            o = event[1];
-          } else {
-            t = event.time;
-            o = event;
-          }
-          if (isObj(o)) {
-            note2 = o.name || o.key || o.note || o.midi || null;
-            opts = o;
-          } else {
-            note2 = o;
-            opts = OPTS;
-          }
-          return player.start(note2, when + (t || 0), opts);
-        });
-      };
-      return player;
-    };
-  }
-});
-
-// node_modules/midimessage/dist/index.min.js
-var require_index_min = __commonJS({
-  "node_modules/midimessage/dist/index.min.js"(exports, module) {
-    (function(e) {
-      if (typeof exports === "object" && typeof module !== "undefined") {
-        module.exports = e();
-      } else if (typeof define === "function" && define.amd) {
-        define([], e);
-      } else {
-        var t;
-        if (typeof window !== "undefined") {
-          t = window;
-        } else if (typeof global !== "undefined") {
-          t = global;
-        } else if (typeof self !== "undefined") {
-          t = self;
-        } else {
-          t = this;
-        }
-        t.midimessage = e();
-      }
-    })(function() {
-      var e, t, s;
-      return function o(e2, t2, s2) {
-        function a(n2, i) {
-          if (!t2[n2]) {
-            if (!e2[n2]) {
-              var l = typeof __require == "function" && __require;
-              if (!i && l) return l(n2, true);
-              if (r) return r(n2, true);
-              var h = new Error("Cannot find module '" + n2 + "'");
-              throw h.code = "MODULE_NOT_FOUND", h;
-            }
-            var c = t2[n2] = { exports: {} };
-            e2[n2][0].call(c.exports, function(t3) {
-              var s3 = e2[n2][1][t3];
-              return a(s3 ? s3 : t3);
-            }, c, c.exports, o, e2, t2, s2);
-          }
-          return t2[n2].exports;
-        }
-        var r = typeof __require == "function" && __require;
-        for (var n = 0; n < s2.length; n++) a(s2[n]);
-        return a;
-      }({ 1: [function(e2, t2, s2) {
-        "use strict";
-        Object.defineProperty(s2, "__esModule", { value: true });
-        s2["default"] = function(e3) {
-          function t3(e4) {
-            this._event = e4;
-            this._data = e4.data;
-            this.receivedTime = e4.receivedTime;
-            if (this._data && this._data.length < 2) {
-              console.warn("Illegal MIDI message of length", this._data.length);
-              return;
-            }
-            this._messageCode = e4.data[0] & 240;
-            this.channel = e4.data[0] & 15;
-            switch (this._messageCode) {
-              case 128:
-                this.messageType = "noteoff";
-                this.key = e4.data[1] & 127;
-                this.velocity = e4.data[2] & 127;
-                break;
-              case 144:
-                this.messageType = "noteon";
-                this.key = e4.data[1] & 127;
-                this.velocity = e4.data[2] & 127;
-                break;
-              case 160:
-                this.messageType = "keypressure";
-                this.key = e4.data[1] & 127;
-                this.pressure = e4.data[2] & 127;
-                break;
-              case 176:
-                this.messageType = "controlchange";
-                this.controllerNumber = e4.data[1] & 127;
-                this.controllerValue = e4.data[2] & 127;
-                if (this.controllerNumber === 120 && this.controllerValue === 0) {
-                  this.channelModeMessage = "allsoundoff";
-                } else if (this.controllerNumber === 121) {
-                  this.channelModeMessage = "resetallcontrollers";
-                } else if (this.controllerNumber === 122) {
-                  if (this.controllerValue === 0) {
-                    this.channelModeMessage = "localcontroloff";
-                  } else {
-                    this.channelModeMessage = "localcontrolon";
-                  }
-                } else if (this.controllerNumber === 123 && this.controllerValue === 0) {
-                  this.channelModeMessage = "allnotesoff";
-                } else if (this.controllerNumber === 124 && this.controllerValue === 0) {
-                  this.channelModeMessage = "omnimodeoff";
-                } else if (this.controllerNumber === 125 && this.controllerValue === 0) {
-                  this.channelModeMessage = "omnimodeon";
-                } else if (this.controllerNumber === 126) {
-                  this.channelModeMessage = "monomodeon";
-                } else if (this.controllerNumber === 127) {
-                  this.channelModeMessage = "polymodeon";
-                }
-                break;
-              case 192:
-                this.messageType = "programchange";
-                this.program = e4.data[1];
-                break;
-              case 208:
-                this.messageType = "channelpressure";
-                this.pressure = e4.data[1] & 127;
-                break;
-              case 224:
-                this.messageType = "pitchbendchange";
-                var t4 = e4.data[2] & 127;
-                var s3 = e4.data[1] & 127;
-                this.pitchBend = (t4 << 8) + s3;
-                break;
-            }
-          }
-          return new t3(e3);
-        };
-        t2.exports = s2["default"];
-      }, {}] }, {}, [1])(1);
-    });
-  }
-});
-
-// node_modules/sample-player/lib/midi.js
-var require_midi = __commonJS({
-  "node_modules/sample-player/lib/midi.js"(exports, module) {
-    var midimessage = require_index_min();
-    module.exports = function(player) {
-      player.listenToMidi = function(input, options) {
-        var started = {};
-        var opts = options || {};
-        var gain = opts.gain || function(vel) {
-          return vel / 127;
-        };
-        input.onmidimessage = function(msg) {
-          var mm = msg.messageType ? msg : midimessage(msg);
-          if (mm.messageType === "noteon" && mm.velocity === 0) {
-            mm.messageType = "noteoff";
-          }
-          if (opts.channel && mm.channel !== opts.channel) return;
-          switch (mm.messageType) {
-            case "noteon":
-              started[mm.key] = player.play(mm.key, 0, { gain: gain(mm.velocity) });
-              break;
-            case "noteoff":
-              if (started[mm.key]) {
-                started[mm.key].stop();
-                delete started[mm.key];
-              }
-              break;
-          }
-        };
-        return player;
-      };
-      return player;
-    };
-  }
-});
-
-// node_modules/sample-player/lib/index.js
-var require_lib2 = __commonJS({
-  "node_modules/sample-player/lib/index.js"(exports, module) {
-    "use strict";
-    var player = require_player();
-    var events = require_events();
-    var notes2 = require_notes();
-    var scheduler = require_scheduler();
-    var midi2 = require_midi();
-    function SamplePlayer(ac, source, options) {
-      return midi2(scheduler(notes2(events(player(ac, source, options)))));
-    }
-    if (typeof module === "object" && module.exports) module.exports = SamplePlayer;
-    if (typeof window !== "undefined") window.SamplePlayer = SamplePlayer;
-  }
-});
-
-// node_modules/note-parser/dist/note-parser.js
-var require_note_parser2 = __commonJS({
-  "node_modules/note-parser/dist/note-parser.js"(exports, module) {
-    !function(t, n) {
-      "object" == typeof exports && "undefined" != typeof module ? n(exports) : "function" == typeof define && define.amd ? define(["exports"], n) : n(t.NoteParser = t.NoteParser || {});
-    }(exports, function(t) {
-      "use strict";
-      function n(t2, n2) {
-        return Array(n2 + 1).join(t2);
-      }
-      function r(t2) {
-        return "number" == typeof t2;
-      }
-      function e(t2) {
-        return "string" == typeof t2;
-      }
-      function u(t2) {
-        return void 0 !== t2;
-      }
-      function c(t2, n2) {
-        return Math.pow(2, (t2 - 69) / 12) * (n2 || 440);
-      }
-      function o() {
-        return b;
-      }
-      function i(t2, n2, r2) {
-        if ("string" != typeof t2) return null;
-        var e2 = b.exec(t2);
-        if (!e2 || !n2 && e2[4]) return null;
-        var u2 = { letter: e2[1].toUpperCase(), acc: e2[2].replace(/x/g, "##") };
-        u2.pc = u2.letter + u2.acc, u2.step = (u2.letter.charCodeAt(0) + 3) % 7, u2.alt = "b" === u2.acc[0] ? -u2.acc.length : u2.acc.length;
-        var o2 = A[u2.step] + u2.alt;
-        return u2.chroma = o2 < 0 ? 12 + o2 : o2 % 12, e2[3] && (u2.oct = +e2[3], u2.midi = o2 + 12 * (u2.oct + 1), u2.freq = c(u2.midi, r2)), n2 && (u2.tonicOf = e2[4]), u2;
-      }
-      function f(t2) {
-        return r(t2) ? t2 < 0 ? n("b", -t2) : n("#", t2) : "";
-      }
-      function a(t2) {
-        return r(t2) ? "" + t2 : "";
-      }
-      function l(t2, n2, r2) {
-        return null === t2 || void 0 === t2 ? null : t2.step ? l(t2.step, t2.alt, t2.oct) : t2 < 0 || t2 > 6 ? null : C.charAt(t2) + f(n2) + a(r2);
-      }
-      function p(t2) {
-        if ((r(t2) || e(t2)) && t2 >= 0 && t2 < 128) return +t2;
-        var n2 = i(t2);
-        return n2 && u(n2.midi) ? n2.midi : null;
-      }
-      function s(t2, n2) {
-        var r2 = p(t2);
-        return null === r2 ? null : c(r2, n2);
-      }
-      function d(t2) {
-        return (i(t2) || {}).letter;
-      }
-      function m(t2) {
-        return (i(t2) || {}).acc;
-      }
-      function h(t2) {
-        return (i(t2) || {}).pc;
-      }
-      function v(t2) {
-        return (i(t2) || {}).step;
-      }
-      function g(t2) {
-        return (i(t2) || {}).alt;
-      }
-      function x(t2) {
-        return (i(t2) || {}).chroma;
-      }
-      function y(t2) {
-        return (i(t2) || {}).oct;
-      }
-      var b = /^([a-gA-G])(#{1,}|b{1,}|x{1,}|)(-?\d*)\s*(.*)\s*$/, A = [0, 2, 4, 5, 7, 9, 11], C = "CDEFGAB";
-      t.regex = o, t.parse = i, t.build = l, t.midi = p, t.freq = s, t.letter = d, t.acc = m, t.pc = h, t.step = v, t.alt = g, t.chroma = x, t.oct = y;
-    });
-  }
-});
-
-// node_modules/soundfont-player/lib/legacy.js
-var require_legacy = __commonJS({
-  "node_modules/soundfont-player/lib/legacy.js"(exports, module) {
-    "use strict";
-    var parser = require_note_parser2();
-    function Soundfont2(ctx, nameToUrl) {
-      console.warn("new Soundfont() is deprected");
-      console.log("Please use Soundfont.instrument() instead of new Soundfont().instrument()");
-      if (!(this instanceof Soundfont2)) return new Soundfont2(ctx);
-      this.nameToUrl = nameToUrl || Soundfont2.nameToUrl;
-      this.ctx = ctx;
-      this.instruments = {};
-      this.promises = [];
-    }
-    Soundfont2.prototype.onready = function(callback) {
-      console.warn("deprecated API");
-      console.log("Please use Promise.all(Soundfont.instrument(), Soundfont.instrument()).then() instead of new Soundfont().onready()");
-      Promise.all(this.promises).then(callback);
-    };
-    Soundfont2.prototype.instrument = function(name2, options) {
-      console.warn("new Soundfont().instrument() is deprecated.");
-      console.log("Please use Soundfont.instrument() instead.");
-      var ctx = this.ctx;
-      name2 = name2 || "default";
-      if (name2 in this.instruments) return this.instruments[name2];
-      var inst = { name: name2, play: oscillatorPlayer(ctx, options) };
-      this.instruments[name2] = inst;
-      if (name2 !== "default") {
-        var promise = Soundfont2.instrument(ctx, name2, options).then(function(instrument) {
-          inst.play = instrument.play;
-          return inst;
-        });
-        this.promises.push(promise);
-        inst.onready = function(cb) {
-          console.warn("onready is deprecated. Use Soundfont.instrument().then()");
-          promise.then(cb);
-        };
-      } else {
-        inst.onready = function(cb) {
-          console.warn("onready is deprecated. Use Soundfont.instrument().then()");
-          cb();
-        };
-      }
-      return inst;
-    };
-    function loadBuffers(ac, name2, options) {
-      console.warn("Soundfont.loadBuffers is deprecate.");
-      console.log("Use Soundfont.instrument(..) and get buffers properties from the result.");
-      return Soundfont2.instrument(ac, name2, options).then(function(inst) {
-        return inst.buffers;
-      });
-    }
-    Soundfont2.loadBuffers = loadBuffers;
-    function oscillatorPlayer(ctx, defaultOptions) {
-      defaultOptions = defaultOptions || {};
-      return function(note2, time, duration, options) {
-        console.warn("The oscillator player is deprecated.");
-        console.log("Starting with version 0.9.0 you will have to wait until the soundfont is loaded to play sounds.");
-        var midi2 = note2 > 0 && note2 < 129 ? +note2 : parser.midi(note2);
-        var freq2 = midi2 ? parser.midiToFreq(midi2, 440) : null;
-        if (!freq2) return;
-        duration = duration || 0.2;
-        options = options || {};
-        var destination = options.destination || defaultOptions.destination || ctx.destination;
-        var vcoType = options.vcoType || defaultOptions.vcoType || "sine";
-        var gain = options.gain || defaultOptions.gain || 0.4;
-        var vco = ctx.createOscillator();
-        vco.type = vcoType;
-        vco.frequency.value = freq2;
-        var vca = ctx.createGain();
-        vca.gain.value = gain;
-        vco.connect(vca);
-        vca.connect(destination);
-        vco.start(time);
-        if (duration > 0) vco.stop(time + duration);
-        return vco;
-      };
-    }
-    Soundfont2.noteToMidi = parser.midi;
-    module.exports = Soundfont2;
-  }
-});
-
-// node_modules/soundfont-player/lib/index.js
-var require_lib3 = __commonJS({
-  "node_modules/soundfont-player/lib/index.js"(exports, module) {
-    "use strict";
-    var load = require_lib();
-    var player = require_lib2();
-    function instrument(ac, name2, options) {
-      if (arguments.length === 1) return function(n, o) {
-        return instrument(ac, n, o);
-      };
-      var opts = options || {};
-      var isUrl = opts.isSoundfontURL || isSoundfontURL;
-      var toUrl = opts.nameToUrl || nameToUrl;
-      var url = isUrl(name2) ? name2 : toUrl(name2, opts.soundfont, opts.format);
-      return load(ac, url, { only: opts.only || opts.notes }).then(function(buffers) {
-        var p = player(ac, buffers, opts).connect(opts.destination ? opts.destination : ac.destination);
-        p.url = url;
-        p.name = name2;
-        return p;
-      });
-    }
-    function isSoundfontURL(name2) {
-      return /\.js(\?.*)?$/i.test(name2);
-    }
-    function nameToUrl(name2, sf, format) {
-      format = format === "ogg" ? format : "mp3";
-      sf = sf === "FluidR3_GM" ? sf : "MusyngKite";
-      return "https://gleitz.github.io/midi-js-soundfonts/" + sf + "/" + name2 + "-" + format + ".js";
-    }
-    var Soundfont2 = require_legacy();
-    Soundfont2.instrument = instrument;
-    Soundfont2.nameToUrl = nameToUrl;
-    if (typeof module === "object" && module.exports) module.exports = Soundfont2;
-    if (typeof window !== "undefined") window.Soundfont = Soundfont2;
-  }
-});
-
-// node_modules/@tonaljs/pitch/dist/index.mjs
-function isNamedPitch(src) {
-  return src !== null && typeof src === "object" && "name" in src && typeof src.name === "string" ? true : false;
-}
-function isPitch(pitch2) {
-  return pitch2 !== null && typeof pitch2 === "object" && "step" in pitch2 && typeof pitch2.step === "number" && "alt" in pitch2 && typeof pitch2.alt === "number" && !isNaN(pitch2.step) && !isNaN(pitch2.alt) ? true : false;
-}
-var FIFTHS = [0, 2, 4, -1, 1, 3, 5];
-var STEPS_TO_OCTS = FIFTHS.map(
-  (fifths) => Math.floor(fifths * 7 / 12)
-);
-function coordinates(pitch2) {
-  const { step, alt, oct, dir = 1 } = pitch2;
-  const f = FIFTHS[step] + 7 * alt;
-  if (oct === void 0) {
-    return [dir * f];
-  }
-  const o = oct - STEPS_TO_OCTS[step] - 4 * alt;
-  return [dir * f, dir * o];
-}
-var FIFTHS_TO_STEPS = [3, 0, 4, 1, 5, 2, 6];
-function pitch(coord) {
-  const [f, o, dir] = coord;
-  const step = FIFTHS_TO_STEPS[unaltered(f)];
-  const alt = Math.floor((f + 1) / 7);
-  if (o === void 0) {
-    return { step, alt, dir };
-  }
-  const oct = o + 4 * alt + STEPS_TO_OCTS[step];
-  return { step, alt, oct, dir };
-}
-function unaltered(f) {
-  const i = (f + 1) % 7;
-  return i < 0 ? 7 + i : i;
-}
-
-// node_modules/@tonaljs/pitch-interval/dist/index.mjs
-var fillStr = (s, n) => Array(Math.abs(n) + 1).join(s);
-var NoInterval = Object.freeze({
-  empty: true,
-  name: "",
-  num: NaN,
-  q: "",
-  type: "",
-  step: NaN,
-  alt: NaN,
-  dir: NaN,
-  simple: NaN,
-  semitones: NaN,
-  chroma: NaN,
-  coord: [],
-  oct: NaN
-});
-var INTERVAL_TONAL_REGEX = "([-+]?\\d+)(d{1,4}|m|M|P|A{1,4})";
-var INTERVAL_SHORTHAND_REGEX = "(AA|A|P|M|m|d|dd)([-+]?\\d+)";
-var REGEX = new RegExp(
-  "^" + INTERVAL_TONAL_REGEX + "|" + INTERVAL_SHORTHAND_REGEX + "$"
-);
-function tokenizeInterval(str) {
-  const m = REGEX.exec(`${str}`);
-  if (m === null) {
-    return ["", ""];
-  }
-  return m[1] ? [m[1], m[2]] : [m[4], m[3]];
-}
-var cache = {};
-function interval(src) {
-  return typeof src === "string" ? cache[src] || (cache[src] = parse(src)) : isPitch(src) ? interval(pitchName(src)) : isNamedPitch(src) ? interval(src.name) : NoInterval;
-}
-var SIZES = [0, 2, 4, 5, 7, 9, 11];
-var TYPES = "PMMPPMM";
-function parse(str) {
-  const tokens = tokenizeInterval(str);
-  if (tokens[0] === "") {
-    return NoInterval;
-  }
-  const num = +tokens[0];
-  const q = tokens[1];
-  const step = (Math.abs(num) - 1) % 7;
-  const t = TYPES[step];
-  if (t === "M" && q === "P") {
-    return NoInterval;
-  }
-  const type = t === "M" ? "majorable" : "perfectable";
-  const name2 = "" + num + q;
-  const dir = num < 0 ? -1 : 1;
-  const simple = num === 8 || num === -8 ? num : dir * (step + 1);
-  const alt = qToAlt(type, q);
-  const oct = Math.floor((Math.abs(num) - 1) / 7);
-  const semitones = dir * (SIZES[step] + alt + 12 * oct);
-  const chroma4 = (dir * (SIZES[step] + alt) % 12 + 12) % 12;
-  const coord = coordinates({ step, alt, oct, dir });
-  return {
-    empty: false,
-    name: name2,
-    num,
-    q,
-    step,
-    alt,
-    dir,
-    type,
-    simple,
-    semitones,
-    chroma: chroma4,
-    coord,
-    oct
-  };
-}
-function coordToInterval(coord, forceDescending) {
-  const [f, o = 0] = coord;
-  const isDescending = f * 7 + o * 12 < 0;
-  const ivl = forceDescending || isDescending ? [-f, -o, -1] : [f, o, 1];
-  return interval(pitch(ivl));
-}
-function qToAlt(type, q) {
-  return q === "M" && type === "majorable" || q === "P" && type === "perfectable" ? 0 : q === "m" && type === "majorable" ? -1 : /^A+$/.test(q) ? q.length : /^d+$/.test(q) ? -1 * (type === "perfectable" ? q.length : q.length + 1) : 0;
-}
-function pitchName(props) {
-  const { step, alt, oct = 0, dir } = props;
-  if (!dir) {
-    return "";
-  }
-  const calcNum = step + 1 + 7 * oct;
-  const num = calcNum === 0 ? step + 1 : calcNum;
-  const d = dir < 0 ? "-" : "";
-  const type = TYPES[step] === "M" ? "majorable" : "perfectable";
-  const name2 = d + num + altToQ(type, alt);
-  return name2;
-}
-function altToQ(type, alt) {
-  if (alt === 0) {
-    return type === "majorable" ? "M" : "P";
-  } else if (alt === -1 && type === "majorable") {
-    return "m";
-  } else if (alt > 0) {
-    return fillStr("A", alt);
-  } else {
-    return fillStr("d", type === "perfectable" ? alt : alt + 1);
-  }
-}
-
-// node_modules/@tonaljs/pitch-note/dist/index.mjs
-var fillStr2 = (s, n) => Array(Math.abs(n) + 1).join(s);
-var NoNote = Object.freeze({
-  empty: true,
-  name: "",
-  letter: "",
-  acc: "",
-  pc: "",
-  step: NaN,
-  alt: NaN,
-  chroma: NaN,
-  height: NaN,
-  coord: [],
-  midi: null,
-  freq: null
-});
-var cache2 = /* @__PURE__ */ new Map();
-var stepToLetter = (step) => "CDEFGAB".charAt(step);
-var altToAcc = (alt) => alt < 0 ? fillStr2("b", -alt) : fillStr2("#", alt);
-var accToAlt = (acc) => acc[0] === "b" ? -acc.length : acc.length;
-function note(src) {
-  const stringSrc = JSON.stringify(src);
-  const cached = cache2.get(stringSrc);
-  if (cached) {
-    return cached;
-  }
-  const value = typeof src === "string" ? parse2(src) : isPitch(src) ? note(pitchName2(src)) : isNamedPitch(src) ? note(src.name) : NoNote;
-  cache2.set(stringSrc, value);
-  return value;
-}
-var REGEX2 = /^([a-gA-G]?)(#{1,}|b{1,}|x{1,}|)(-?\d*)\s*(.*)$/;
-function tokenizeNote(str) {
-  const m = REGEX2.exec(str);
-  return m ? [m[1].toUpperCase(), m[2].replace(/x/g, "##"), m[3], m[4]] : ["", "", "", ""];
-}
-function coordToNote(noteCoord) {
-  return note(pitch(noteCoord));
-}
-var mod = (n, m) => (n % m + m) % m;
-var SEMI = [0, 2, 4, 5, 7, 9, 11];
-function parse2(noteName) {
-  const tokens = tokenizeNote(noteName);
-  if (tokens[0] === "" || tokens[3] !== "") {
-    return NoNote;
-  }
-  const letter = tokens[0];
-  const acc = tokens[1];
-  const octStr = tokens[2];
-  const step = (letter.charCodeAt(0) + 3) % 7;
-  const alt = accToAlt(acc);
-  const oct = octStr.length ? +octStr : void 0;
-  const coord = coordinates({ step, alt, oct });
-  const name2 = letter + acc + octStr;
-  const pc = letter + acc;
-  const chroma4 = (SEMI[step] + alt + 120) % 12;
-  const height = oct === void 0 ? mod(SEMI[step] + alt, 12) - 12 * 99 : SEMI[step] + alt + 12 * (oct + 1);
-  const midi2 = height >= 0 && height <= 127 ? height : null;
-  const freq2 = oct === void 0 ? null : Math.pow(2, (height - 69) / 12) * 440;
-  return {
-    empty: false,
-    acc,
-    alt,
-    chroma: chroma4,
-    coord,
-    freq: freq2,
-    height,
-    letter,
-    midi: midi2,
-    name: name2,
-    oct,
-    pc,
-    step
-  };
-}
-function pitchName2(props) {
-  const { step, alt, oct } = props;
-  const letter = stepToLetter(step);
-  if (!letter) {
-    return "";
-  }
-  const pc = letter + altToAcc(alt);
-  return oct || oct === 0 ? pc + oct : pc;
-}
-
-// node_modules/@tonaljs/pitch-distance/dist/index.mjs
-function transpose(noteName, intervalName) {
-  const note2 = note(noteName);
-  const intervalCoord = Array.isArray(intervalName) ? intervalName : interval(intervalName).coord;
-  if (note2.empty || !intervalCoord || intervalCoord.length < 2) {
-    return "";
-  }
-  const noteCoord = note2.coord;
-  const tr2 = noteCoord.length === 1 ? [noteCoord[0] + intervalCoord[0]] : [noteCoord[0] + intervalCoord[0], noteCoord[1] + intervalCoord[1]];
-  return coordToNote(tr2).name;
-}
-function tonicIntervalsTransposer(intervals, tonic) {
-  const len = intervals.length;
-  return (normalized) => {
-    if (!tonic) return "";
-    const index4 = normalized < 0 ? (len - -normalized % len) % len : normalized % len;
-    const octaves = Math.floor(normalized / len);
-    const root = transpose(tonic, [0, octaves]);
-    return transpose(root, intervals[index4]);
-  };
-}
-function distance(fromNote, toNote) {
-  const from = note(fromNote);
-  const to = note(toNote);
-  if (from.empty || to.empty) {
-    return "";
-  }
-  const fcoord = from.coord;
-  const tcoord = to.coord;
-  const fifths = tcoord[0] - fcoord[0];
-  const octs = fcoord.length === 2 && tcoord.length === 2 ? tcoord[1] - fcoord[1] : -Math.floor(fifths * 7 / 12);
-  const forceDescending = to.height === from.height && to.midi !== null && from.oct === to.oct && from.step > to.step;
-  return coordToInterval([fifths, octs], forceDescending).name;
-}
-
-// node_modules/@tonaljs/chord/dist/index.mjs
-var dist_exports = {};
-__export(dist_exports, {
-  chord: () => chord,
-  chordScales: () => chordScales,
-  default: () => chord_default,
-  degrees: () => degrees,
-  detect: () => detect,
-  extended: () => extended,
-  get: () => get4,
-  getChord: () => getChord,
-  notes: () => notes,
-  reduced: () => reduced,
-  steps: () => steps,
-  tokenize: () => tokenize,
-  transpose: () => transpose2
-});
-
-// node_modules/@tonaljs/collection/dist/index.mjs
-function rotate(times, arr) {
-  const len = arr.length;
-  const n = (times % len + len) % len;
-  return arr.slice(n, len).concat(arr.slice(0, n));
-}
-function compact(arr) {
-  return arr.filter((n) => n === 0 || n);
-}
-
-// node_modules/@tonaljs/pcset/dist/index.mjs
-var EmptyPcset = {
-  empty: true,
-  name: "",
-  setNum: 0,
-  chroma: "000000000000",
-  normalized: "000000000000",
-  intervals: []
-};
-var setNumToChroma = (num2) => Number(num2).toString(2).padStart(12, "0");
-var chromaToNumber = (chroma22) => parseInt(chroma22, 2);
-var REGEX3 = /^[01]{12}$/;
-function isChroma(set) {
-  return REGEX3.test(set);
-}
-var isPcsetNum = (set) => typeof set === "number" && set >= 0 && set <= 4095;
-var isPcset = (set) => set && isChroma(set.chroma);
-var cache3 = { [EmptyPcset.chroma]: EmptyPcset };
-function get(src) {
-  const chroma22 = isChroma(src) ? src : isPcsetNum(src) ? setNumToChroma(src) : Array.isArray(src) ? listToChroma(src) : isPcset(src) ? src.chroma : EmptyPcset.chroma;
-  return cache3[chroma22] = cache3[chroma22] || chromaToPcset(chroma22);
-}
-var IVLS = [
-  "1P",
-  "2m",
-  "2M",
-  "3m",
-  "3M",
-  "4P",
-  "5d",
-  "5P",
-  "6m",
-  "6M",
-  "7m",
-  "7M"
-];
-function chromaToIntervals(chroma22) {
-  const intervals2 = [];
-  for (let i = 0; i < 12; i++) {
-    if (chroma22.charAt(i) === "1") intervals2.push(IVLS[i]);
-  }
-  return intervals2;
-}
-function modes(set, normalize = true) {
-  const pcs = get(set);
-  const binary = pcs.chroma.split("");
-  return compact(
-    binary.map((_, i) => {
-      const r = rotate(i, binary);
-      return normalize && r[0] === "0" ? null : r.join("");
-    })
-  );
-}
-function isSubsetOf(set) {
-  const s = get(set).setNum;
-  return (notes2) => {
-    const o = get(notes2).setNum;
-    return s && s !== o && (o & s) === o;
-  };
-}
-function isSupersetOf(set) {
-  const s = get(set).setNum;
-  return (notes2) => {
-    const o = get(notes2).setNum;
-    return s && s !== o && (o | s) === o;
-  };
-}
-function chromaRotations(chroma22) {
-  const binary = chroma22.split("");
-  return binary.map((_, i) => rotate(i, binary).join(""));
-}
-function chromaToPcset(chroma22) {
-  const setNum = chromaToNumber(chroma22);
-  const normalizedNum = chromaRotations(chroma22).map(chromaToNumber).filter((n) => n >= 2048).sort()[0];
-  const normalized = setNumToChroma(normalizedNum);
-  const intervals2 = chromaToIntervals(chroma22);
-  return {
-    empty: false,
-    name: "",
-    setNum,
-    chroma: chroma22,
-    normalized,
-    intervals: intervals2
-  };
-}
-function listToChroma(set) {
-  if (set.length === 0) {
-    return EmptyPcset.chroma;
-  }
-  let pitch2;
-  const binary = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-  for (let i = 0; i < set.length; i++) {
-    pitch2 = note(set[i]);
-    if (pitch2.empty) pitch2 = interval(set[i]);
-    if (!pitch2.empty) binary[pitch2.chroma] = 1;
-  }
-  return binary.join("");
-}
-
-// node_modules/@tonaljs/chord-type/dist/index.mjs
-var CHORDS = [
-  // ==Major==
-  ["1P 3M 5P", "major", "M ^  maj"],
-  ["1P 3M 5P 7M", "major seventh", "maj7 \u0394 ma7 M7 Maj7 ^7"],
-  ["1P 3M 5P 7M 9M", "major ninth", "maj9 \u03949 ^9"],
-  ["1P 3M 5P 7M 9M 13M", "major thirteenth", "maj13 Maj13 ^13"],
-  ["1P 3M 5P 6M", "sixth", "6 add6 add13 M6"],
-  ["1P 3M 5P 6M 9M", "sixth added ninth", "6add9 6/9 69 M69"],
-  ["1P 3M 6m 7M", "major seventh flat sixth", "M7b6 ^7b6"],
-  [
-    "1P 3M 5P 7M 11A",
-    "major seventh sharp eleventh",
-    "maj#4 \u0394#4 \u0394#11 M7#11 ^7#11 maj7#11"
-  ],
-  // ==Minor==
-  // '''Normal'''
-  ["1P 3m 5P", "minor", "m min -"],
-  ["1P 3m 5P 7m", "minor seventh", "m7 min7 mi7 -7"],
-  [
-    "1P 3m 5P 7M",
-    "minor/major seventh",
-    "m/ma7 m/maj7 mM7 mMaj7 m/M7 -\u03947 m\u0394 -^7 -maj7"
-  ],
-  ["1P 3m 5P 6M", "minor sixth", "m6 -6"],
-  ["1P 3m 5P 7m 9M", "minor ninth", "m9 -9"],
-  ["1P 3m 5P 7M 9M", "minor/major ninth", "mM9 mMaj9 -^9"],
-  ["1P 3m 5P 7m 9M 11P", "minor eleventh", "m11 -11"],
-  ["1P 3m 5P 7m 9M 13M", "minor thirteenth", "m13 -13"],
-  // '''Diminished'''
-  ["1P 3m 5d", "diminished", "dim \xB0 o"],
-  ["1P 3m 5d 7d", "diminished seventh", "dim7 \xB07 o7"],
-  ["1P 3m 5d 7m", "half-diminished", "m7b5 \xF8 -7b5 h7 h"],
-  // ==Dominant/Seventh==
-  // '''Normal'''
-  ["1P 3M 5P 7m", "dominant seventh", "7 dom"],
-  ["1P 3M 5P 7m 9M", "dominant ninth", "9"],
-  ["1P 3M 5P 7m 9M 13M", "dominant thirteenth", "13"],
-  ["1P 3M 5P 7m 11A", "lydian dominant seventh", "7#11 7#4"],
-  // '''Altered'''
-  ["1P 3M 5P 7m 9m", "dominant flat ninth", "7b9"],
-  ["1P 3M 5P 7m 9A", "dominant sharp ninth", "7#9"],
-  ["1P 3M 7m 9m", "altered", "alt7"],
-  // '''Suspended'''
-  ["1P 4P 5P", "suspended fourth", "sus4 sus"],
-  ["1P 2M 5P", "suspended second", "sus2"],
-  ["1P 4P 5P 7m", "suspended fourth seventh", "7sus4 7sus"],
-  ["1P 5P 7m 9M 11P", "eleventh", "11"],
-  [
-    "1P 4P 5P 7m 9m",
-    "suspended fourth flat ninth",
-    "b9sus phryg 7b9sus 7b9sus4"
-  ],
-  // ==Other==
-  ["1P 5P", "fifth", "5"],
-  ["1P 3M 5A", "augmented", "aug + +5 ^#5"],
-  ["1P 3m 5A", "minor augmented", "m#5 -#5 m+"],
-  ["1P 3M 5A 7M", "augmented seventh", "maj7#5 maj7+5 +maj7 ^7#5"],
-  [
-    "1P 3M 5P 7M 9M 11A",
-    "major sharp eleventh (lydian)",
-    "maj9#11 \u03949#11 ^9#11"
-  ],
-  // ==Legacy==
-  ["1P 2M 4P 5P", "", "sus24 sus4add9"],
-  ["1P 3M 5A 7M 9M", "", "maj9#5 Maj9#5"],
-  ["1P 3M 5A 7m", "", "7#5 +7 7+ 7aug aug7"],
-  ["1P 3M 5A 7m 9A", "", "7#5#9 7#9#5 7alt"],
-  ["1P 3M 5A 7m 9M", "", "9#5 9+"],
-  ["1P 3M 5A 7m 9M 11A", "", "9#5#11"],
-  ["1P 3M 5A 7m 9m", "", "7#5b9 7b9#5"],
-  ["1P 3M 5A 7m 9m 11A", "", "7#5b9#11"],
-  ["1P 3M 5A 9A", "", "+add#9"],
-  ["1P 3M 5A 9M", "", "M#5add9 +add9"],
-  ["1P 3M 5P 6M 11A", "", "M6#11 M6b5 6#11 6b5"],
-  ["1P 3M 5P 6M 7M 9M", "", "M7add13"],
-  ["1P 3M 5P 6M 9M 11A", "", "69#11"],
-  ["1P 3m 5P 6M 9M", "", "m69 -69"],
-  ["1P 3M 5P 6m 7m", "", "7b6"],
-  ["1P 3M 5P 7M 9A 11A", "", "maj7#9#11"],
-  ["1P 3M 5P 7M 9M 11A 13M", "", "M13#11 maj13#11 M13+4 M13#4"],
-  ["1P 3M 5P 7M 9m", "", "M7b9"],
-  ["1P 3M 5P 7m 11A 13m", "", "7#11b13 7b5b13"],
-  ["1P 3M 5P 7m 13M", "", "7add6 67 7add13"],
-  ["1P 3M 5P 7m 9A 11A", "", "7#9#11 7b5#9 7#9b5"],
-  ["1P 3M 5P 7m 9A 11A 13M", "", "13#9#11"],
-  ["1P 3M 5P 7m 9A 11A 13m", "", "7#9#11b13"],
-  ["1P 3M 5P 7m 9A 13M", "", "13#9"],
-  ["1P 3M 5P 7m 9A 13m", "", "7#9b13"],
-  ["1P 3M 5P 7m 9M 11A", "", "9#11 9+4 9#4"],
-  ["1P 3M 5P 7m 9M 11A 13M", "", "13#11 13+4 13#4"],
-  ["1P 3M 5P 7m 9M 11A 13m", "", "9#11b13 9b5b13"],
-  ["1P 3M 5P 7m 9m 11A", "", "7b9#11 7b5b9 7b9b5"],
-  ["1P 3M 5P 7m 9m 11A 13M", "", "13b9#11"],
-  ["1P 3M 5P 7m 9m 11A 13m", "", "7b9b13#11 7b9#11b13 7b5b9b13"],
-  ["1P 3M 5P 7m 9m 13M", "", "13b9"],
-  ["1P 3M 5P 7m 9m 13m", "", "7b9b13"],
-  ["1P 3M 5P 7m 9m 9A", "", "7b9#9"],
-  ["1P 3M 5P 9M", "", "Madd9 2 add9 add2"],
-  ["1P 3M 5P 9m", "", "Maddb9"],
-  ["1P 3M 5d", "", "Mb5"],
-  ["1P 3M 5d 6M 7m 9M", "", "13b5"],
-  ["1P 3M 5d 7M", "", "M7b5"],
-  ["1P 3M 5d 7M 9M", "", "M9b5"],
-  ["1P 3M 5d 7m", "", "7b5"],
-  ["1P 3M 5d 7m 9M", "", "9b5"],
-  ["1P 3M 7m", "", "7no5"],
-  ["1P 3M 7m 13m", "", "7b13"],
-  ["1P 3M 7m 9M", "", "9no5"],
-  ["1P 3M 7m 9M 13M", "", "13no5"],
-  ["1P 3M 7m 9M 13m", "", "9b13"],
-  ["1P 3m 4P 5P", "", "madd4"],
-  ["1P 3m 5P 6m 7M", "", "mMaj7b6"],
-  ["1P 3m 5P 6m 7M 9M", "", "mMaj9b6"],
-  ["1P 3m 5P 7m 11P", "", "m7add11 m7add4"],
-  ["1P 3m 5P 9M", "", "madd9"],
-  ["1P 3m 5d 6M 7M", "", "o7M7"],
-  ["1P 3m 5d 7M", "", "oM7"],
-  ["1P 3m 6m 7M", "", "mb6M7"],
-  ["1P 3m 6m 7m", "", "m7#5"],
-  ["1P 3m 6m 7m 9M", "", "m9#5"],
-  ["1P 3m 5A 7m 9M 11P", "", "m11A"],
-  ["1P 3m 6m 9m", "", "mb6b9"],
-  ["1P 2M 3m 5d 7m", "", "m9b5"],
-  ["1P 4P 5A 7M", "", "M7#5sus4"],
-  ["1P 4P 5A 7M 9M", "", "M9#5sus4"],
-  ["1P 4P 5A 7m", "", "7#5sus4"],
-  ["1P 4P 5P 7M", "", "M7sus4"],
-  ["1P 4P 5P 7M 9M", "", "M9sus4"],
-  ["1P 4P 5P 7m 9M", "", "9sus4 9sus"],
-  ["1P 4P 5P 7m 9M 13M", "", "13sus4 13sus"],
-  ["1P 4P 5P 7m 9m 13m", "", "7sus4b9b13 7b9b13sus4"],
-  ["1P 4P 7m 10m", "", "4 quartal"],
-  ["1P 5P 7m 9m 11P", "", "11b9"]
-];
-var data_default = CHORDS;
-var NoChordType = {
-  ...EmptyPcset,
-  name: "",
-  quality: "Unknown",
-  intervals: [],
-  aliases: []
-};
-var dictionary = [];
-var index = {};
-function get2(type) {
-  return index[type] || NoChordType;
-}
-function all() {
-  return dictionary.slice();
-}
-function add(intervals, aliases, fullName) {
-  const quality = getQuality(intervals);
-  const chord2 = {
-    ...get(intervals),
-    name: fullName || "",
-    quality,
-    intervals,
-    aliases
-  };
-  dictionary.push(chord2);
-  if (chord2.name) {
-    index[chord2.name] = chord2;
-  }
-  index[chord2.setNum] = chord2;
-  index[chord2.chroma] = chord2;
-  chord2.aliases.forEach((alias) => addAlias(chord2, alias));
-}
-function addAlias(chord2, alias) {
-  index[alias] = chord2;
-}
-function getQuality(intervals) {
-  const has = (interval2) => intervals.indexOf(interval2) !== -1;
-  return has("5A") ? "Augmented" : has("3M") ? "Major" : has("5d") ? "Diminished" : has("3m") ? "Minor" : "Unknown";
-}
-data_default.forEach(
-  ([ivls, fullName, names22]) => add(ivls.split(" "), names22.split(" "), fullName)
-);
-dictionary.sort((a, b) => a.setNum - b.setNum);
-
-// node_modules/@tonaljs/chord-detect/dist/index.mjs
-var namedSet = (notes2) => {
-  const pcToName = notes2.reduce((record, n) => {
-    const chroma4 = note(n).chroma;
-    if (chroma4 !== void 0) {
-      record[chroma4] = record[chroma4] || note(n).name;
-    }
-    return record;
-  }, {});
-  return (chroma4) => pcToName[chroma4];
-};
-function detect(source, options = {}) {
-  const notes2 = source.map((n) => note(n).pc).filter((x) => x);
-  if (note.length === 0) {
-    return [];
-  }
-  const found = findMatches(notes2, 1, options);
-  return found.filter((chord2) => chord2.weight).sort((a, b) => b.weight - a.weight).map((chord2) => chord2.name);
-}
-var BITMASK = {
-  // 3m 000100000000
-  // 3M 000010000000
-  anyThirds: 384,
-  // 5P 000000010000
-  perfectFifth: 16,
-  // 5d 000000100000
-  // 5A 000000001000
-  nonPerfectFifths: 40,
-  anySeventh: 3
-};
-var testChromaNumber = (bitmask) => (chromaNumber) => Boolean(chromaNumber & bitmask);
-var hasAnyThird = testChromaNumber(BITMASK.anyThirds);
-var hasPerfectFifth = testChromaNumber(BITMASK.perfectFifth);
-var hasAnySeventh = testChromaNumber(BITMASK.anySeventh);
-var hasNonPerfectFifth = testChromaNumber(BITMASK.nonPerfectFifths);
-function hasAnyThirdAndPerfectFifthAndAnySeventh(chordType) {
-  const chromaNumber = parseInt(chordType.chroma, 2);
-  return hasAnyThird(chromaNumber) && hasPerfectFifth(chromaNumber) && hasAnySeventh(chromaNumber);
-}
-function withPerfectFifth(chroma4) {
-  const chromaNumber = parseInt(chroma4, 2);
-  return hasNonPerfectFifth(chromaNumber) ? chroma4 : (chromaNumber | 16).toString(2);
-}
-function findMatches(notes2, weight, options) {
-  const tonic = notes2[0];
-  const tonicChroma = note(tonic).chroma;
-  const noteName = namedSet(notes2);
-  const allModes = modes(notes2, false);
-  const found = [];
-  allModes.forEach((mode, index4) => {
-    const modeWithPerfectFifth = options.assumePerfectFifth && withPerfectFifth(mode);
-    const chordTypes = all().filter((chordType) => {
-      if (options.assumePerfectFifth && hasAnyThirdAndPerfectFifthAndAnySeventh(chordType)) {
-        return chordType.chroma === modeWithPerfectFifth;
-      }
-      return chordType.chroma === mode;
-    });
-    chordTypes.forEach((chordType) => {
-      const chordName = chordType.aliases[0];
-      const baseNote = noteName(index4);
-      const isInversion = index4 !== tonicChroma;
-      if (isInversion) {
-        found.push({
-          weight: 0.5 * weight,
-          name: `${baseNote}${chordName}/${tonic}`
-        });
-      } else {
-        found.push({ weight: 1 * weight, name: `${baseNote}${chordName}` });
-      }
-    });
-  });
-  return found;
-}
-
-// node_modules/@tonaljs/interval/dist/index.mjs
-var IQ = "P m M m M P d P m M m M".split(" ");
-var add2 = combinator((a, b) => [a[0] + b[0], a[1] + b[1]]);
-var subtract = combinator((a, b) => [a[0] - b[0], a[1] - b[1]]);
-function combinator(fn) {
-  return (a, b) => {
-    const coordA = interval(a).coord;
-    const coordB = interval(b).coord;
-    if (coordA && coordB) {
-      const coord = fn(coordA, coordB);
-      return coordToInterval(coord).name;
-    }
-  };
-}
-
-// node_modules/@tonaljs/scale-type/dist/index.mjs
-var SCALES = [
-  // Basic scales
-  ["1P 2M 3M 5P 6M", "major pentatonic", "pentatonic"],
-  ["1P 2M 3M 4P 5P 6M 7M", "major", "ionian"],
-  ["1P 2M 3m 4P 5P 6m 7m", "minor", "aeolian"],
-  // Jazz common scales
-  ["1P 2M 3m 3M 5P 6M", "major blues"],
-  ["1P 3m 4P 5d 5P 7m", "minor blues", "blues"],
-  ["1P 2M 3m 4P 5P 6M 7M", "melodic minor"],
-  ["1P 2M 3m 4P 5P 6m 7M", "harmonic minor"],
-  ["1P 2M 3M 4P 5P 6M 7m 7M", "bebop"],
-  ["1P 2M 3m 4P 5d 6m 6M 7M", "diminished", "whole-half diminished"],
-  // Modes
-  ["1P 2M 3m 4P 5P 6M 7m", "dorian"],
-  ["1P 2M 3M 4A 5P 6M 7M", "lydian"],
-  ["1P 2M 3M 4P 5P 6M 7m", "mixolydian", "dominant"],
-  ["1P 2m 3m 4P 5P 6m 7m", "phrygian"],
-  ["1P 2m 3m 4P 5d 6m 7m", "locrian"],
-  // 5-note scales
-  ["1P 3M 4P 5P 7M", "ionian pentatonic"],
-  ["1P 3M 4P 5P 7m", "mixolydian pentatonic", "indian"],
-  ["1P 2M 4P 5P 6M", "ritusen"],
-  ["1P 2M 4P 5P 7m", "egyptian"],
-  ["1P 3M 4P 5d 7m", "neopolitan major pentatonic"],
-  ["1P 3m 4P 5P 6m", "vietnamese 1"],
-  ["1P 2m 3m 5P 6m", "pelog"],
-  ["1P 2m 4P 5P 6m", "kumoijoshi"],
-  ["1P 2M 3m 5P 6m", "hirajoshi"],
-  ["1P 2m 4P 5d 7m", "iwato"],
-  ["1P 2m 4P 5P 7m", "in-sen"],
-  ["1P 3M 4A 5P 7M", "lydian pentatonic", "chinese"],
-  ["1P 3m 4P 6m 7m", "malkos raga"],
-  ["1P 3m 4P 5d 7m", "locrian pentatonic", "minor seven flat five pentatonic"],
-  ["1P 3m 4P 5P 7m", "minor pentatonic", "vietnamese 2"],
-  ["1P 3m 4P 5P 6M", "minor six pentatonic"],
-  ["1P 2M 3m 5P 6M", "flat three pentatonic", "kumoi"],
-  ["1P 2M 3M 5P 6m", "flat six pentatonic"],
-  ["1P 2m 3M 5P 6M", "scriabin"],
-  ["1P 3M 5d 6m 7m", "whole tone pentatonic"],
-  ["1P 3M 4A 5A 7M", "lydian #5P pentatonic"],
-  ["1P 3M 4A 5P 7m", "lydian dominant pentatonic"],
-  ["1P 3m 4P 5P 7M", "minor #7M pentatonic"],
-  ["1P 3m 4d 5d 7m", "super locrian pentatonic"],
-  // 6-note scales
-  ["1P 2M 3m 4P 5P 7M", "minor hexatonic"],
-  ["1P 2A 3M 5P 5A 7M", "augmented"],
-  ["1P 2M 4P 5P 6M 7m", "piongio"],
-  ["1P 2m 3M 4A 6M 7m", "prometheus neopolitan"],
-  ["1P 2M 3M 4A 6M 7m", "prometheus"],
-  ["1P 2m 3M 5d 6m 7m", "mystery #1"],
-  ["1P 2m 3M 4P 5A 6M", "six tone symmetric"],
-  ["1P 2M 3M 4A 5A 6A", "whole tone", "messiaen's mode #1"],
-  ["1P 2m 4P 4A 5P 7M", "messiaen's mode #5"],
-  // 7-note scales
-  ["1P 2M 3M 4P 5d 6m 7m", "locrian major", "arabian"],
-  ["1P 2m 3M 4A 5P 6m 7M", "double harmonic lydian"],
-  [
-    "1P 2m 2A 3M 4A 6m 7m",
-    "altered",
-    "super locrian",
-    "diminished whole tone",
-    "pomeroy"
-  ],
-  ["1P 2M 3m 4P 5d 6m 7m", "locrian #2", "half-diminished", "aeolian b5"],
-  [
-    "1P 2M 3M 4P 5P 6m 7m",
-    "mixolydian b6",
-    "melodic minor fifth mode",
-    "hindu"
-  ],
-  ["1P 2M 3M 4A 5P 6M 7m", "lydian dominant", "lydian b7", "overtone"],
-  ["1P 2M 3M 4A 5A 6M 7M", "lydian augmented"],
-  [
-    "1P 2m 3m 4P 5P 6M 7m",
-    "dorian b2",
-    "phrygian #6",
-    "melodic minor second mode"
-  ],
-  [
-    "1P 2m 3m 4d 5d 6m 7d",
-    "ultralocrian",
-    "superlocrian bb7",
-    "superlocrian diminished"
-  ],
-  ["1P 2m 3m 4P 5d 6M 7m", "locrian 6", "locrian natural 6", "locrian sharp 6"],
-  ["1P 2A 3M 4P 5P 5A 7M", "augmented heptatonic"],
-  // Source https://en.wikipedia.org/wiki/Ukrainian_Dorian_scale
-  [
-    "1P 2M 3m 4A 5P 6M 7m",
-    "dorian #4",
-    "ukrainian dorian",
-    "romanian minor",
-    "altered dorian"
-  ],
-  ["1P 2M 3m 4A 5P 6M 7M", "lydian diminished"],
-  ["1P 2M 3M 4A 5A 7m 7M", "leading whole tone"],
-  ["1P 2M 3M 4A 5P 6m 7m", "lydian minor"],
-  ["1P 2m 3M 4P 5P 6m 7m", "phrygian dominant", "spanish", "phrygian major"],
-  ["1P 2m 3m 4P 5P 6m 7M", "balinese"],
-  ["1P 2m 3m 4P 5P 6M 7M", "neopolitan major"],
-  ["1P 2M 3M 4P 5P 6m 7M", "harmonic major"],
-  ["1P 2m 3M 4P 5P 6m 7M", "double harmonic major", "gypsy"],
-  ["1P 2M 3m 4A 5P 6m 7M", "hungarian minor"],
-  ["1P 2A 3M 4A 5P 6M 7m", "hungarian major"],
-  ["1P 2m 3M 4P 5d 6M 7m", "oriental"],
-  ["1P 2m 3m 3M 4A 5P 7m", "flamenco"],
-  ["1P 2m 3m 4A 5P 6m 7M", "todi raga"],
-  ["1P 2m 3M 4P 5d 6m 7M", "persian"],
-  ["1P 2m 3M 5d 6m 7m 7M", "enigmatic"],
-  [
-    "1P 2M 3M 4P 5A 6M 7M",
-    "major augmented",
-    "major #5",
-    "ionian augmented",
-    "ionian #5"
-  ],
-  ["1P 2A 3M 4A 5P 6M 7M", "lydian #9"],
-  // 8-note scales
-  ["1P 2m 2M 4P 4A 5P 6m 7M", "messiaen's mode #4"],
-  ["1P 2m 3M 4P 4A 5P 6m 7M", "purvi raga"],
-  ["1P 2m 3m 3M 4P 5P 6m 7m", "spanish heptatonic"],
-  ["1P 2M 3m 3M 4P 5P 6M 7m", "bebop minor"],
-  ["1P 2M 3M 4P 5P 5A 6M 7M", "bebop major"],
-  ["1P 2m 3m 4P 5d 5P 6m 7m", "bebop locrian"],
-  ["1P 2M 3m 4P 5P 6m 7m 7M", "minor bebop"],
-  ["1P 2M 3M 4P 5d 5P 6M 7M", "ichikosucho"],
-  ["1P 2M 3m 4P 5P 6m 6M 7M", "minor six diminished"],
-  [
-    "1P 2m 3m 3M 4A 5P 6M 7m",
-    "half-whole diminished",
-    "dominant diminished",
-    "messiaen's mode #2"
-  ],
-  ["1P 3m 3M 4P 5P 6M 7m 7M", "kafi raga"],
-  ["1P 2M 3M 4P 4A 5A 6A 7M", "messiaen's mode #6"],
-  // 9-note scales
-  ["1P 2M 3m 3M 4P 5d 5P 6M 7m", "composite blues"],
-  ["1P 2M 3m 3M 4A 5P 6m 7m 7M", "messiaen's mode #3"],
-  // 10-note scales
-  ["1P 2m 2M 3m 4P 4A 5P 6m 6M 7M", "messiaen's mode #7"],
-  // 12-note scales
-  ["1P 2m 2M 3m 3M 4P 5d 5P 6m 6M 7m 7M", "chromatic"]
-];
-var data_default2 = SCALES;
-var NoScaleType = {
-  ...EmptyPcset,
-  intervals: [],
-  aliases: []
-};
-var dictionary2 = [];
-var index2 = {};
-function get3(type) {
-  return index2[type] || NoScaleType;
-}
-function all2() {
-  return dictionary2.slice();
-}
-function add3(intervals, name2, aliases = []) {
-  const scale = { ...get(intervals), name: name2, intervals, aliases };
-  dictionary2.push(scale);
-  index2[scale.name] = scale;
-  index2[scale.setNum] = scale;
-  index2[scale.chroma] = scale;
-  scale.aliases.forEach((alias) => addAlias2(scale, alias));
-  return scale;
-}
-function addAlias2(scale, alias) {
-  index2[alias] = scale;
-}
-data_default2.forEach(
-  ([ivls, name2, ...aliases]) => add3(ivls.split(" "), name2, aliases)
-);
-
-// node_modules/@tonaljs/chord/dist/index.mjs
-var NoChord = {
-  empty: true,
-  name: "",
-  symbol: "",
-  root: "",
-  bass: "",
-  rootDegree: 0,
-  type: "",
-  tonic: null,
-  setNum: NaN,
-  quality: "Unknown",
-  chroma: "",
-  normalized: "",
-  aliases: [],
-  notes: [],
-  intervals: []
-};
-function tokenize(name2) {
-  const [letter, acc, oct, type] = tokenizeNote(name2);
-  if (letter === "") {
-    return tokenizeBass("", name2);
-  } else if (letter === "A" && type === "ug") {
-    return tokenizeBass("", "aug");
-  } else {
-    return tokenizeBass(letter + acc, oct + type);
-  }
-}
-function tokenizeBass(note2, chord2) {
-  const split = chord2.split("/");
-  if (split.length === 1) {
-    return [note2, split[0], ""];
-  }
-  const [letter, acc, oct, type] = tokenizeNote(split[1]);
-  if (letter !== "" && oct === "" && type === "") {
-    return [note2, split[0], letter + acc];
-  } else {
-    return [note2, chord2, ""];
-  }
-}
-function get4(src) {
-  if (Array.isArray(src)) {
-    return getChord(src[1] || "", src[0], src[2]);
-  } else if (src === "") {
-    return NoChord;
-  } else {
-    const [tonic, type, bass] = tokenize(src);
-    const chord2 = getChord(type, tonic, bass);
-    return chord2.empty ? getChord(src) : chord2;
-  }
-}
-function getChord(typeName, optionalTonic, optionalBass) {
-  const type = get2(typeName);
-  const tonic = note(optionalTonic || "");
-  const bass = note(optionalBass || "");
-  if (type.empty || optionalTonic && tonic.empty || optionalBass && bass.empty) {
-    return NoChord;
-  }
-  const bassInterval = distance(tonic.pc, bass.pc);
-  const bassIndex = type.intervals.indexOf(bassInterval);
-  const hasRoot = bassIndex >= 0;
-  const root = hasRoot ? bass : note("");
-  const rootDegree = bassIndex === -1 ? NaN : bassIndex + 1;
-  const hasBass = bass.pc && bass.pc !== tonic.pc;
-  const intervals = Array.from(type.intervals);
-  if (hasRoot) {
-    for (let i = 1; i < rootDegree; i++) {
-      const num = intervals[0][0];
-      const quality = intervals[0][1];
-      const newNum = parseInt(num, 10) + 7;
-      intervals.push(`${newNum}${quality}`);
-      intervals.shift();
-    }
-  } else if (hasBass) {
-    const ivl = subtract(distance(tonic.pc, bass.pc), "8P");
-    if (ivl) intervals.unshift(ivl);
-  }
-  const notes2 = tonic.empty ? [] : intervals.map((i) => transpose(tonic.pc, i));
-  typeName = type.aliases.indexOf(typeName) !== -1 ? typeName : type.aliases[0];
-  const symbol = `${tonic.empty ? "" : tonic.pc}${typeName}${hasRoot && rootDegree > 1 ? "/" + root.pc : hasBass ? "/" + bass.pc : ""}`;
-  const name2 = `${optionalTonic ? tonic.pc + " " : ""}${type.name}${hasRoot && rootDegree > 1 ? " over " + root.pc : hasBass ? " over " + bass.pc : ""}`;
-  return {
-    ...type,
-    name: name2,
-    symbol,
-    tonic: tonic.pc,
-    type: type.name,
-    root: root.pc,
-    bass: hasBass ? bass.pc : "",
-    intervals,
-    rootDegree,
-    notes: notes2
-  };
-}
-var chord = get4;
-function transpose2(chordName, interval2) {
-  const [tonic, type, bass] = tokenize(chordName);
-  if (!tonic) {
-    return chordName;
-  }
-  const tr2 = transpose(bass, interval2);
-  const slash = tr2 ? "/" + tr2 : "";
-  return transpose(tonic, interval2) + type + slash;
-}
-function chordScales(name2) {
-  const s = get4(name2);
-  const isChordIncluded = isSupersetOf(s.chroma);
-  return all2().filter((scale) => isChordIncluded(scale.chroma)).map((scale) => scale.name);
-}
-function extended(chordName) {
-  const s = get4(chordName);
-  const isSuperset = isSupersetOf(s.chroma);
-  return all().filter((chord2) => isSuperset(chord2.chroma)).map((chord2) => s.tonic + chord2.aliases[0]);
-}
-function reduced(chordName) {
-  const s = get4(chordName);
-  const isSubset = isSubsetOf(s.chroma);
-  return all().filter((chord2) => isSubset(chord2.chroma)).map((chord2) => s.tonic + chord2.aliases[0]);
-}
-function notes(chordName, tonic) {
-  const chord2 = get4(chordName);
-  const note2 = tonic || chord2.tonic;
-  if (!note2 || chord2.empty) return [];
-  return chord2.intervals.map((ivl) => transpose(note2, ivl));
-}
-function degrees(chordName, tonic) {
-  const chord2 = get4(chordName);
-  const note2 = tonic || chord2.tonic;
-  const transpose22 = tonicIntervalsTransposer(chord2.intervals, note2);
-  return (degree) => degree ? transpose22(degree > 0 ? degree - 1 : degree) : "";
-}
-function steps(chordName, tonic) {
-  const chord2 = get4(chordName);
-  const note2 = tonic || chord2.tonic;
-  return tonicIntervalsTransposer(chord2.intervals, note2);
-}
-var chord_default = {
-  getChord,
-  get: get4,
-  detect,
-  chordScales,
-  extended,
-  reduced,
-  tokenize,
-  transpose: transpose2,
-  degrees,
-  steps,
-  notes,
-  chord
-};
-
-// node_modules/@tonaljs/duration-value/dist/index.mjs
-var DATA = [
-  [
-    0.125,
-    "dl",
-    ["large", "duplex longa", "maxima", "octuple", "octuple whole"]
-  ],
-  [0.25, "l", ["long", "longa"]],
-  [0.5, "d", ["double whole", "double", "breve"]],
-  [1, "w", ["whole", "semibreve"]],
-  [2, "h", ["half", "minim"]],
-  [4, "q", ["quarter", "crotchet"]],
-  [8, "e", ["eighth", "quaver"]],
-  [16, "s", ["sixteenth", "semiquaver"]],
-  [32, "t", ["thirty-second", "demisemiquaver"]],
-  [64, "sf", ["sixty-fourth", "hemidemisemiquaver"]],
-  [128, "h", ["hundred twenty-eighth"]],
-  [256, "th", ["two hundred fifty-sixth"]]
-];
-var data_default3 = DATA;
-var VALUES = [];
-data_default3.forEach(
-  ([denominator, shorthand, names22]) => add4(denominator, shorthand, names22)
-);
-function add4(denominator, shorthand, names22) {
-  VALUES.push({
-    empty: false,
-    dots: "",
-    name: "",
-    value: 1 / denominator,
-    fraction: denominator < 1 ? [1 / denominator, 1] : [1, denominator],
-    shorthand,
-    names: names22
+    return [err, void 0];
   });
 }
 
-// node_modules/@tonaljs/note/dist/index.mjs
-var dist_exports3 = {};
-__export(dist_exports3, {
-  accidentals: () => accidentals,
-  ascending: () => ascending,
-  chroma: () => chroma2,
-  default: () => index_default2,
-  descending: () => descending,
-  distance: () => distance2,
-  enharmonic: () => enharmonic,
-  freq: () => freq,
-  fromFreq: () => fromFreq,
-  fromFreqSharps: () => fromFreqSharps,
-  fromMidi: () => fromMidi,
-  fromMidiSharps: () => fromMidiSharps,
-  get: () => get5,
-  midi: () => midi,
-  name: () => name,
-  names: () => names,
-  octave: () => octave,
-  pitchClass: () => pitchClass,
-  simplify: () => simplify,
-  sortedNames: () => sortedNames,
-  sortedUniqNames: () => sortedUniqNames,
-  tr: () => tr,
-  trBy: () => trBy,
-  trFifths: () => trFifths,
-  trFrom: () => trFrom,
-  transpose: () => transpose3,
-  transposeBy: () => transposeBy,
-  transposeFifths: () => transposeFifths,
-  transposeFrom: () => transposeFrom,
-  transposeOctaves: () => transposeOctaves
-});
-
-// node_modules/@tonaljs/midi/dist/index.mjs
-var dist_exports2 = {};
-__export(dist_exports2, {
-  chroma: () => chroma,
-  default: () => index_default,
-  freqToMidi: () => freqToMidi,
-  isMidi: () => isMidi,
-  midiToFreq: () => midiToFreq,
-  midiToNoteName: () => midiToNoteName,
-  pcset: () => pcset,
-  pcsetDegrees: () => pcsetDegrees,
-  pcsetNearest: () => pcsetNearest,
-  pcsetSteps: () => pcsetSteps,
-  toMidi: () => toMidi
-});
-function isMidi(arg) {
-  return +arg >= 0 && +arg <= 127;
-}
-function toMidi(note2) {
-  if (isMidi(note2)) {
-    return +note2;
-  }
-  const n = note(note2);
-  return n.empty ? null : n.midi;
-}
-function midiToFreq(midi2, tuning = 440) {
-  return Math.pow(2, (midi2 - 69) / 12) * tuning;
-}
-var L2 = Math.log(2);
-var L440 = Math.log(440);
-function freqToMidi(freq2) {
-  const v = 12 * (Math.log(freq2) - L440) / L2 + 69;
-  return Math.round(v * 100) / 100;
-}
-var SHARPS = "C C# D D# E F F# G G# A A# B".split(" ");
-var FLATS = "C Db D Eb E F Gb G Ab A Bb B".split(" ");
-function midiToNoteName(midi2, options = {}) {
-  if (isNaN(midi2) || midi2 === -Infinity || midi2 === Infinity) return "";
-  midi2 = Math.round(midi2);
-  const pcs = options.sharps === true ? SHARPS : FLATS;
-  const pc = pcs[midi2 % 12];
-  if (options.pitchClass) {
-    return pc;
-  }
-  const o = Math.floor(midi2 / 12) - 1;
-  return pc + o;
-}
-function chroma(midi2) {
-  return midi2 % 12;
-}
-function pcsetFromChroma(chroma22) {
-  return chroma22.split("").reduce((pcset2, val, index4) => {
-    if (index4 < 12 && val === "1") pcset2.push(index4);
-    return pcset2;
-  }, []);
-}
-function pcsetFromMidi(midi2) {
-  return midi2.map(chroma).sort((a, b) => a - b).filter((n, i, a) => i === 0 || n !== a[i - 1]);
-}
-function pcset(notes2) {
-  return Array.isArray(notes2) ? pcsetFromMidi(notes2) : pcsetFromChroma(notes2);
-}
-function pcsetNearest(notes2) {
-  const set = pcset(notes2);
-  return (midi2) => {
-    const ch = chroma(midi2);
-    for (let i = 0; i < 12; i++) {
-      if (set.includes(ch + i)) return midi2 + i;
-      if (set.includes(ch - i)) return midi2 - i;
-    }
-    return void 0;
-  };
-}
-function pcsetSteps(notes2, tonic) {
-  const set = pcset(notes2);
-  const len = set.length;
-  return (step) => {
-    const index4 = step < 0 ? (len - -step % len) % len : step % len;
-    const octaves = Math.floor(step / len);
-    return set[index4] + octaves * 12 + tonic;
-  };
-}
-function pcsetDegrees(notes2, tonic) {
-  const steps2 = pcsetSteps(notes2, tonic);
-  return (degree) => {
-    if (degree === 0) return void 0;
-    return steps2(degree > 0 ? degree - 1 : degree);
-  };
-}
-var index_default = {
-  chroma,
-  freqToMidi,
-  isMidi,
-  midiToFreq,
-  midiToNoteName,
-  pcsetNearest,
-  pcset,
-  pcsetDegrees,
-  pcsetSteps,
-  toMidi
+// src/refactor/throwShit.ts
+var THROW_MESSAGE_MAP = {
+  "fetchSoundfont": "Error fetching soundfont",
+  "parseSoundfont": "Error parsing soundfont",
+  "networkError": "Network error occurred"
+};
+var throwShit = (messageOrKey, data) => {
+  const message = THROW_MESSAGE_MAP[messageOrKey] || messageOrKey;
+  console.error(message, data);
+  throw new Error(message);
 };
 
-// node_modules/@tonaljs/note/dist/index.mjs
-var NAMES = ["C", "D", "E", "F", "G", "A", "B"];
-var toName = (n) => n.name;
-var onlyNotes = (array) => array.map(note).filter((n) => !n.empty);
-function names(array) {
-  if (array === void 0) {
-    return NAMES.slice();
-  } else if (!Array.isArray(array)) {
-    return [];
-  } else {
-    return onlyNotes(array).map(toName);
-  }
-}
-var get5 = note;
-var name = (note2) => get5(note2).name;
-var pitchClass = (note2) => get5(note2).pc;
-var accidentals = (note2) => get5(note2).acc;
-var octave = (note2) => get5(note2).oct;
-var midi = (note2) => get5(note2).midi;
-var freq = (note2) => get5(note2).freq;
-var chroma2 = (note2) => get5(note2).chroma;
-function fromMidi(midi2) {
-  return midiToNoteName(midi2);
-}
-function fromFreq(freq2) {
-  return midiToNoteName(freqToMidi(freq2));
-}
-function fromFreqSharps(freq2) {
-  return midiToNoteName(freqToMidi(freq2), { sharps: true });
-}
-function fromMidiSharps(midi2) {
-  return midiToNoteName(midi2, { sharps: true });
-}
-var distance2 = distance;
-var transpose3 = transpose;
-var tr = transpose;
-var transposeBy = (interval2) => (note2) => transpose3(note2, interval2);
-var trBy = transposeBy;
-var transposeFrom = (note2) => (interval2) => transpose3(note2, interval2);
-var trFrom = transposeFrom;
-function transposeFifths(noteName, fifths) {
-  return transpose3(noteName, [fifths, 0]);
-}
-var trFifths = transposeFifths;
-function transposeOctaves(noteName, octaves) {
-  return transpose3(noteName, [0, octaves]);
-}
-var ascending = (a, b) => a.height - b.height;
-var descending = (a, b) => b.height - a.height;
-function sortedNames(notes2, comparator) {
-  comparator = comparator || ascending;
-  return onlyNotes(notes2).sort(comparator).map(toName);
-}
-function sortedUniqNames(notes2) {
-  return sortedNames(notes2, ascending).filter(
-    (n, i, a) => i === 0 || n !== a[i - 1]
-  );
-}
-var simplify = (noteName) => {
-  const note2 = get5(noteName);
-  if (note2.empty) {
-    return "";
-  }
-  return midiToNoteName(note2.midi || note2.chroma, {
-    sharps: note2.alt > 0,
-    pitchClass: note2.midi === null
-  });
-};
-function enharmonic(noteName, destName) {
-  const src = get5(noteName);
-  if (src.empty) {
-    return "";
-  }
-  const dest = get5(
-    destName || midiToNoteName(src.midi || src.chroma, {
-      sharps: src.alt < 0,
-      pitchClass: true
-    })
-  );
-  if (dest.empty || dest.chroma !== src.chroma) {
-    return "";
-  }
-  if (src.oct === void 0) {
-    return dest.pc;
-  }
-  const srcChroma = src.chroma - src.alt;
-  const destChroma = dest.chroma - dest.alt;
-  const destOctOffset = srcChroma > 11 || destChroma < 0 ? -1 : srcChroma < 0 || destChroma > 11 ? 1 : 0;
-  const destOct = src.oct + destOctOffset;
-  return dest.pc + destOct;
-}
-var index_default2 = {
-  names,
-  get: get5,
-  name,
-  pitchClass,
-  accidentals,
-  octave,
-  midi,
-  ascending,
-  descending,
-  distance: distance2,
-  sortedNames,
-  sortedUniqNames,
-  fromMidi,
-  fromMidiSharps,
-  freq,
-  fromFreq,
-  fromFreqSharps,
-  chroma: chroma2,
-  transpose: transpose3,
-  tr,
-  transposeBy,
-  trBy,
-  transposeFrom,
-  trFrom,
-  transposeFifths,
-  transposeOctaves,
-  trFifths,
-  simplify,
-  enharmonic
-};
-
-// node_modules/@tonaljs/roman-numeral/dist/index.mjs
-var NoRomanNumeral = { empty: true, name: "", chordType: "" };
-var cache4 = {};
-function get6(src) {
-  return typeof src === "string" ? cache4[src] || (cache4[src] = parse3(src)) : typeof src === "number" ? get6(NAMES2[src] || "") : isPitch(src) ? fromPitch(src) : isNamedPitch(src) ? get6(src.name) : NoRomanNumeral;
-}
-function fromPitch(pitch2) {
-  return get6(altToAcc(pitch2.alt) + NAMES2[pitch2.step]);
-}
-var REGEX4 = /^(#{1,}|b{1,}|x{1,}|)(IV|I{1,3}|VI{0,2}|iv|i{1,3}|vi{0,2})([^IViv]*)$/;
-function tokenize2(str) {
-  return REGEX4.exec(str) || ["", "", "", ""];
-}
-var ROMANS = "I II III IV V VI VII";
-var NAMES2 = ROMANS.split(" ");
-var NAMES_MINOR = ROMANS.toLowerCase().split(" ");
-function parse3(src) {
-  const [name2, acc, roman, chordType] = tokenize2(src);
-  if (!roman) {
-    return NoRomanNumeral;
-  }
-  const upperRoman = roman.toUpperCase();
-  const step = NAMES2.indexOf(upperRoman);
-  const alt = accToAlt(acc);
-  const dir = 1;
-  return {
-    empty: false,
-    name: name2,
-    roman,
-    interval: interval({ step, alt, dir }).name,
-    acc,
-    chordType,
-    alt,
-    step,
-    major: roman === upperRoman,
-    oct: 0,
-    dir
-  };
-}
-
-// node_modules/@tonaljs/key/dist/index.mjs
-var Empty = Object.freeze([]);
-var NoKey = {
-  type: "major",
-  tonic: "",
-  alteration: 0,
-  keySignature: ""
-};
-var NoKeyScale = {
-  tonic: "",
-  grades: Empty,
-  intervals: Empty,
-  scale: Empty,
-  triads: Empty,
-  chords: Empty,
-  chordsHarmonicFunction: Empty,
-  chordScales: Empty,
-  secondaryDominants: Empty,
-  secondaryDominantSupertonics: Empty,
-  substituteDominantsMinorRelative: Empty,
-  substituteDominants: Empty,
-  substituteDominantSupertonics: Empty,
-  secondaryDominantsMinorRelative: Empty
-};
-var NoMajorKey = {
-  ...NoKey,
-  ...NoKeyScale,
-  type: "major",
-  minorRelative: "",
-  scale: Empty,
-  substituteDominants: Empty,
-  secondaryDominantSupertonics: Empty,
-  substituteDominantsMinorRelative: Empty
-};
-var NoMinorKey = {
-  ...NoKey,
-  type: "minor",
-  relativeMajor: "",
-  natural: NoKeyScale,
-  harmonic: NoKeyScale,
-  melodic: NoKeyScale
-};
-var mapScaleToType = (scale, list, sep = "") => list.map((type, i) => `${scale[i]}${sep}${type}`);
-function keyScale(grades, triads3, chordTypes, harmonicFunctions, chordScales2) {
-  return (tonic) => {
-    const intervals = grades.map((gr) => get6(gr).interval || "");
-    const scale = intervals.map((interval2) => transpose3(tonic, interval2));
-    const chords2 = mapScaleToType(scale, chordTypes);
-    const secondaryDominants = scale.map((note2) => transpose3(note2, "5P")).map(
-      (note2) => (
-        // A secondary dominant is a V chord which:
-        // 1. is not diatonic to the key,
-        // 2. it must have a diatonic root.
-        scale.includes(note2) && !chords2.includes(note2 + "7") ? note2 + "7" : ""
-      )
-    );
-    const secondaryDominantSupertonics = supertonics(
-      secondaryDominants,
-      triads3
-    );
-    const substituteDominants = secondaryDominants.map((chord2) => {
-      if (!chord2) return "";
-      const domRoot = chord2.slice(0, -1);
-      const subRoot = transpose3(domRoot, "5d");
-      return subRoot + "7";
+// node_modules/@marmooo/soundfont-parser/esm/Stream.js
+var Stream = class {
+  constructor(data, offset) {
+    Object.defineProperty(this, "data", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: data
     });
-    const substituteDominantSupertonics = supertonics(
-      substituteDominants,
-      triads3
-    );
+    Object.defineProperty(this, "offset", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: offset
+    });
+  }
+  readString(size) {
+    const start2 = this.offset;
+    const end = start2 + size;
+    const data = this.data;
+    this.offset = end;
+    let nul = end;
+    for (let i = start2 + 1; i < end; i++) {
+      if (data[i] === 0) {
+        nul = i;
+        break;
+      }
+    }
+    const len = nul - start2;
+    const arr = new Array(len);
+    for (let i = 0; i < len; i++) {
+      arr[i] = data[start2 + i];
+    }
+    return String.fromCharCode(...arr);
+  }
+  readWORD() {
+    return this.data[this.offset++] | this.data[this.offset++] << 8;
+  }
+  readDWORD(bigEndian = false) {
+    if (bigEndian) {
+      return (this.data[this.offset++] << 24 | this.data[this.offset++] << 16 | this.data[this.offset++] << 8 | this.data[this.offset++]) >>> 0;
+    } else {
+      return (this.data[this.offset++] | this.data[this.offset++] << 8 | this.data[this.offset++] << 16 | this.data[this.offset++] << 24) >>> 0;
+    }
+  }
+  readByte() {
+    return this.data[this.offset++];
+  }
+  readAt(offset) {
+    return this.data[this.offset + offset];
+  }
+  /* helper */
+  readUInt8() {
+    return this.readByte();
+  }
+  readInt8() {
+    return this.readByte() << 24 >> 24;
+  }
+  readUInt16() {
+    return this.readWORD();
+  }
+  readInt16() {
+    return this.readWORD() << 16 >> 16;
+  }
+  readUInt32() {
+    return this.readDWORD();
+  }
+};
+
+// node_modules/@marmooo/soundfont-parser/esm/RiffParser.js
+function parseChunk(input, offset, bigEndian) {
+  const stream = new Stream(input, offset);
+  const type = stream.readString(4);
+  const size = stream.readDWORD(bigEndian);
+  return new Chunk(type, size, stream.offset);
+}
+function parseRiff(input, index4 = 0, length, { padding = true, bigEndian = false } = {}) {
+  const chunkList = [];
+  const end = length + index4;
+  let offset = index4;
+  while (offset < end) {
+    const chunk = parseChunk(input, offset, bigEndian);
+    offset = chunk.offset + chunk.size;
+    if (padding && (offset - index4 & 1) === 1) {
+      offset++;
+    }
+    chunkList.push(chunk);
+  }
+  return chunkList;
+}
+var Chunk = class {
+  constructor(type, size, offset) {
+    Object.defineProperty(this, "type", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: type
+    });
+    Object.defineProperty(this, "size", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: size
+    });
+    Object.defineProperty(this, "offset", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: offset
+    });
+  }
+};
+
+// node_modules/@marmooo/soundfont-parser/esm/Constants.js
+var GeneratorKeys = [
+  "startAddrsOffset",
+  "endAddrsOffset",
+  "startloopAddrsOffset",
+  "endloopAddrsOffset",
+  "startAddrsCoarseOffset",
+  "modLfoToPitch",
+  "vibLfoToPitch",
+  "modEnvToPitch",
+  "initialFilterFc",
+  "initialFilterQ",
+  "modLfoToFilterFc",
+  "modEnvToFilterFc",
+  "endAddrsCoarseOffset",
+  "modLfoToVolume",
+  void 0,
+  // 14
+  "chorusEffectsSend",
+  "reverbEffectsSend",
+  "pan",
+  void 0,
+  void 0,
+  void 0,
+  // 18,19,20
+  "delayModLFO",
+  "freqModLFO",
+  "delayVibLFO",
+  "freqVibLFO",
+  "delayModEnv",
+  "attackModEnv",
+  "holdModEnv",
+  "decayModEnv",
+  "sustainModEnv",
+  "releaseModEnv",
+  "keynumToModEnvHold",
+  "keynumToModEnvDecay",
+  "delayVolEnv",
+  "attackVolEnv",
+  "holdVolEnv",
+  "decayVolEnv",
+  "sustainVolEnv",
+  "releaseVolEnv",
+  "keynumToVolEnvHold",
+  "keynumToVolEnvDecay",
+  "instrument",
+  void 0,
+  // 42
+  "keyRange",
+  "velRange",
+  "startloopAddrsCoarseOffset",
+  "keynum",
+  "velocity",
+  "initialAttenuation",
+  void 0,
+  // 49
+  "endloopAddrsCoarseOffset",
+  "coarseTune",
+  "fineTune",
+  "sampleID",
+  "sampleModes",
+  void 0,
+  // 55
+  "scaleTuning",
+  "exclusiveClass",
+  "overridingRootKey"
+];
+
+// node_modules/@marmooo/soundfont-parser/esm/Modulator.js
+var ModulatorSource = class _ModulatorSource {
+  constructor(type, polarity, direction, cc, index4) {
+    Object.defineProperty(this, "type", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: type
+    });
+    Object.defineProperty(this, "polarity", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: polarity
+    });
+    Object.defineProperty(this, "direction", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: direction
+    });
+    Object.defineProperty(this, "cc", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: cc
+    });
+    Object.defineProperty(this, "index", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: index4
+    });
+  }
+  get controllerType() {
+    return this.cc << 7 | this.index;
+  }
+  static parse(sourceOper) {
+    const type = sourceOper >> 10 & 63;
+    const index4 = sourceOper & 127;
+    const cc = sourceOper >> 7 & 1;
+    const direction = sourceOper >> 8 & 1;
+    const polarity = sourceOper >> 9 & 1;
+    return new _ModulatorSource(type, polarity, direction, cc, index4);
+  }
+  map(normalizedValue) {
+    let v = normalizedValue;
+    if (this.polarity === 1) {
+      v = (v - 0.5) * 2;
+      if (this.direction === 1) {
+        v *= -1;
+      }
+    } else if (this.direction === 1) {
+      v = 1 - v;
+    }
+    switch (this.type) {
+      case 0:
+        break;
+      case 1:
+        v = Math.sign(v) * Math.log(Math.abs(v));
+        break;
+      case 2:
+        v = Math.sign(v) * Math.exp(-Math.abs(v));
+        break;
+      case 3:
+        v = v >= 0.5 ? 1 : 0;
+        break;
+      default:
+        console.warn(`unexpected type: ${this.type}`);
+        break;
+    }
+    return v;
+  }
+};
+
+// node_modules/@marmooo/soundfont-parser/esm/Structs.js
+var VersionTag = class _VersionTag {
+  constructor(major, minor) {
+    Object.defineProperty(this, "major", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: major
+    });
+    Object.defineProperty(this, "minor", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: minor
+    });
+  }
+  static parse(stream) {
+    const major = stream.readInt8();
+    const minor = stream.readInt8();
+    return new _VersionTag(major, minor);
+  }
+};
+var Info = class _Info {
+  constructor(comment, copyright, creationDate, engineer, name2, product, software, version2, soundEngine, romName, romVersion) {
+    Object.defineProperty(this, "comment", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: comment
+    });
+    Object.defineProperty(this, "copyright", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: copyright
+    });
+    Object.defineProperty(this, "creationDate", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: creationDate
+    });
+    Object.defineProperty(this, "engineer", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: engineer
+    });
+    Object.defineProperty(this, "name", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: name2
+    });
+    Object.defineProperty(this, "product", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: product
+    });
+    Object.defineProperty(this, "software", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: software
+    });
+    Object.defineProperty(this, "version", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: version2
+    });
+    Object.defineProperty(this, "soundEngine", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: soundEngine
+    });
+    Object.defineProperty(this, "romName", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: romName
+    });
+    Object.defineProperty(this, "romVersion", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: romVersion
+    });
+  }
+  static parse(data, chunks) {
+    function getChunk(type) {
+      for (let i = 0; i < chunks.length; i++) {
+        if (chunks[i].type === type)
+          return chunks[i];
+      }
+      return void 0;
+    }
+    function toStream(chunk) {
+      return new Stream(data, chunk.offset);
+    }
+    function readString(type) {
+      const chunk = getChunk(type);
+      if (!chunk)
+        return null;
+      return toStream(chunk).readString(chunk.size);
+    }
+    function readVersionTag(type) {
+      const chunk = getChunk(type);
+      if (!chunk)
+        return null;
+      return VersionTag.parse(toStream(chunk));
+    }
+    const comment = readString("ICMT");
+    const copyright = readString("ICOP");
+    const creationDate = readString("ICRD");
+    const engineer = readString("IENG");
+    const name2 = readString("INAM");
+    const product = readString("IPRD");
+    const software = readString("ISFT");
+    const version2 = readVersionTag("ifil");
+    const soundEngine = readString("isng");
+    const romName = readString("irom");
+    const romVersion = readVersionTag("iver");
+    return new _Info(comment, copyright, creationDate, engineer, name2, product, software, version2, soundEngine, romName, romVersion);
+  }
+};
+var Bag = class _Bag {
+  constructor(generatorIndex, modulatorIndex) {
+    Object.defineProperty(this, "generatorIndex", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: generatorIndex
+    });
+    Object.defineProperty(this, "modulatorIndex", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: modulatorIndex
+    });
+  }
+  static parse(stream) {
+    const generatorIndex = stream.readWORD();
+    const modulatorIndex = stream.readWORD();
+    return new _Bag(generatorIndex, modulatorIndex);
+  }
+};
+var PresetHeader = class _PresetHeader {
+  constructor(presetName, preset, bank, presetBagIndex, library, genre, morphology) {
+    Object.defineProperty(this, "presetName", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: presetName
+    });
+    Object.defineProperty(this, "preset", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: preset
+    });
+    Object.defineProperty(this, "bank", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: bank
+    });
+    Object.defineProperty(this, "presetBagIndex", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: presetBagIndex
+    });
+    Object.defineProperty(this, "library", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: library
+    });
+    Object.defineProperty(this, "genre", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: genre
+    });
+    Object.defineProperty(this, "morphology", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: morphology
+    });
+  }
+  get isEnd() {
+    return this.presetName === "EOP";
+  }
+  static parse(stream) {
+    const presetName = stream.readString(20);
+    const preset = stream.readWORD();
+    const bank = stream.readWORD();
+    const presetBagIndex = stream.readWORD();
+    const library = stream.readDWORD();
+    const genre = stream.readDWORD();
+    const morphology = stream.readDWORD();
+    return new _PresetHeader(presetName, preset, bank, presetBagIndex, library, genre, morphology);
+  }
+};
+var RangeValue = class _RangeValue {
+  constructor(lo, hi) {
+    Object.defineProperty(this, "lo", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "hi", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    this.lo = lo;
+    this.hi = hi;
+  }
+  in(value) {
+    return this.lo <= value && value <= this.hi;
+  }
+  static parse(stream) {
+    const lo = stream.readByte();
+    const hi = stream.readByte();
+    return new _RangeValue(lo, hi);
+  }
+};
+var ModulatorList = class _ModulatorList {
+  constructor(sourceOper, destinationOper, value, amountSourceOper, transOper) {
+    Object.defineProperty(this, "sourceOper", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: sourceOper
+    });
+    Object.defineProperty(this, "destinationOper", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: destinationOper
+    });
+    Object.defineProperty(this, "value", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value
+    });
+    Object.defineProperty(this, "amountSourceOper", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: amountSourceOper
+    });
+    Object.defineProperty(this, "transOper", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: transOper
+    });
+  }
+  transform(inputValue) {
+    const newValue = this.value * inputValue;
+    switch (this.transOper) {
+      case 0:
+        return newValue;
+      case 2:
+        return Math.abs(newValue);
+      default:
+        return newValue;
+    }
+  }
+  static parse(stream) {
+    const source = stream.readWORD();
+    const destinationOper = stream.readWORD();
+    const value = stream.readInt16();
+    const amountSource = stream.readWORD();
+    const transOper = stream.readWORD();
+    const sourceOper = ModulatorSource.parse(source);
+    const amountSourceOper = ModulatorSource.parse(amountSource);
+    return new _ModulatorList(sourceOper, destinationOper, value, amountSourceOper, transOper);
+  }
+};
+var GeneratorList = class _GeneratorList {
+  constructor(code, value) {
+    Object.defineProperty(this, "code", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: code
+    });
+    Object.defineProperty(this, "value", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value
+    });
+  }
+  get type() {
+    return GeneratorKeys[this.code];
+  }
+  get isEnd() {
+    return this.code === 0 && this.value === 0;
+  }
+  static parse(stream) {
+    const code = stream.readWORD();
+    const type = GeneratorKeys[code];
+    let value;
+    switch (type) {
+      case "keyRange":
+      case "velRange":
+        value = RangeValue.parse(stream);
+        break;
+      default:
+        value = stream.readInt16();
+        break;
+    }
+    return new _GeneratorList(code, value);
+  }
+};
+var Instrument = class _Instrument {
+  constructor() {
+    Object.defineProperty(this, "instrumentName", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "instrumentBagIndex", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+  }
+  get isEnd() {
+    return this.instrumentName === "EOI";
+  }
+  static parse(stream) {
+    const t = new _Instrument();
+    t.instrumentName = stream.readString(20);
+    t.instrumentBagIndex = stream.readWORD();
+    return t;
+  }
+};
+var SampleHeader = class _SampleHeader {
+  constructor(sampleName, start2, end, loopStart, loopEnd, sampleRate, originalPitch, pitchCorrection, sampleLink, sampleType) {
+    Object.defineProperty(this, "sampleName", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: sampleName
+    });
+    Object.defineProperty(this, "start", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: start2
+    });
+    Object.defineProperty(this, "end", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: end
+    });
+    Object.defineProperty(this, "loopStart", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: loopStart
+    });
+    Object.defineProperty(this, "loopEnd", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: loopEnd
+    });
+    Object.defineProperty(this, "sampleRate", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: sampleRate
+    });
+    Object.defineProperty(this, "originalPitch", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: originalPitch
+    });
+    Object.defineProperty(this, "pitchCorrection", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: pitchCorrection
+    });
+    Object.defineProperty(this, "sampleLink", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: sampleLink
+    });
+    Object.defineProperty(this, "sampleType", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: sampleType
+    });
+  }
+  get isEnd() {
+    return this.sampleName === "EOS";
+  }
+  static parse(stream, isSF3) {
+    const sampleName = stream.readString(20);
+    const start2 = stream.readDWORD();
+    const end = stream.readDWORD();
+    let loopStart = stream.readDWORD();
+    let loopEnd = stream.readDWORD();
+    const sampleRate = stream.readDWORD();
+    const originalPitch = stream.readByte();
+    const pitchCorrection = stream.readInt8();
+    const sampleLink = stream.readWORD();
+    const sampleType = stream.readWORD();
+    if (!isSF3) {
+      loopStart -= start2;
+      loopEnd -= start2;
+    }
+    return new _SampleHeader(sampleName, start2, end, loopStart, loopEnd, sampleRate, originalPitch, pitchCorrection, sampleLink, sampleType);
+  }
+};
+var BoundedValue = class {
+  constructor(min, defaultValue, max) {
+    Object.defineProperty(this, "min", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "max", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    Object.defineProperty(this, "defaultValue", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: void 0
+    });
+    this.min = min;
+    this.defaultValue = defaultValue;
+    this.max = max;
+  }
+  clamp(value) {
+    return Math.max(this.min, Math.min(value, this.max));
+  }
+};
+
+// node_modules/@marmooo/soundfont-parser/esm/Parser.js
+function parse(input, option = {}) {
+  const chunkList = parseRiff(input, 0, input.length, option);
+  if (chunkList.length !== 1) {
+    throw new Error("wrong chunk length");
+  }
+  const chunk = chunkList[0];
+  if (chunk === null) {
+    throw new Error("chunk not found");
+  }
+  function parseRiffChunk(chunk2, data, option2 = {}) {
+    const chunkList2 = getChunkList(chunk2, data, "RIFF", "sfbk", option2);
+    if (chunkList2.length !== 3) {
+      throw new Error("invalid sfbk structure");
+    }
+    const info = parseInfoList(chunkList2[0], data);
+    const isSF32 = info.version.major === 3;
+    if (isSF32 && chunkList2[2].type !== "LIST") {
+      chunkList2[2] = parseChunk(data, chunkList2[2].offset - 9, false);
+    }
     return {
-      tonic,
-      grades,
-      intervals,
-      scale,
-      triads: mapScaleToType(scale, triads3),
-      chords: chords2,
-      chordsHarmonicFunction: harmonicFunctions.slice(),
-      chordScales: mapScaleToType(scale, chordScales2, " "),
-      secondaryDominants,
-      secondaryDominantSupertonics,
-      substituteDominants,
-      substituteDominantSupertonics,
-      // @deprecated use secondaryDominantsSupertonic
-      secondaryDominantsMinorRelative: secondaryDominantSupertonics,
-      // @deprecated use secondaryDominantsSupertonic
-      substituteDominantsMinorRelative: substituteDominantSupertonics
+      // INFO-list
+      info,
+      // sdta-list
+      samplingData: parseSdtaList(chunkList2[1], data),
+      // pdta-list
+      ...parsePdtaList(chunkList2[2], data, isSF32)
     };
-  };
-}
-var supertonics = (dominants, targetTriads) => {
-  return dominants.map((chord2, index4) => {
-    if (!chord2) return "";
-    const domRoot = chord2.slice(0, -1);
-    const minorRoot = transpose3(domRoot, "5P");
-    const target = targetTriads[index4];
-    const isMinor = target.endsWith("m");
-    return isMinor ? minorRoot + "m7" : minorRoot + "m7b5";
-  });
-};
-var MajorScale = keyScale(
-  "I II III IV V VI VII".split(" "),
-  " m m   m dim".split(" "),
-  "maj7 m7 m7 maj7 7 m7 m7b5".split(" "),
-  "T SD T SD D T D".split(" "),
-  "major,dorian,phrygian,lydian,mixolydian,minor,locrian".split(",")
-);
-var NaturalScale = keyScale(
-  "I II bIII IV V bVI bVII".split(" "),
-  "m dim  m m  ".split(" "),
-  "m7 m7b5 maj7 m7 m7 maj7 7".split(" "),
-  "T SD T SD D SD SD".split(" "),
-  "minor,locrian,major,dorian,phrygian,lydian,mixolydian".split(",")
-);
-var HarmonicScale = keyScale(
-  "I II bIII IV V bVI VII".split(" "),
-  "m dim aug m   dim".split(" "),
-  "mMaj7 m7b5 +maj7 m7 7 maj7 o7".split(" "),
-  "T SD T SD D SD D".split(" "),
-  "harmonic minor,locrian 6,major augmented,lydian diminished,phrygian dominant,lydian #9,ultralocrian".split(
-    ","
-  )
-);
-var MelodicScale = keyScale(
-  "I II bIII IV V VI VII".split(" "),
-  "m m aug   dim dim".split(" "),
-  "m6 m7 +maj7 7 7 m7b5 m7b5".split(" "),
-  "T SD T SD D  ".split(" "),
-  "melodic minor,dorian b2,lydian augmented,lydian dominant,mixolydian b6,locrian #2,altered".split(
-    ","
-  )
-);
-
-// node_modules/@tonaljs/mode/dist/index.mjs
-var MODES = [
-  [0, 2773, 0, "ionian", "", "Maj7", "major"],
-  [1, 2902, 2, "dorian", "m", "m7"],
-  [2, 3418, 4, "phrygian", "m", "m7"],
-  [3, 2741, -1, "lydian", "", "Maj7"],
-  [4, 2774, 1, "mixolydian", "", "7"],
-  [5, 2906, 3, "aeolian", "m", "m7", "minor"],
-  [6, 3434, 5, "locrian", "dim", "m7b5"]
-];
-var NoMode = {
-  ...EmptyPcset,
-  name: "",
-  alt: 0,
-  modeNum: NaN,
-  triad: "",
-  seventh: "",
-  aliases: []
-};
-var modes2 = MODES.map(toMode);
-var index3 = {};
-modes2.forEach((mode2) => {
-  index3[mode2.name] = mode2;
-  mode2.aliases.forEach((alias) => {
-    index3[alias] = mode2;
-  });
-});
-function get7(name2) {
-  return typeof name2 === "string" ? index3[name2.toLowerCase()] || NoMode : name2 && name2.name ? get7(name2.name) : NoMode;
-}
-function toMode(mode2) {
-  const [modeNum, setNum, alt, name2, triad, seventh, alias] = mode2;
-  const aliases = alias ? [alias] : [];
-  const chroma4 = Number(setNum).toString(2);
-  const intervals = get3(name2).intervals;
+  }
+  function parsePdtaList(chunk2, data, isSF32) {
+    const chunkList2 = getChunkList(chunk2, data, "LIST", "pdta");
+    if (chunkList2.length !== 9) {
+      throw new Error("invalid pdta chunk");
+    }
+    return {
+      presetHeaders: parsePhdr(chunkList2[0], data),
+      presetZone: parsePbag(chunkList2[1], data),
+      presetModulators: parsePmod(chunkList2[2], data),
+      presetGenerators: parsePgen(chunkList2[3], data),
+      instruments: parseInst(chunkList2[4], data),
+      instrumentZone: parseIbag(chunkList2[5], data),
+      instrumentModulators: parseImod(chunkList2[6], data),
+      instrumentGenerators: parseIgen(chunkList2[7], data),
+      sampleHeaders: parseShdr(chunkList2[8], data, isSF32)
+    };
+  }
+  const result = parseRiffChunk(chunk, input, option);
+  const isSF3 = result.info.version.major === 3;
   return {
-    empty: false,
-    intervals,
-    modeNum,
-    chroma: chroma4,
-    normalized: chroma4,
-    name: name2,
-    setNum,
-    alt,
-    triad,
-    seventh,
-    aliases
+    ...result,
+    samples: loadSample(result.sampleHeaders, result.samplingData.offsetMSB, result.samplingData.offsetLSB, input, isSF3)
   };
 }
-function chords(chords2) {
-  return (modeName, tonic) => {
-    const mode2 = get7(modeName);
-    if (mode2.empty) return [];
-    const triads22 = rotate(mode2.modeNum, chords2);
-    const tonics = mode2.intervals.map((i) => transpose(tonic, i));
-    return triads22.map((triad, i) => tonics[i] + triad);
+function getChunkList(chunk, data, expectedType, expectedSignature, option = {}) {
+  if (chunk.type !== expectedType) {
+    throw new Error("invalid chunk type:" + chunk.type);
+  }
+  const stream = new Stream(data, chunk.offset);
+  const signature = stream.readString(4);
+  if (signature !== expectedSignature) {
+    throw new Error("invalid signature:" + signature);
+  }
+  return parseRiff(data, stream.offset, chunk.size - 4, option);
+}
+function parseInfoList(chunk, data) {
+  const chunkList = getChunkList(chunk, data, "LIST", "INFO");
+  return Info.parse(data, chunkList);
+}
+function parseSdtaList(chunk, data) {
+  const chunkList = getChunkList(chunk, data, "LIST", "sdta");
+  return {
+    offsetMSB: chunkList[0].offset,
+    offsetLSB: chunkList[1]?.offset
   };
 }
-var triads = chords(MODES.map((x) => x[4]));
-var seventhChords = chords(MODES.map((x) => x[5]));
-
-// node_modules/@tonaljs/voice-leading/dist/index.mjs
-var topNoteDiff = (voicings, lastVoicing) => {
-  if (!lastVoicing || !lastVoicing.length) {
-    return voicings[0];
+function parseChunkObjects(chunk, data, type, clazz, terminate, isSF3) {
+  const result = [];
+  if (chunk.type !== type) {
+    throw new Error("invalid chunk type:" + chunk.type);
   }
-  const topNoteMidi = (voicing) => index_default2.midi(voicing[voicing.length - 1]) || 0;
-  const diff = (voicing) => Math.abs(topNoteMidi(lastVoicing) - topNoteMidi(voicing));
-  return voicings.sort((a, b) => diff(a) - diff(b))[0];
-};
-var index_default3 = {
-  topNoteDiff
-};
-
-// node_modules/@tonaljs/voicing-dictionary/dist/index.mjs
-var triads2 = {
-  M: ["1P 3M 5P", "3M 5P 8P", "5P 8P 10M"],
-  m: ["1P 3m 5P", "3m 5P 8P", "5P 8P 10m"],
-  o: ["1P 3m 5d", "3m 5d 8P", "5d 8P 10m"],
-  aug: ["1P 3m 5A", "3m 5A 8P", "5A 8P 10m"]
-};
-var lefthand = {
-  m7: ["3m 5P 7m 9M", "7m 9M 10m 12P"],
-  "7": ["3M 6M 7m 9M", "7m 9M 10M 13M"],
-  "^7": ["3M 5P 7M 9M", "7M 9M 10M 12P"],
-  "69": ["3M 5P 6A 9M"],
-  m7b5: ["3m 5d 7m 8P", "7m 8P 10m 12d"],
-  "7b9": ["3M 6m 7m 9m", "7m 9m 10M 13m"],
-  // b9 / b13
-  "7b13": ["3M 6m 7m 9m", "7m 9m 10M 13m"],
-  // b9 / b13
-  o7: ["1P 3m 5d 6M", "5d 6M 8P 10m"],
-  "7#11": ["7m 9M 11A 13A"],
-  "7#9": ["3M 7m 9A"],
-  mM7: ["3m 5P 7M 9M", "7M 9M 10m 12P"],
-  m6: ["3m 5P 6M 9M", "6M 9M 10m 12P"]
-};
-var all3 = {
-  M: ["1P 3M 5P", "3M 5P 8P", "5P 8P 10M"],
-  m: ["1P 3m 5P", "3m 5P 8P", "5P 8P 10m"],
-  o: ["1P 3m 5d", "3m 5d 8P", "5d 8P 10m"],
-  aug: ["1P 3m 5A", "3m 5A 8P", "5A 8P 10m"],
-  m7: ["3m 5P 7m 9M", "7m 9M 10m 12P"],
-  "7": ["3M 6M 7m 9M", "7m 9M 10M 13M"],
-  "^7": ["3M 5P 7M 9M", "7M 9M 10M 12P"],
-  "69": ["3M 5P 6A 9M"],
-  m7b5: ["3m 5d 7m 8P", "7m 8P 10m 12d"],
-  "7b9": ["3M 6m 7m 9m", "7m 9m 10M 13m"],
-  // b9 / b13
-  "7b13": ["3M 6m 7m 9m", "7m 9m 10M 13m"],
-  // b9 / b13
-  o7: ["1P 3m 5d 6M", "5d 6M 8P 10m"],
-  "7#11": ["7m 9M 11A 13A"],
-  "7#9": ["3M 7m 9A"],
-  mM7: ["3m 5P 7M 9M", "7M 9M 10m 12P"],
-  m6: ["3m 5P 6M 9M", "6M 9M 10m 12P"]
-};
-var defaultDictionary = lefthand;
-function lookup(symbol, dictionary3 = defaultDictionary) {
-  if (dictionary3[symbol]) {
-    return dictionary3[symbol];
+  const stream = new Stream(data, chunk.offset);
+  const size = chunk.offset + chunk.size;
+  while (stream.offset < size) {
+    const obj = clazz.parse(stream, isSF3);
+    if (terminate && terminate(obj)) {
+      break;
+    }
+    result.push(obj);
   }
-  const { aliases } = chord_default.get("C" + symbol);
-  const match = Object.keys(dictionary3).find((_symbol) => aliases.includes(_symbol)) || "";
-  if (match !== void 0) {
-    return dictionary3[match];
-  }
-  return void 0;
+  return result;
 }
-var index_default4 = {
-  lookup,
-  lefthand,
-  triads: triads2,
-  all: all3,
-  defaultDictionary
-};
-
-// node_modules/@tonaljs/voicing/dist/index.mjs
-var defaultDictionary2 = index_default4.all;
-var defaultVoiceLeading = index_default3.topNoteDiff;
-
-// node_modules/@tonaljs/core/dist/index.mjs
-function deprecate(original, alternative, fn) {
-  return function(...args) {
-    console.warn(`${original} is deprecated. Use ${alternative}.`);
-    return fn.apply(this, args);
-  };
+var parsePhdr = (chunk, data) => parseChunkObjects(chunk, data, "phdr", PresetHeader, (p) => p.isEnd);
+var parsePbag = (chunk, data) => parseChunkObjects(chunk, data, "pbag", Bag);
+var parseInst = (chunk, data) => parseChunkObjects(chunk, data, "inst", Instrument, (i) => i.isEnd);
+var parseIbag = (chunk, data) => parseChunkObjects(chunk, data, "ibag", Bag);
+var parsePmod = (chunk, data) => parseChunkObjects(chunk, data, "pmod", ModulatorList);
+var parseImod = (chunk, data) => parseChunkObjects(chunk, data, "imod", ModulatorList);
+var parsePgen = (chunk, data) => parseChunkObjects(chunk, data, "pgen", GeneratorList, (g) => g.isEnd);
+var parseIgen = (chunk, data) => parseChunkObjects(chunk, data, "igen", GeneratorList);
+var parseShdr = (chunk, data, isSF3) => parseChunkObjects(chunk, data, "shdr", SampleHeader, (s) => s.isEnd, isSF3);
+function loadSample(sampleHeader, samplingDataOffsetMSB, _samplingDataOffsetLSB, data, isSF3) {
+  const result = new Array(sampleHeader.length);
+  const factor = isSF3 ? 1 : 2;
+  for (let i = 0; i < sampleHeader.length; i++) {
+    const { start: start2, end } = sampleHeader[i];
+    const startOffset = samplingDataOffsetMSB + start2 * factor;
+    const endOffset = samplingDataOffsetMSB + end * factor;
+    result[i] = data.subarray(startOffset, endOffset);
+  }
+  return result;
 }
-var isNamed = deprecate("isNamed", "isNamedPitch", isNamedPitch);
 
-// src/utils/note-parser.ts
-var noteToMidi = (args) => {
-  const midi2 = dist_exports2.toMidi(args.note);
-  if (midi2 === null) {
-    throw new Error(`Cannot convert note to MIDI: ${args.note}`);
-  }
-  return midi2;
-};
-var midiToNote = (args) => {
-  const note2 = dist_exports2.midiToNoteName(args.midi);
-  if (!note2) {
-    throw new Error(`Cannot convert MIDI to note: ${args.midi}`);
-  }
-  return note2;
-};
-var transposeNote = (args) => {
-  const midi2 = noteToMidi(args);
-  return midiToNote({ midi: midi2 + args.semitones });
-};
-
-// src/note.ts
-var createNote = (args) => {
-  const state = {
-    note: args.note,
-    velocity: args.config.minVelocity || 45,
-    afterMs: 0,
-    detuneCents: 0,
-    gain: args.config.gain || 70,
-    pan: 0
-  };
-  const noteInstance = {
-    velocity: (vel, maxVel) => {
-      if (maxVel !== void 0) {
-        state.minVelocity = vel;
-        state.maxVelocity = maxVel;
-        state.velocity = Math.random() * (maxVel - vel) + vel;
-      } else {
-        state.velocity = vel;
-      }
-      return noteInstance;
-    },
-    after: (ms) => {
-      state.afterMs = ms;
-      return noteInstance;
-    },
-    duration: (ms) => {
-      state.durationMs = ms;
-      return noteInstance;
-    },
-    detune: (cents) => {
-      state.detuneCents = cents;
-      return noteInstance;
-    },
-    attack: (ms) => {
-      state.attackMs = ms;
-      return noteInstance;
-    },
-    release: (ms) => {
-      state.releaseMs = ms;
-      return noteInstance;
-    },
-    gain: (gain) => {
-      state.gain = gain;
-      return noteInstance;
-    },
-    pan: (pan) => {
-      state.pan = pan;
-      return noteInstance;
-    },
-    play: () => {
-      return createPlayingNote({ state, synth: args.synth, instanceTracker: args.instanceTracker });
-    },
-    stop: () => {
-      console.log(`Stopping note ${state.note} immediately`);
-      const instances = args.instanceTracker.noteInstances.get(state.note);
-      if (instances) {
-        instances.forEach((voice) => voice.stop());
-        instances.clear();
-      }
+// node_modules/@marmooo/soundfont-parser/esm/Generator.js
+var generatorKeyToIndex = /* @__PURE__ */ new Map();
+for (let i = 0; i < GeneratorKeys.length; i++) {
+  generatorKeyToIndex.set(GeneratorKeys[i], i);
+}
+var IndexGeneratorKeys = [
+  "instrument",
+  "sampleID"
+];
+var RangeGeneratorKeys = [
+  "keyRange",
+  "velRange"
+];
+var SubstitutionGeneratorKeys = [
+  "keynum",
+  "velocity"
+];
+var SampleGeneratorKeys = [
+  "startAddrsOffset",
+  "endAddrsOffset",
+  "startloopAddrsOffset",
+  "endloopAddrsOffset",
+  "startAddrsCoarseOffset",
+  "endAddrsCoarseOffset",
+  "startloopAddrsCoarseOffset",
+  "endloopAddrsCoarseOffset",
+  "sampleModes",
+  "exclusiveClass",
+  "overridingRootKey"
+];
+var presetExcludedKeys = [
+  ...SampleGeneratorKeys,
+  ...SubstitutionGeneratorKeys
+];
+var presetExcludedIndices = /* @__PURE__ */ new Set();
+for (let i = 0; i < presetExcludedKeys.length; i++) {
+  const key = presetExcludedKeys[i];
+  const index4 = generatorKeyToIndex.get(key);
+  if (index4 !== void 0)
+    presetExcludedIndices.add(index4);
+}
+function convertToInstrumentGeneratorParams(input) {
+  const output = {};
+  const keys = Object.keys(input);
+  for (const key of keys) {
+    const value = input[key];
+    if (isRangeGenerator(key)) {
+      output[key] = value;
+    } else {
+      const boundedValue = value;
+      output[key] = boundedValue.clamp(boundedValue.defaultValue);
     }
-  };
-  return noteInstance;
-};
-var createPlayingNote = (args) => {
-  const playingState = {
-    afterMs: 0,
-    gain: args.state.gain,
-    pan: args.state.pan
-  };
-  const midi2 = noteToMidi({ note: args.state.note });
-  const startTime = args.state.afterMs > 0 ? args.state.afterMs / 1e3 : void 0;
-  console.log(`Playing note ${args.state.note} (MIDI ${midi2}) with velocity ${args.state.velocity}`);
-  if (args.state.afterMs > 0) {
-    console.log(`  After ${args.state.afterMs}ms`);
   }
-  if (args.state.durationMs) {
-    console.log(`  Duration: ${args.state.durationMs}ms`);
+  return output;
+}
+var fixedGenerators = [
+  ["keynum", "keyRange"],
+  ["velocity", "velRange"]
+];
+var RangeGeneratorKeysSet = new Set(RangeGeneratorKeys);
+function isRangeGenerator(key) {
+  return RangeGeneratorKeysSet.has(key);
+}
+var nonValueGeneratorKeysSet = /* @__PURE__ */ new Set([
+  ...IndexGeneratorKeys,
+  ...RangeGeneratorKeys,
+  ...SubstitutionGeneratorKeys,
+  ...SampleGeneratorKeys
+]);
+function extractValueGeneratorKeys() {
+  const result = [];
+  const length = GeneratorKeys.length;
+  for (let i = 0; i < length; i++) {
+    const key = GeneratorKeys[i];
+    if (key !== void 0 && !nonValueGeneratorKeysSet.has(key)) {
+      result.push(key);
+    }
   }
-  const voice = args.synth.playNote({
-    midi: midi2,
-    velocity: args.state.velocity,
-    startTime,
-    duration: args.state.durationMs,
-    detune: args.state.detuneCents,
-    attack: args.state.attackMs,
-    release: args.state.releaseMs,
-    gain: args.state.gain,
-    pan: args.state.pan
-  });
-  if (!args.instanceTracker.noteInstances.has(args.state.note)) {
-    args.instanceTracker.noteInstances.set(args.state.note, /* @__PURE__ */ new Set());
+  return result;
+}
+var ValueGeneratorKeys = extractValueGeneratorKeys();
+var ValueGeneratorKeysSet = new Set(ValueGeneratorKeys);
+function isValueGenerator(key) {
+  return ValueGeneratorKeysSet.has(key);
+}
+function createPresetGeneratorObject(generators) {
+  const result = {};
+  for (let i = 0; i < generators.length; i++) {
+    const gen = generators[i];
+    const type = gen.type;
+    if (type === void 0)
+      continue;
+    if (presetExcludedIndices.has(gen.code))
+      continue;
+    if (isRangeGenerator(type)) {
+      result[type] = gen.value;
+    } else {
+      const key = type;
+      result[key] = gen.value;
+    }
   }
-  args.instanceTracker.noteInstances.get(args.state.note).add(voice);
-  args.instanceTracker.allInstances.add(voice);
-  const playingNote = {
-    after: (ms) => {
-      playingState.afterMs = ms;
-      return playingNote;
-    },
-    gain: (gain) => {
-      playingState.gain = gain;
-      return playingNote;
-    },
-    pan: (pan) => {
-      playingState.pan = pan;
-      return playingNote;
-    },
-    stop: () => {
-      if (playingState.afterMs > 0) {
-        console.log(`Stopping note ${args.state.note} after ${playingState.afterMs}ms`);
-        console.log(`  Transitioning to gain: ${playingState.gain}, pan: ${playingState.pan}`);
-        setTimeout(() => {
-          voice.modulate({
-            gain: playingState.gain,
-            pan: playingState.pan,
-            duration: playingState.afterMs
-          });
-          setTimeout(() => {
-            voice.stop();
-            const instances = args.instanceTracker.noteInstances.get(args.state.note);
-            if (instances) {
-              instances.delete(voice);
-            }
-            args.instanceTracker.allInstances.delete(voice);
-          }, playingState.afterMs);
-        }, 0);
-      } else {
-        console.log(`Stopping note ${args.state.note} immediately`);
-        voice.stop();
-        const instances = args.instanceTracker.noteInstances.get(args.state.note);
-        if (instances) {
-          instances.delete(voice);
-        }
-        args.instanceTracker.allInstances.delete(voice);
-      }
+  return result;
+}
+function createInstrumentGeneratorObject(generators) {
+  const result = {};
+  for (let i = 0; i < generators.length; i++) {
+    const gen = generators[i];
+    const type = gen.type;
+    if (type === void 0)
+      continue;
+    if (isRangeGenerator(type)) {
+      result[type] = gen.value;
+    } else {
+      const key = type;
+      result[key] = gen.value;
     }
-  };
-  return playingNote;
-};
-
-// src/notes.ts
-var createNotes = (args) => {
-  const state = {
-    notes: args.notes,
-    velocity: args.config.minVelocity || 45,
-    afterMs: 0,
-    staggerMs: 0,
-    detuneCents: 0,
-    gain: args.config.gain || 70,
-    pan: 0
-  };
-  const notesInstance = {
-    velocity: (vel, maxVel) => {
-      if (maxVel !== void 0) {
-        state.minVelocity = vel;
-        state.maxVelocity = maxVel;
-        state.velocity = Math.random() * (maxVel - vel) + vel;
-      } else {
-        state.velocity = vel;
-      }
-      return notesInstance;
-    },
-    after: (ms) => {
-      state.afterMs = ms;
-      return notesInstance;
-    },
-    duration: (ms) => {
-      state.durationMs = ms;
-      return notesInstance;
-    },
-    stagger: (ms) => {
-      state.staggerMs = ms;
-      return notesInstance;
-    },
-    detune: (cents) => {
-      state.detuneCents = cents;
-      return notesInstance;
-    },
-    attack: (ms) => {
-      state.attackMs = ms;
-      return notesInstance;
-    },
-    release: (ms) => {
-      state.releaseMs = ms;
-      return notesInstance;
-    },
-    gain: (gain) => {
-      state.gain = gain;
-      return notesInstance;
-    },
-    pan: (pan) => {
-      state.pan = pan;
-      return notesInstance;
-    },
-    play: () => {
-      return createPlayingNotes({ state, synth: args.synth, instanceTracker: args.instanceTracker });
-    },
-    stop: (note2) => {
-      if (note2) {
-        console.log(`Stopping note ${note2} from notes ${state.notes.join(", ")}`);
-        const notesKey = state.notes.join(",");
-        const instances = args.instanceTracker.notesInstances.get(notesKey);
-        if (instances) {
-          instances.forEach((voice) => {
-            voice.stop();
-          });
-          instances.clear();
-        }
-      } else {
-        console.log(`Stopping notes ${state.notes.join(", ")} immediately`);
-        const notesKey = state.notes.join(",");
-        const instances = args.instanceTracker.notesInstances.get(notesKey);
-        if (instances) {
-          instances.forEach((voice) => voice.stop());
-          instances.clear();
-        }
-      }
-    }
-  };
-  return notesInstance;
-};
-var createPlayingNotes = (args) => {
-  const playingState = {
-    afterMs: 0,
-    gain: args.state.gain,
-    pan: args.state.pan
-  };
-  const voices = [];
-  if (args.state.staggerMs > 0) {
-    console.log(`Playing notes ${args.state.notes.join(", ")} with ${args.state.staggerMs}ms stagger`);
-    args.state.notes.forEach((note2, index4) => {
-      const midi2 = noteToMidi({ note: note2 });
-      const delay = args.state.afterMs + index4 * args.state.staggerMs;
-      const startTime = delay > 0 ? (performance.now() + delay) / 1e3 : void 0;
-      console.log(`  ${note2} (MIDI ${midi2}) after ${delay}ms with velocity ${args.state.velocity}`);
-      const voice = args.synth.playNote({
-        midi: midi2,
-        velocity: args.state.velocity,
-        startTime,
-        duration: args.state.durationMs,
-        detune: args.state.detuneCents,
-        attack: args.state.attackMs,
-        release: args.state.releaseMs,
-        gain: args.state.gain,
-        pan: args.state.pan
-      });
-      voices.push(voice);
-    });
-    const notesKey = args.state.notes.join(",");
-    if (!args.instanceTracker.notesInstances.has(notesKey)) {
-      args.instanceTracker.notesInstances.set(notesKey, /* @__PURE__ */ new Set());
-    }
-    const notesInstances = args.instanceTracker.notesInstances.get(notesKey);
-    voices.forEach((voice) => {
-      notesInstances.add(voice);
-      args.instanceTracker.allInstances.add(voice);
-    });
-  } else {
-    console.log(`Playing notes ${args.state.notes.join(", ")} simultaneously`);
-    console.log(`  Velocity: ${args.state.velocity}`);
-    if (args.state.afterMs > 0) {
-      console.log(`  After: ${args.state.afterMs}ms`);
-    }
-    const startTime = args.state.afterMs > 0 ? (performance.now() + args.state.afterMs) / 1e3 : void 0;
-    args.state.notes.forEach((note2) => {
-      const midi2 = noteToMidi({ note: note2 });
-      const voice = args.synth.playNote({
-        midi: midi2,
-        velocity: args.state.velocity,
-        startTime,
-        duration: args.state.durationMs,
-        detune: args.state.detuneCents,
-        attack: args.state.attackMs,
-        release: args.state.releaseMs,
-        gain: args.state.gain,
-        pan: args.state.pan
-      });
-      voices.push(voice);
-    });
-    const notesKey = args.state.notes.join(",");
-    if (!args.instanceTracker.notesInstances.has(notesKey)) {
-      args.instanceTracker.notesInstances.set(notesKey, /* @__PURE__ */ new Set());
-    }
-    const notesInstances = args.instanceTracker.notesInstances.get(notesKey);
-    voices.forEach((voice) => {
-      notesInstances.add(voice);
-      args.instanceTracker.allInstances.add(voice);
-    });
   }
-  if (args.state.durationMs) {
-    console.log(`  Duration: ${args.state.durationMs}ms`);
+  for (let i = 0; i < fixedGenerators.length; i++) {
+    const [src, dst] = fixedGenerators[i];
+    const v = result[src];
+    if (v === void 0)
+      continue;
+    result[dst] = new RangeValue(v, v);
   }
-  const playingNotes = {
-    after: (ms) => {
-      playingState.afterMs = ms;
-      return playingNotes;
-    },
-    gain: (gain) => {
-      playingState.gain = gain;
-      return playingNotes;
-    },
-    pan: (pan) => {
-      playingState.pan = pan;
-      return playingNotes;
-    },
-    stop: () => {
-      if (playingState.afterMs > 0) {
-        console.log(`Stopping notes ${args.state.notes.join(", ")} after ${playingState.afterMs}ms`);
-        console.log(`  Transitioning to gain: ${playingState.gain}, pan: ${playingState.pan}`);
-        setTimeout(() => {
-          voices.forEach((voice) => {
-            voice.modulate({
-              gain: playingState.gain,
-              pan: playingState.pan,
-              duration: playingState.afterMs
-            });
-          });
-          setTimeout(() => {
-            voices.forEach((voice) => voice.stop());
-            const notesKey = args.state.notes.join(",");
-            const notesInstances = args.instanceTracker.notesInstances.get(notesKey);
-            if (notesInstances) {
-              voices.forEach((voice) => notesInstances.delete(voice));
-            }
-            voices.forEach((voice) => args.instanceTracker.allInstances.delete(voice));
-          }, playingState.afterMs);
-        }, 0);
-      } else {
-        console.log(`Stopping notes ${args.state.notes.join(", ")} immediately`);
-        voices.forEach((voice) => voice.stop());
-        const notesKey = args.state.notes.join(",");
-        const notesInstances = args.instanceTracker.notesInstances.get(notesKey);
-        if (notesInstances) {
-          voices.forEach((voice) => notesInstances.delete(voice));
-        }
-        voices.forEach((voice) => args.instanceTracker.allInstances.delete(voice));
-      }
-    }
-  };
-  return playingNotes;
+  return result;
+}
+var int16min = -32768;
+var int16max = 32767;
+var DefaultInstrumentZone = {
+  startAddrsOffset: new BoundedValue(0, 0, int16max),
+  endAddrsOffset: new BoundedValue(int16min, 0, 0),
+  startloopAddrsOffset: new BoundedValue(int16min, 0, int16max),
+  endloopAddrsOffset: new BoundedValue(int16min, 0, int16max),
+  startAddrsCoarseOffset: new BoundedValue(0, 0, int16max),
+  modLfoToPitch: new BoundedValue(-12e3, 0, 12e3),
+  vibLfoToPitch: new BoundedValue(-12e3, 0, 12e3),
+  modEnvToPitch: new BoundedValue(-12e3, 0, 12e3),
+  initialFilterFc: new BoundedValue(1500, 13500, 13500),
+  initialFilterQ: new BoundedValue(0, 0, 960),
+  modLfoToFilterFc: new BoundedValue(-12e3, 0, 12e3),
+  modEnvToFilterFc: new BoundedValue(-12e3, 0, 12e3),
+  endAddrsCoarseOffset: new BoundedValue(int16min, 0, 0),
+  modLfoToVolume: new BoundedValue(-960, 0, 960),
+  chorusEffectsSend: new BoundedValue(0, 0, 1e3),
+  reverbEffectsSend: new BoundedValue(0, 0, 1e3),
+  pan: new BoundedValue(-500, 0, 500),
+  delayModLFO: new BoundedValue(-12e3, -12e3, 5e3),
+  freqModLFO: new BoundedValue(-16e3, 0, 4500),
+  delayVibLFO: new BoundedValue(-12e3, -12e3, 5e3),
+  freqVibLFO: new BoundedValue(-16e3, 0, 4500),
+  delayModEnv: new BoundedValue(-12e3, -12e3, 5e3),
+  attackModEnv: new BoundedValue(-12e3, -12e3, 8e3),
+  holdModEnv: new BoundedValue(-12e3, -12e3, 5e3),
+  decayModEnv: new BoundedValue(-12e3, -12e3, 8e3),
+  sustainModEnv: new BoundedValue(0, 0, 1e3),
+  releaseModEnv: new BoundedValue(-12e3, -12e3, 8e3),
+  keynumToModEnvHold: new BoundedValue(-1200, 0, 1200),
+  keynumToModEnvDecay: new BoundedValue(-1200, 0, 1200),
+  delayVolEnv: new BoundedValue(-12e3, -12e3, 5e3),
+  attackVolEnv: new BoundedValue(-12e3, -12e3, 8e3),
+  holdVolEnv: new BoundedValue(-12e3, -12e3, 5e3),
+  decayVolEnv: new BoundedValue(-12e3, -12e3, 8e3),
+  sustainVolEnv: new BoundedValue(0, 0, 1440),
+  releaseVolEnv: new BoundedValue(-12e3, -12e3, 8e3),
+  keynumToVolEnvHold: new BoundedValue(-1200, 0, 1200),
+  keynumToVolEnvDecay: new BoundedValue(-1200, 0, 1200),
+  instrument: new BoundedValue(-1, -1, int16max),
+  keyRange: new RangeValue(0, 127),
+  velRange: new RangeValue(0, 127),
+  startloopAddrsCoarseOffset: new BoundedValue(int16min, 0, int16max),
+  keynum: new BoundedValue(-1, -1, 127),
+  velocity: new BoundedValue(-1, -1, 127),
+  initialAttenuation: new BoundedValue(0, 0, 1440),
+  endloopAddrsCoarseOffset: new BoundedValue(int16min, 0, int16max),
+  coarseTune: new BoundedValue(-120, 0, 120),
+  fineTune: new BoundedValue(-99, 0, 99),
+  sampleID: new BoundedValue(-1, -1, int16max),
+  sampleModes: new BoundedValue(0, 0, 3),
+  scaleTuning: new BoundedValue(0, 100, 100),
+  exclusiveClass: new BoundedValue(0, 0, 127),
+  overridingRootKey: new BoundedValue(-1, -1, 127)
 };
 
-// src/utils/chord-parser.ts
-var getChordNotes = (args) => {
-  const octave2 = args.octave || 4;
-  const chordData = dist_exports.get(args.chord);
-  if (!chordData.tonic) {
-    throw new Error(`Invalid chord format: ${args.chord}`);
+// node_modules/@marmooo/soundfont-parser/esm/Voice.js
+function timecentToSecond(value) {
+  return Math.pow(2, value / 1200);
+}
+var Voice = class {
+  constructor(key, generators, modulators, sample, sampleHeader) {
+    Object.defineProperty(this, "key", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: key
+    });
+    Object.defineProperty(this, "generators", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: generators
+    });
+    Object.defineProperty(this, "modulators", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: modulators
+    });
+    Object.defineProperty(this, "sample", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: sample
+    });
+    Object.defineProperty(this, "sampleHeader", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: sampleHeader
+    });
+    Object.defineProperty(this, "controllerToDestinations", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: /* @__PURE__ */ new Map()
+    });
+    Object.defineProperty(this, "destinationToModulators", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: /* @__PURE__ */ new Map()
+    });
+    Object.defineProperty(this, "voiceHandlers", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: {
+        // startAddrsOffset
+        // endAddrsOffset
+        // startloopAddrsOffset
+        // endloopAddrsOffset
+        modLfoToPitch: (params, generators2) => {
+          params.modLfoToPitch = this.clamp("modLfoToPitch", generators2);
+        },
+        vibLfoToPitch: (params, generators2) => {
+          params.vibLfoToPitch = this.clamp("vibLfoToPitch", generators2);
+        },
+        modEnvToPitch: (params, generators2) => {
+          params.modEnvToPitch = this.clamp("modEnvToPitch", generators2);
+        },
+        initialFilterFc: (params, generators2) => {
+          params.initialFilterFc = this.clamp("initialFilterFc", generators2);
+        },
+        initialFilterQ: (params, generators2) => {
+          params.initialFilterQ = this.clamp("initialFilterQ", generators2);
+        },
+        modLfoToFilterFc: (params, generators2) => {
+          params.modLfoToFilterFc = this.clamp("modLfoToFilterFc", generators2);
+        },
+        modEnvToFilterFc: (params, generators2) => {
+          params.modEnvToFilterFc = this.clamp("modEnvToFilterFc", generators2);
+        },
+        // endAddrsCoarseOffset
+        modLfoToVolume: (params, generators2) => {
+          params.modLfoToVolume = this.clamp("modLfoToVolume", generators2);
+        },
+        chorusEffectsSend: (params, generators2) => {
+          params.chorusEffectsSend = this.clamp("chorusEffectsSend", generators2) / 1e3;
+        },
+        reverbEffectsSend: (params, generators2) => {
+          params.reverbEffectsSend = this.clamp("reverbEffectsSend", generators2) / 1e3;
+        },
+        pan: (params, generators2) => {
+          params.pan = this.clamp("pan", generators2) / 1e3;
+        },
+        delayModLFO: (params, generators2) => {
+          params.delayModLFO = timecentToSecond(this.clamp("delayModLFO", generators2));
+        },
+        freqModLFO: (params, generators2) => {
+          params.freqModLFO = this.clamp("freqModLFO", generators2);
+        },
+        delayVibLFO: (params, generators2) => {
+          params.delayVibLFO = timecentToSecond(this.clamp("delayVibLFO", generators2));
+        },
+        freqVibLFO: (params, generators2) => {
+          params.freqVibLFO = this.clamp("freqVibLFO", generators2);
+        },
+        delayModEnv: (params, generators2) => {
+          params.modDelay = timecentToSecond(this.clamp("delayModEnv", generators2));
+        },
+        attackModEnv: (params, generators2) => {
+          params.modAttack = timecentToSecond(this.clamp("attackModEnv", generators2));
+        },
+        holdModEnv: (params, generators2) => {
+          const holdModEnv = this.clamp("holdModEnv", generators2);
+          const keynumToModEnvHold = this.clamp("keynumToModEnvHold", generators2);
+          params.modHold = this.getModHold(holdModEnv, keynumToModEnvHold);
+        },
+        decayModEnv: (params, generators2) => {
+          const decayModEnv = this.clamp("decayModEnv", generators2);
+          const keynumToModEnvDecay = this.clamp("keynumToModEnvDecay", generators2);
+          params.modDecay = this.getModDecay(decayModEnv, keynumToModEnvDecay);
+        },
+        sustainModEnv: (params, generators2) => {
+          params.modSustain = this.clamp("sustainModEnv", generators2) / 1e3;
+        },
+        releaseModEnv: (params, generators2) => {
+          params.modRelease = timecentToSecond(this.clamp("releaseModEnv", generators2));
+        },
+        keynumToModEnvHold: (params, generators2) => {
+          const holdModEnv = this.clamp("holdModEnv", generators2);
+          const keynumToModEnvHold = this.clamp("keynumToModEnvHold", generators2);
+          params.modHold = this.getModHold(holdModEnv, keynumToModEnvHold);
+        },
+        keynumToModEnvDecay: (params, generators2) => {
+          const decayModEnv = this.clamp("decayModEnv", generators2);
+          const keynumToModEnvDecay = this.clamp("keynumToModEnvDecay", generators2);
+          params.modDecay = this.getModDecay(decayModEnv, keynumToModEnvDecay);
+        },
+        delayVolEnv: (params, generators2) => {
+          params.volDelay = timecentToSecond(this.clamp("delayVolEnv", generators2));
+        },
+        attackVolEnv: (params, generators2) => {
+          params.volAttack = timecentToSecond(this.clamp("attackVolEnv", generators2));
+        },
+        holdVolEnv: (params, generators2) => {
+          const holdVolEnv = this.clamp("holdVolEnv", generators2);
+          const keynumToVolEnvHold = this.clamp("keynumToVolEnvHold", generators2);
+          params.volHold = this.getVolHold(holdVolEnv, keynumToVolEnvHold);
+        },
+        decayVolEnv: (params, generators2) => {
+          const decayVolEnv = this.clamp("decayVolEnv", generators2);
+          const keynumToVolEnvDecay = this.clamp("keynumToVolEnvDecay", generators2);
+          params.volDecay = this.getVolDecay(decayVolEnv, keynumToVolEnvDecay);
+        },
+        sustainVolEnv: (params, generators2) => {
+          params.volSustain = this.clamp("sustainVolEnv", generators2) / 1e3;
+        },
+        releaseVolEnv: (params, generators2) => {
+          params.volRelease = timecentToSecond(this.clamp("releaseVolEnv", generators2));
+        },
+        keynumToVolEnvHold: (params, generators2) => {
+          const holdVolEnv = this.clamp("holdVolEnv", generators2);
+          const keynumToVolEnvHold = this.clamp("keynumToVolEnvHold", generators2);
+          params.modHold = this.getVolHold(holdVolEnv, keynumToVolEnvHold);
+        },
+        keynumToVolEnvDecay: (params, generators2) => {
+          const decayVolEnv = this.clamp("decayVolEnv", generators2);
+          const keynumToVolEnvDecay = this.clamp("keynumToVolEnvDecay", generators2);
+          params.modDecay = this.getVolDecay(decayVolEnv, keynumToVolEnvDecay);
+        },
+        // instrument
+        // keyRange
+        // velRange
+        // startloopAddrsCoarseOffset
+        // keynum
+        // velocity
+        initialAttenuation: (params, generators2) => {
+          params.initialAttenuation = this.clamp("initialAttenuation", generators2);
+        },
+        // endloopAddrsCoarseOffset
+        coarseTune: (params, generators2) => {
+          params.playbackRate = this.getPlaybackRate(generators2);
+        },
+        fineTune: (params, generators2) => {
+          params.playbackRate = this.getPlaybackRate(generators2);
+        },
+        // sampleID
+        scaleTuning: (params, generators2) => {
+          params.playbackRate = this.getPlaybackRate(generators2);
+        }
+        // exclusiveClass
+        // overridingRootKey
+      }
+    });
+    this.setControllerToDestinations();
+    this.setDestinationToModulators();
   }
-  let chordNotes = chordData.notes;
-  if (chordNotes.length === 0) {
-    const basicChords = {
-      "M": ["1P", "3M", "5P"],
-      // Major
-      "": ["1P", "3M", "5P"],
-      // Default major
-      "m": ["1P", "3m", "5P"],
-      // Minor
-      "dim": ["1P", "3m", "5d"],
-      // Diminished
-      "aug": ["1P", "3M", "5A"],
-      // Augmented
-      "7": ["1P", "3M", "5P", "7m"],
-      // Dominant 7th
-      "M7": ["1P", "3M", "5P", "7M"],
-      // Major 7th
-      "m7": ["1P", "3m", "5P", "7m"]
-      // Minor 7th
+  setControllerToDestinations() {
+    for (let i = 0; i < this.modulators.length; i++) {
+      const modulator = this.modulators[i];
+      const controllerType = modulator.sourceOper.controllerType;
+      const destinationOper = modulator.destinationOper;
+      const list = this.controllerToDestinations.get(controllerType);
+      if (list) {
+        list.add(modulator.destinationOper);
+      } else {
+        this.controllerToDestinations.set(controllerType, /* @__PURE__ */ new Set([destinationOper]));
+      }
+    }
+  }
+  setDestinationToModulators() {
+    for (let i = 0; i < this.modulators.length; i++) {
+      const modulator = this.modulators[i];
+      const generatorKey = modulator.destinationOper;
+      const list = this.destinationToModulators.get(generatorKey);
+      if (list) {
+        list.push(modulator);
+      } else {
+        this.destinationToModulators.set(generatorKey, [modulator]);
+      }
+    }
+  }
+  getModHold(holdModEnv, keynumToModEnvHold) {
+    return timecentToSecond(holdModEnv + (this.key - 60) * keynumToModEnvHold);
+  }
+  getModDecay(decayModEnv, keynumToModEnvDecay) {
+    return timecentToSecond(decayModEnv + (this.key - 60) * keynumToModEnvDecay);
+  }
+  getVolHold(holdVolEnv, keynumToVolEnvHold) {
+    return timecentToSecond(holdVolEnv + (this.key - 60) * keynumToVolEnvHold);
+  }
+  getVolDecay(decayVolEnv, keynumToVolEnvDecay) {
+    return timecentToSecond(decayVolEnv + (this.key - 60) * keynumToVolEnvDecay);
+  }
+  getPlaybackRate(generators) {
+    const coarseTune = this.clamp("coarseTune", generators);
+    const fineTune = this.clamp("fineTune", generators) / 100;
+    const overridingRootKey = this.clamp("overridingRootKey", generators);
+    const scaleTuning = this.clamp("scaleTuning", generators) / 100;
+    const tune = coarseTune + fineTune;
+    const rootKey = overridingRootKey === -1 ? this.sampleHeader.originalPitch : overridingRootKey;
+    const basePitch = tune + this.sampleHeader.pitchCorrection / 100 - rootKey;
+    return Math.pow(Math.pow(2, 1 / 12), (this.key + basePitch) * scaleTuning);
+  }
+  transformParams(controllerType, controllerState) {
+    const params = {};
+    const destinations = this.controllerToDestinations.get(controllerType);
+    if (!destinations)
+      return params;
+    for (const destinationOper of destinations) {
+      const generatorKey = GeneratorKeys[destinationOper];
+      if (!generatorKey)
+        continue;
+      if (!isValueGenerator(generatorKey))
+        continue;
+      const modulators = this.destinationToModulators.get(destinationOper);
+      if (!modulators)
+        continue;
+      params[generatorKey] = this.generators[generatorKey];
+      for (const modulator of modulators) {
+        const source = modulator.sourceOper;
+        const primary = source.map(controllerState[source.controllerType]);
+        let secondary = 1;
+        const amountSource = modulator.amountSourceOper;
+        if (!(amountSource.cc === 0 && amountSource.index === 0)) {
+          const amount = controllerState[amountSource.controllerType];
+          secondary = amountSource.map(amount);
+        }
+        const summingValue = modulator.transform(primary * secondary);
+        if (Number.isNaN(summingValue))
+          continue;
+        params[generatorKey] += summingValue;
+      }
+    }
+    return params;
+  }
+  transformAllParams(controllerState) {
+    const params = structuredClone(this.generators);
+    for (const modulator of this.modulators) {
+      const controllerType = modulator.sourceOper.controllerType;
+      const controllerValue = controllerState[controllerType];
+      if (!controllerValue)
+        continue;
+      const generatorKey = GeneratorKeys[modulator.destinationOper];
+      if (!generatorKey)
+        continue;
+      if (!isValueGenerator(generatorKey))
+        continue;
+      const source = modulator.sourceOper;
+      const primary = source.map(controllerValue);
+      let secondary = 1;
+      const amountSource = modulator.amountSourceOper;
+      if (!(amountSource.cc === 0 && amountSource.index === 0)) {
+        const amount = controllerState[amountSource.controllerType];
+        secondary = amountSource.map(amount);
+      }
+      const summingValue = modulator.transform(primary * secondary);
+      if (Number.isNaN(summingValue))
+        continue;
+      params[generatorKey] += summingValue;
+    }
+    return params;
+  }
+  clamp(key, generators) {
+    return DefaultInstrumentZone[key].clamp(generators[key]);
+  }
+  getParams(controllerType, controllerState) {
+    const params = {};
+    const generators = structuredClone(this.generators);
+    const updatedParams = this.transformParams(controllerType, controllerState);
+    const updatedKeys = Object.keys(updatedParams);
+    for (const updatedKey of updatedKeys) {
+      generators[updatedKey] = updatedParams[updatedKey];
+    }
+    for (const updatedKey of updatedKeys) {
+      this.voiceHandlers[updatedKey](params, generators);
+    }
+    return params;
+  }
+  getAllParams(controllerValues) {
+    const params = {
+      start: this.generators.startAddrsCoarseOffset * 32768 + this.generators.startAddrsOffset,
+      end: this.generators.endAddrsCoarseOffset * 32768 + this.generators.endAddrsOffset,
+      loopStart: this.sampleHeader.loopStart + this.generators.startloopAddrsCoarseOffset * 32768 + this.generators.startloopAddrsOffset,
+      loopEnd: this.sampleHeader.loopEnd + this.generators.endloopAddrsCoarseOffset * 32768 + this.generators.endloopAddrsOffset,
+      sample: this.sample,
+      sampleRate: this.sampleHeader.sampleRate,
+      sampleName: this.sampleHeader.sampleName,
+      sampleModes: this.generators.sampleModes,
+      exclusiveClass: this.clamp("exclusiveClass", this.generators)
     };
-    const rootNote = `${chordData.tonic}${octave2}`;
-    const intervals = basicChords[chordData.quality] || basicChords["M"];
-    return intervals.map(
-      (interval2) => dist_exports3.transpose(rootNote, interval2)
-    ).filter(Boolean);
-  }
-  return chordNotes.map((note2) => `${note2}${octave2}`);
-};
-var applyInversion = (args) => {
-  const inversionCount = args.inversion % args.notes.length;
-  const inverted = [...args.notes];
-  for (let i = 0; i < inversionCount; i++) {
-    const note2 = inverted.shift();
-    if (note2) {
-      const transposed = transposeNote({ note: note2, semitones: 12 });
-      inverted.push(transposed);
+    const generators = this.transformAllParams(controllerValues);
+    for (let i = 0; i < ValueGeneratorKeys.length; i++) {
+      const generatorKey = ValueGeneratorKeys[i];
+      this.voiceHandlers[generatorKey](params, generators);
     }
+    return params;
   }
-  return inverted;
 };
 
-// src/voicings.ts
-var applyVoicing = (args) => {
-  const voicingFunctions = {
-    open: openVoicing,
-    closed: closedVoicing,
-    drop2: drop2Voicing,
-    drop3: drop3Voicing,
-    drop2and4: drop2and4Voicing,
-    rootless: rootlessVoicing,
-    spread: spreadVoicing,
-    cluster: clusterVoicing,
-    shell: shellVoicing,
-    pianistic: pianisticVoicing,
-    guitaristic: guitaristicVoicing,
-    orchestral: orchestralVoicing
-  };
-  const voicingFunction = voicingFunctions[args.voicing];
-  const final = voicingFunction(args.notes);
-  console.log("voicing applied: ", args.voicing);
-  console.log("notes before voicing: ", args.notes);
-  console.log("notes after voicing: ", final);
-  return final;
-};
-var openVoicing = (notes2) => {
-  return notes2.map((note2, index4) => {
-    const semitones = index4 * 7;
-    return transposeNote({ note: note2, semitones });
-  });
-};
-var closedVoicing = (notes2) => {
-  return notes2;
-};
-var drop2Voicing = (notes2) => {
-  if (notes2.length < 3) return notes2;
-  const result = [...notes2];
-  const secondHighest = result[result.length - 2];
-  result[result.length - 2] = transposeNote({ note: secondHighest, semitones: -12 });
-  return result;
-};
-var drop3Voicing = (notes2) => {
-  const result = [...notes2];
-  const thirdHighest = result[result.length - 3];
-  result[result.length - 3] = transposeNote({ note: thirdHighest, semitones: -12 });
-  return result;
-};
-var drop2and4Voicing = (notes2) => {
-  let result = [...notes2];
-  result = drop2Voicing(result);
-  result = drop3Voicing(result);
-  return result;
-};
-var rootlessVoicing = (notes2) => {
-  const [root, ...rest] = notes2;
-  return rest;
-};
-var spreadVoicing = (notes2) => {
-  return notes2.map((note2, index4) => {
-    const octaveSpread = Math.floor(index4 / 2);
-    return transposeNote({ note: note2, semitones: octaveSpread * 12 });
-  });
-};
-var clusterVoicing = (notes2) => {
-  return notes2.flatMap((note2, index4) => {
-    if (index4 === 0) return [note2];
-    const clusterNote = transposeNote({ note: note2, semitones: 1 });
-    return [note2, clusterNote];
-  });
-};
-var shellVoicing = (notes2) => {
-  if (notes2.length >= 4) {
-    return [notes2[0], notes2[3]];
-  }
-  return [notes2[0], notes2[notes2.length - 1]];
-};
-var pianisticVoicing = (notes2) => {
-  const bassNote = transposeNote({ note: notes2[0], semitones: -12 });
-  const upperNotes = notes2.slice(1).map(
-    (note2) => transposeNote({ note: note2, semitones: 12 })
-  );
-  return [bassNote, ...upperNotes];
-};
-var guitaristicVoicing = (notes2) => {
-  return notes2.map((note2, index4) => {
-    const fretOffset = index4 * 5;
-    return transposeNote({ note: note2, semitones: fretOffset });
-  });
-};
-var orchestralVoicing = (notes2) => {
-  return notes2.map((note2, index4) => {
-    const octaveSpread = index4 * 12;
-    return transposeNote({ note: note2, semitones: octaveSpread });
-  });
-};
+// node_modules/@marmooo/soundfont-parser/esm/DefaultModulators.js
+var DefaultModulators = [
+  new ModulatorList(ModulatorSource.parse(1282), 48, 960, ModulatorSource.parse(0), 0),
+  new ModulatorList(ModulatorSource.parse(258), 8, -2400, ModulatorSource.parse(0), 0),
+  new ModulatorList(ModulatorSource.parse(13), 6, 50, ModulatorSource.parse(0), 0),
+  new ModulatorList(ModulatorSource.parse(129), 6, 50, ModulatorSource.parse(0), 0),
+  new ModulatorList(ModulatorSource.parse(1415), 48, 960, ModulatorSource.parse(0), 0),
+  // specification is wrong
+  new ModulatorList(ModulatorSource.parse(650), 48, 1, ModulatorSource.parse(0), 0),
+  new ModulatorList(ModulatorSource.parse(1419), 48, 960, ModulatorSource.parse(0), 0),
+  new ModulatorList(ModulatorSource.parse(219), 16, 0.2, ModulatorSource.parse(0), 0),
+  new ModulatorList(ModulatorSource.parse(221), 15, 0.2, ModulatorSource.parse(0), 0),
+  new ModulatorList(ModulatorSource.parse(526), 51, 127, ModulatorSource.parse(16), 0)
+];
 
-// src/chord.ts
-var createChord = (args) => {
-  const initialNotes = getChordNotes({ chord: args.chord, octave: 4 });
-  const state = {
-    chord: args.chord,
-    notes: initialNotes,
-    velocity: args.config.minVelocity || 45,
-    afterMs: 0,
-    staggerMs: 0,
-    octave: 4,
-    inversion: 0,
-    detuneCents: 0,
-    gain: args.config.gain || 70,
-    pan: 0
-  };
-  const updateNotes = () => {
-    let notes2 = getChordNotes({ chord: state.chord, octave: state.octave });
-    if (state.inversion > 0) {
-      notes2 = applyInversion({ notes: notes2, inversion: state.inversion });
+// node_modules/@marmooo/soundfont-parser/esm/SoundFont.js
+var InstrumentZone = class {
+  constructor(generators, modulators) {
+    Object.defineProperty(this, "generators", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: generators
+    });
+    Object.defineProperty(this, "modulators", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: modulators
+    });
+  }
+};
+var PresetZone = class {
+  constructor(generators, modulators) {
+    Object.defineProperty(this, "generators", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: generators
+    });
+    Object.defineProperty(this, "modulators", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: modulators
+    });
+  }
+};
+var SoundFont = class {
+  constructor(parsed) {
+    Object.defineProperty(this, "parsed", {
+      enumerable: true,
+      configurable: true,
+      writable: true,
+      value: parsed
+    });
+  }
+  getGeneratorParams(generators, zone, from, to2) {
+    const result = new Array(to2 - from);
+    for (let i = from; i < to2; i++) {
+      const segmentFrom = zone[i].generatorIndex;
+      const segmentTo = zone[i + 1].generatorIndex;
+      result[i - from] = generators.slice(segmentFrom, segmentTo);
     }
-    console.log("updateNotes()", { notes: notes2, state });
-    if (state.voicing) {
-      if (typeof state.voicing === "string" && state.voicing in (args.config.voicings || {})) {
-        const customVoicing = args.config.voicings[state.voicing];
-        notes2 = customVoicing(notes2);
+    return result;
+  }
+  getPresetGenerators(presetHeaderIndex) {
+    const presetHeader = this.parsed.presetHeaders[presetHeaderIndex];
+    const nextPresetHeader = this.parsed.presetHeaders[presetHeaderIndex + 1];
+    const nextPresetBagIndex = nextPresetHeader ? nextPresetHeader.presetBagIndex : this.parsed.presetZone.length - 1;
+    return this.getGeneratorParams(this.parsed.presetGenerators, this.parsed.presetZone, presetHeader.presetBagIndex, nextPresetBagIndex);
+  }
+  getInstrumentGenerators(instrumentID) {
+    const instrument = this.parsed.instruments[instrumentID];
+    const nextInstrument = this.parsed.instruments[instrumentID + 1];
+    const nextInstrumentBagIndex = nextInstrument ? nextInstrument.instrumentBagIndex : this.parsed.instrumentZone.length - 1;
+    return this.getGeneratorParams(this.parsed.instrumentGenerators, this.parsed.instrumentZone, instrument.instrumentBagIndex, nextInstrumentBagIndex);
+  }
+  getModulators(modulators, zone, from, to2) {
+    const result = new Array(to2 - from);
+    for (let i = from; i < to2; i++) {
+      const segmentFrom = zone[i].modulatorIndex;
+      const segmentTo = zone[i + 1].modulatorIndex;
+      result[i - from] = modulators.slice(segmentFrom, segmentTo);
+    }
+    return result;
+  }
+  getPresetModulators(presetHeaderIndex) {
+    const presetHeader = this.parsed.presetHeaders[presetHeaderIndex];
+    const nextPresetHeader = this.parsed.presetHeaders[presetHeaderIndex + 1];
+    const nextPresetBagIndex = nextPresetHeader ? nextPresetHeader.presetBagIndex : this.parsed.presetZone.length - 1;
+    return this.getModulators(this.parsed.presetModulators, this.parsed.presetZone, presetHeader.presetBagIndex, nextPresetBagIndex);
+  }
+  getInstrumentModulators(instrumentID) {
+    const instrument = this.parsed.instruments[instrumentID];
+    const nextInstrument = this.parsed.instruments[instrumentID + 1];
+    const nextInstrumentBagIndex = nextInstrument ? nextInstrument.instrumentBagIndex : this.parsed.instrumentZone.length - 1;
+    return this.getModulators(this.parsed.instrumentModulators, this.parsed.instrumentZone, instrument.instrumentBagIndex, nextInstrumentBagIndex);
+  }
+  findInstrumentZone(instrumentID, key, velocity) {
+    const instrumentGenerators = this.getInstrumentGenerators(instrumentID);
+    const instrumentModulators = this.getInstrumentModulators(instrumentID);
+    let globalGenerators;
+    let globalModulators = [];
+    for (let i = 0; i < instrumentGenerators.length; i++) {
+      const generators = createInstrumentGeneratorObject(instrumentGenerators[i]);
+      if (generators.sampleID === void 0) {
+        globalGenerators = generators;
+        globalModulators = instrumentModulators[i];
+        continue;
+      }
+      if (generators.keyRange && !generators.keyRange.in(key))
+        continue;
+      if (generators.velRange && !generators.velRange.in(velocity))
+        continue;
+      if (globalGenerators) {
+        const gen = { ...globalGenerators, ...generators };
+        const mod2 = [...globalModulators, ...instrumentModulators[i]];
+        return new InstrumentZone(gen, mod2);
       } else {
-        notes2 = applyVoicing({ notes: notes2, voicing: state.voicing });
+        return new InstrumentZone(generators, instrumentModulators[i]);
       }
     }
-    if (state.bassNote !== void 0) {
-      if (typeof state.bassNote === "string") {
-        let bassNote = state.bassNote;
-        if (!/\d/.test(bassNote)) {
-          bassNote = `${bassNote}${state.octave}`;
+    return;
+  }
+  findInstrument(presetHeaderIndex, key, velocity) {
+    const presetGenerators = this.getPresetGenerators(presetHeaderIndex);
+    const presetModulators = this.getPresetModulators(presetHeaderIndex);
+    let globalGenerators;
+    let globalModulators = [];
+    for (let i = 0; i < presetGenerators.length; i++) {
+      const generators = createPresetGeneratorObject(presetGenerators[i]);
+      if (generators.instrument === void 0) {
+        globalGenerators = generators;
+        globalModulators = presetModulators[i];
+        continue;
+      }
+      if (generators.keyRange && !generators.keyRange.in(key))
+        continue;
+      if (generators.velRange && !generators.velRange.in(velocity))
+        continue;
+      const instrumentZone = this.findInstrumentZone(generators.instrument, key, velocity);
+      if (instrumentZone) {
+        if (globalGenerators) {
+          const gen = { ...globalGenerators, ...generators };
+          const mod2 = [...globalModulators, ...presetModulators[i]];
+          const presetZone = new PresetZone(gen, mod2);
+          return this.createVoice(key, presetZone, instrumentZone);
+        } else {
+          const presetZone = new PresetZone(generators, presetModulators[i]);
+          return this.createVoice(key, presetZone, instrumentZone);
         }
-        notes2[0] = bassNote;
-      } else {
-        const bassIndex = state.bassNote % notes2.length;
-        const bassNote = notes2[bassIndex];
-        notes2 = [bassNote, ...notes2.filter((_, i) => i !== bassIndex)];
       }
     }
-    state.notes = notes2;
-  };
-  const chordInstance = {
-    velocity: (vel, maxVel) => {
-      if (maxVel !== void 0) {
-        state.minVelocity = vel;
-        state.maxVelocity = maxVel;
-        state.velocity = Math.random() * (maxVel - vel) + vel;
-      } else {
-        state.velocity = vel;
+    return null;
+  }
+  createVoice(key, presetZone, instrumentZone) {
+    const instrumentGenerators = convertToInstrumentGeneratorParams(DefaultInstrumentZone);
+    Object.assign(instrumentGenerators, instrumentZone.generators);
+    const keys = Object.keys(presetZone.generators);
+    for (let i = 0; i < keys.length; i++) {
+      const key2 = keys[i];
+      if (isRangeGenerator(key2))
+        continue;
+      instrumentGenerators[key2] += presetZone.generators[key2];
+    }
+    const modulators = [
+      ...DefaultModulators,
+      ...presetZone.modulators,
+      ...instrumentZone.modulators
+    ];
+    const sampleID = instrumentGenerators.sampleID;
+    const sample = this.parsed.samples[sampleID];
+    const sampleHeader = this.parsed.sampleHeaders[sampleID];
+    return new Voice(key, instrumentGenerators, modulators, sample, sampleHeader);
+  }
+  getVoice(bankNumber, instrumentNumber, key, velocity) {
+    const presetHeaderIndex = this.parsed.presetHeaders.findIndex((p) => p.preset === instrumentNumber && p.bank === bankNumber);
+    if (presetHeaderIndex < 0) {
+      console.warn("preset not found: bank=%s instrument=%s", bankNumber, instrumentNumber);
+      return null;
+    }
+    const instrument = this.findInstrument(presetHeaderIndex, key, velocity);
+    if (!instrument) {
+      console.warn("instrument not found: bank=%s instrument=%s", bankNumber, instrumentNumber);
+      return null;
+    }
+    return instrument;
+  }
+  // presetNames[bankNumber][presetNumber] = presetName
+  getPresetNames() {
+    const bank = {};
+    const presetHeaders = this.parsed.presetHeaders;
+    for (let i = 0; i < presetHeaders.length; i++) {
+      const preset = presetHeaders[i];
+      if (!bank[preset.bank]) {
+        bank[preset.bank] = {};
       }
-      return chordInstance;
-    },
-    after: (ms) => {
-      state.afterMs = ms;
-      return chordInstance;
-    },
-    duration: (ms) => {
-      state.durationMs = ms;
-      return chordInstance;
-    },
-    stagger: (ms) => {
-      state.staggerMs = ms;
-      return chordInstance;
-    },
-    octave: (octave2) => {
-      state.octave = octave2;
-      updateNotes();
-      return chordInstance;
-    },
-    inversion: (inversion) => {
-      state.inversion = inversion;
-      updateNotes();
-      return chordInstance;
-    },
-    voicing: (voicing) => {
-      state.voicing = voicing;
-      updateNotes();
-      return chordInstance;
-    },
-    bassNote: (note2) => {
-      state.bassNote = note2;
-      updateNotes();
-      return chordInstance;
-    },
-    detune: (cents) => {
-      state.detuneCents = cents;
-      return chordInstance;
-    },
-    attack: (ms) => {
-      state.attackMs = ms;
-      return chordInstance;
-    },
-    release: (ms) => {
-      state.releaseMs = ms;
-      return chordInstance;
-    },
-    gain: (gain) => {
-      state.gain = gain;
-      return chordInstance;
-    },
-    pan: (pan) => {
-      state.pan = pan;
-      return chordInstance;
-    },
-    play: () => {
-      return createPlayingChord({ state, synth: args.synth, instanceTracker: args.instanceTracker });
-    },
-    stop: () => {
-      console.log(`Stopping chord ${state.chord} (${state.notes.join(", ")}) immediately`);
-      const instances = args.instanceTracker.chordInstances.get(state.chord);
-      if (instances) {
-        instances.forEach((voice) => voice.stop());
-        instances.clear();
-      }
+      bank[preset.bank][preset.preset] = preset.presetName;
     }
-  };
-  return chordInstance;
-};
-var createPlayingChord = (args) => {
-  const playingState = {
-    afterMs: 0,
-    gain: args.state.gain,
-    pan: args.state.pan
-  };
-  const voices = [];
-  console.log(`Playing chord ${args.state.chord}`);
-  console.log(`  Notes: ${args.state.notes.join(", ")}`);
-  if (args.state.octave !== 4) {
-    console.log(`  Octave: ${args.state.octave}`);
+    return bank;
   }
-  if (args.state.inversion > 0) {
-    console.log(`  Inversion: ${args.state.inversion}`);
-  }
-  if (args.state.voicing) {
-    console.log(`  Voicing: ${args.state.voicing}`);
-  }
-  if (args.state.bassNote !== void 0) {
-    console.log(`  Bass note: ${args.state.bassNote}`);
-  }
-  if (args.state.staggerMs > 0) {
-    console.log(`  Stagger: ${args.state.staggerMs}ms`);
-    args.state.notes.forEach((note2, index4) => {
-      const midi2 = noteToMidi({ note: note2 });
-      const delay = args.state.afterMs + index4 * args.state.staggerMs;
-      const startTime = delay > 0 ? (performance.now() + delay) / 1e3 : void 0;
-      console.log(`    ${note2} (MIDI ${midi2}) after ${delay}ms`);
-      const voice = args.synth.playNote({
-        midi: midi2,
-        velocity: args.state.velocity,
-        startTime,
-        duration: args.state.durationMs,
-        detune: args.state.detuneCents,
-        attack: args.state.attackMs,
-        release: args.state.releaseMs,
-        gain: args.state.gain,
-        pan: args.state.pan
-      });
-      voices.push(voice);
-    });
-    if (!args.instanceTracker.chordInstances.has(args.state.chord)) {
-      args.instanceTracker.chordInstances.set(args.state.chord, /* @__PURE__ */ new Set());
-    }
-    const chordInstances = args.instanceTracker.chordInstances.get(args.state.chord);
-    voices.forEach((voice) => {
-      chordInstances.add(voice);
-      args.instanceTracker.allInstances.add(voice);
-    });
-  } else {
-    console.log(`  Velocity: ${args.state.velocity}`);
-    if (args.state.afterMs > 0) {
-      console.log(`  After: ${args.state.afterMs}ms`);
-    }
-    const startTime = args.state.afterMs > 0 ? (performance.now() + args.state.afterMs) / 1e3 : void 0;
-    args.state.notes.forEach((note2) => {
-      const midi2 = noteToMidi({ note: note2 });
-      const voice = args.synth.playNote({
-        midi: midi2,
-        velocity: args.state.velocity,
-        startTime,
-        duration: args.state.durationMs,
-        detune: args.state.detuneCents,
-        attack: args.state.attackMs,
-        release: args.state.releaseMs,
-        gain: args.state.gain,
-        pan: args.state.pan
-      });
-      voices.push(voice);
-    });
-    if (!args.instanceTracker.chordInstances.has(args.state.chord)) {
-      args.instanceTracker.chordInstances.set(args.state.chord, /* @__PURE__ */ new Set());
-    }
-    const chordInstances = args.instanceTracker.chordInstances.get(args.state.chord);
-    voices.forEach((voice) => {
-      chordInstances.add(voice);
-      args.instanceTracker.allInstances.add(voice);
-    });
-  }
-  if (args.state.durationMs) {
-    console.log(`  Duration: ${args.state.durationMs}ms`);
-  }
-  const playingChord = {
-    after: (ms) => {
-      playingState.afterMs = ms;
-      return playingChord;
-    },
-    gain: (gain) => {
-      playingState.gain = gain;
-      return playingChord;
-    },
-    pan: (pan) => {
-      playingState.pan = pan;
-      return playingChord;
-    },
-    stop: () => {
-      if (playingState.afterMs > 0) {
-        console.log(`Stopping chord ${args.state.chord} after ${playingState.afterMs}ms`);
-        console.log(`  Transitioning to gain: ${playingState.gain}, pan: ${playingState.pan}`);
-        setTimeout(() => {
-          voices.forEach((voice) => {
-            voice.modulate({
-              gain: playingState.gain,
-              pan: playingState.pan,
-              duration: playingState.afterMs
-            });
-          });
-          setTimeout(() => {
-            voices.forEach((voice) => voice.stop());
-            const chordInstances = args.instanceTracker.chordInstances.get(args.state.chord);
-            if (chordInstances) {
-              voices.forEach((voice) => chordInstances.delete(voice));
-            }
-            voices.forEach((voice) => args.instanceTracker.allInstances.delete(voice));
-          }, playingState.afterMs);
-        }, 0);
-      } else {
-        console.log(`Stopping chord ${args.state.chord} immediately`);
-        voices.forEach((voice) => voice.stop());
-        const chordInstances = args.instanceTracker.chordInstances.get(args.state.chord);
-        if (chordInstances) {
-          voices.forEach((voice) => chordInstances.delete(voice));
-        }
-        voices.forEach((voice) => args.instanceTracker.allInstances.delete(voice));
-      }
-    }
-  };
-  return playingChord;
 };
 
-// src/instrument.ts
-var createInstrument = (args) => {
-  console.log(`Creating instrument "${args.name}" from ${args.soundfontUrl}`);
-  const instanceTracker = {
-    noteInstances: /* @__PURE__ */ new Map(),
-    chordInstances: /* @__PURE__ */ new Map(),
-    notesInstances: /* @__PURE__ */ new Map(),
-    allInstances: /* @__PURE__ */ new Set()
-  };
-  const instrument = {
-    note: (note2) => {
-      return createNote({
-        note: note2,
-        synth: args.synth,
-        config: args.config,
-        instanceTracker
-      });
-    },
-    notes: (notes2) => {
-      return createNotes({
-        notes: notes2,
-        synth: args.synth,
-        config: args.config,
-        instanceTracker
-      });
-    },
-    chord: (chord2) => {
-      return createChord({
-        chord: chord2,
-        synth: args.synth,
-        config: args.config,
-        instanceTracker
-      });
-    },
-    stop: () => {
-      console.log(`Stopping all sounds from instrument "${args.name}"`);
-      args.synth.stopAllNotes();
-      instanceTracker.allInstances.forEach((voice) => voice.stop());
-      instanceTracker.noteInstances.clear();
-      instanceTracker.chordInstances.clear();
-      instanceTracker.notesInstances.clear();
-      instanceTracker.allInstances.clear();
-    }
-  };
-  return instrument;
+// src/refactor/fetch-soundfont.ts
+var fetchSoundfont = async (url) => {
+  const [error, response] = await to(fetch(url));
+  if (error) return throwShit("networkError", { error, url });
+  const arrayBuffer = await response?.arrayBuffer();
+  const buffer = new Uint8Array(arrayBuffer);
+  const parsed = parse(buffer);
+  const soundFont = new SoundFont(parsed);
+  return soundFont;
+};
+
+// src/refactor/constants.ts
+var DEFAULT_SETTINGS = {
+  velocity: 75,
+  minVelocity: 60,
+  maxVelocity: 80,
+  gain: 50,
+  pan: 0
 };
 
 // node_modules/tone/build/esm/version.js
@@ -4316,7 +2581,7 @@ var DEFAULT_OPTIONS2 = {
 };
 var createAudioBufferConstructor = (audioBufferStore2, cacheTestResult2, createNotSupportedError2, nativeAudioBufferConstructor2, nativeOfflineAudioContextConstructor2, testNativeAudioBufferConstructorSupport, wrapAudioBufferCopyChannelMethods2, wrapAudioBufferCopyChannelMethodsOutOfBounds2) => {
   let nativeOfflineAudioContext = null;
-  return class AudioBuffer2 {
+  return class AudioBuffer {
     constructor(options) {
       if (nativeOfflineAudioContextConstructor2 === null) {
         throw new Error("Missing the native OfflineAudioContext constructor.");
@@ -4339,7 +2604,7 @@ var createAudioBufferConstructor = (audioBufferStore2, cacheTestResult2, createN
       return audioBuffer;
     }
     static [Symbol.hasInstance](instance) {
-      return instance !== null && typeof instance === "object" && Object.getPrototypeOf(instance) === AudioBuffer2.prototype || audioBufferStore2.has(instance);
+      return instance !== null && typeof instance === "object" && Object.getPrototypeOf(instance) === AudioBuffer.prototype || audioBufferStore2.has(instance);
     }
   };
 };
@@ -12306,8 +10571,8 @@ var Context = class _Context extends BaseContext {
    * Is invoked from the clock source
    */
   _timeoutLoop() {
-    const now = this.now();
-    this._timeouts.forEachBefore(now, (event) => {
+    const now2 = this.now();
+    this._timeouts.forEachBefore(now2, (event) => {
       event.callback();
       this._timeouts.remove(event);
     });
@@ -12321,11 +10586,11 @@ var Context = class _Context extends BaseContext {
    */
   setTimeout(fn, timeout) {
     this._timeoutIds++;
-    const now = this.now();
+    const now2 = this.now();
     this._timeouts.add({
       callback: fn,
       id: this._timeoutIds,
-      time: now + timeout
+      time: now2 + timeout
     });
     return this._timeoutIds;
   }
@@ -12353,14 +10618,14 @@ var Context = class _Context extends BaseContext {
   setInterval(fn, interval2) {
     const id = ++this._timeoutIds;
     const intervalFn = () => {
-      const now = this.now();
+      const now2 = this.now();
       this._timeouts.add({
         callback: () => {
           fn();
           intervalFn();
         },
         id,
-        time: now + interval2
+        time: now2 + interval2
       });
     };
     intervalFn();
@@ -13570,6 +11835,9 @@ var scaleIndexToNote = [
   "A#",
   "B"
 ];
+function Frequency(value, units) {
+  return new FrequencyClass(getContext(), value, units);
+}
 
 // node_modules/tone/build/esm/core/type/TransportTime.js
 var TransportTimeClass = class extends TimeClass {
@@ -13846,8 +12114,8 @@ var Param = class _Param extends ToneWithContext {
     });
   }
   get value() {
-    const now = this.now();
-    return this.getValueAtTime(now);
+    const now2 = this.now();
+    return this.getValueAtTime(now2);
   }
   set value(value) {
     this.cancelScheduledValues(this.now());
@@ -14127,14 +12395,14 @@ var Param = class _Param extends ToneWithContext {
    * all of the events which are scheduled on this Param onto the passed in param.
    */
   apply(param) {
-    const now = this.context.currentTime;
-    param.setValueAtTime(this.getValueAtTime(now), now);
-    const previousEvent = this._events.get(now);
+    const now2 = this.context.currentTime;
+    param.setValueAtTime(this.getValueAtTime(now2), now2);
+    const previousEvent = this._events.get(now2);
     if (previousEvent && previousEvent.type === "setTargetAtTime") {
       const nextEvent = this._events.getAfter(previousEvent.time);
-      const endTime = nextEvent ? nextEvent.time : now + 2;
-      const subdivisions = (endTime - now) / 10;
-      for (let i = now; i < endTime; i += subdivisions) {
+      const endTime = nextEvent ? nextEvent.time : now2 + 2;
+      const subdivisions = (endTime - now2) / 10;
+      for (let i = now2; i < endTime; i += subdivisions) {
         param.linearRampToValueAtTime(this.getValueAtTime(i), i);
       }
     }
@@ -15240,9 +13508,9 @@ var TickSource = class _TickSource extends ToneWithContext {
     return this.getSecondsAtTime(this.now());
   }
   set seconds(s) {
-    const now = this.now();
-    const ticks = this.frequency.timeToTicks(s, now);
-    this.setTicksAtTime(ticks, now);
+    const now2 = this.now();
+    const ticks = this.frequency.timeToTicks(s, now2);
+    this.setTicksAtTime(ticks, now2);
   }
   /**
    * Return the elapsed seconds at the given time.
@@ -15968,9 +14236,9 @@ var DrawClass = class extends ToneWithContext {
    * The draw loop
    */
   _drawLoop() {
-    const now = this.context.currentTime;
-    this._events.forEachBefore(now + this.anticipation, (event) => {
-      if (now - event.time <= this.expiration) {
+    const now2 = this.context.currentTime;
+    this._events.forEachBefore(now2 + this.anticipation, (event) => {
+      if (now2 - event.time <= this.expiration) {
         event.callback();
       }
       this._events.remove(event);
@@ -17091,8 +15359,8 @@ var TransportClass = class _TransportClass extends ToneWithContext {
    * Setting the value will jump to that position right away.
    */
   get position() {
-    const now = this.now();
-    const ticks = this._clock.getTicksAtTime(now);
+    const now2 = this.now();
+    const ticks = this._clock.getTicksAtTime(now2);
     return new TicksClass(this.context, ticks).toBarsBeatsSixteenths();
   }
   set position(progress) {
@@ -17107,8 +15375,8 @@ var TransportClass = class _TransportClass extends ToneWithContext {
     return this._clock.seconds;
   }
   set seconds(s) {
-    const now = this.now();
-    const ticks = this._clock.frequency.timeToTicks(s, now);
+    const now2 = this.now();
+    const ticks = this._clock.frequency.timeToTicks(s, now2);
     this.ticks = ticks;
   }
   /**
@@ -17117,8 +15385,8 @@ var TransportClass = class _TransportClass extends ToneWithContext {
    */
   get progress() {
     if (this.loop) {
-      const now = this.now();
-      const ticks = this._clock.getTicksAtTime(now);
+      const now2 = this.now();
+      const ticks = this._clock.getTicksAtTime(now2);
       return (ticks - this._loopStart) / (this._loopEnd - this._loopStart);
     } else {
       return 0;
@@ -17132,17 +15400,17 @@ var TransportClass = class _TransportClass extends ToneWithContext {
   }
   set ticks(t) {
     if (this._clock.ticks !== t) {
-      const now = this.now();
+      const now2 = this.now();
       if (this.state === "started") {
-        const ticks = this._clock.getTicksAtTime(now);
-        const remainingTick = this._clock.frequency.getDurationOfTicks(Math.ceil(ticks) - ticks, now);
-        const time = now + remainingTick;
+        const ticks = this._clock.getTicksAtTime(now2);
+        const remainingTick = this._clock.frequency.getDurationOfTicks(Math.ceil(ticks) - ticks, now2);
+        const time = now2 + remainingTick;
         this.emit("stop", time);
         this._clock.setTicksAtTime(t, time);
         this.emit("start", time, this._clock.getSecondsAtTime(time));
       } else {
-        this.emit("ticks", now);
-        this._clock.setTicksAtTime(t, now);
+        this.emit("ticks", now2);
+        this._clock.setTicksAtTime(t, now2);
       }
     }
   }
@@ -17194,10 +15462,10 @@ var TransportClass = class _TransportClass extends ToneWithContext {
     if (this.state !== "started") {
       return 0;
     } else {
-      const now = this.now();
-      const transportPos = this.getTicksAtTime(now);
+      const now2 = this.now();
+      const transportPos = this.getTicksAtTime(now2);
       const remainingTicks = subdivision - transportPos % subdivision;
-      return this._clock.nextTickTime(remainingTicks, now);
+      return this._clock.nextTickTime(remainingTicks, now2);
     }
   }
   /**
@@ -17210,9 +15478,9 @@ var TransportClass = class _TransportClass extends ToneWithContext {
    * 			Otherwise it will be computed based on their current values.
    */
   syncSignal(signal, ratio) {
-    const now = this.now();
+    const now2 = this.now();
     let source = this.bpm;
-    let sourceValue = 1 / (60 / source.getValueAtTime(now) / this.PPQ);
+    let sourceValue = 1 / (60 / source.getValueAtTime(now2) / this.PPQ);
     let nodes = [];
     if (signal.units === "time") {
       const scaleFactor = 1 / 64 / sourceValue;
@@ -17225,8 +15493,8 @@ var TransportClass = class _TransportClass extends ToneWithContext {
       nodes = [scaleBefore, reciprocal, scaleAfter];
     }
     if (!ratio) {
-      if (signal.getValueAtTime(now) !== 0) {
-        ratio = signal.getValueAtTime(now) / sourceValue;
+      if (signal.getValueAtTime(now2) !== 0) {
+        ratio = signal.getValueAtTime(now2) / sourceValue;
       } else {
         ratio = 0;
       }
@@ -18937,10 +17205,10 @@ var OmniOscillator = class _OmniOscillator extends Source {
     if (oscType !== this._sourceType) {
       this._sourceType = oscType;
       const OscConstructor = OmniOscillatorSourceMap[oscType];
-      const now = this.now();
+      const now2 = this.now();
       if (this._oscillator) {
         const oldOsc = this._oscillator;
-        oldOsc.stop(now);
+        oldOsc.stop(now2);
         this.context.setTimeout(() => oldOsc.dispose(), this.blockTime);
       }
       this._oscillator = new OscConstructor({
@@ -18951,7 +17219,7 @@ var OmniOscillator = class _OmniOscillator extends Source {
       this._oscillator.connect(this.output);
       this._oscillator.onstop = () => this.onstop(this);
       if (this.state === "started") {
-        this._oscillator.start(now);
+        this._oscillator.start(now2);
       }
     }
   }
@@ -19116,7 +17384,7 @@ var OmniOscillator = class _OmniOscillator extends Source {
 };
 
 // node_modules/tone/build/esm/core/util/Decorator.js
-function range2(min, max = Infinity) {
+function range(min, max = Infinity) {
   const valueMap = /* @__PURE__ */ new WeakMap();
   return function(target, propertyKey) {
     Reflect.defineProperty(target, propertyKey, {
@@ -19413,14 +17681,14 @@ var Player = class _Player extends Source {
   }
   set playbackRate(rate) {
     this._playbackRate = rate;
-    const now = this.now();
-    const stopEvent = this._state.getNextState("stopped", now);
+    const now2 = this.now();
+    const stopEvent = this._state.getNextState("stopped", now2);
     if (stopEvent && stopEvent.implicitEnd) {
       this._state.cancel(stopEvent.time);
       this._activeSources.forEach((source) => source.cancelStop());
     }
     this._activeSources.forEach((source) => {
-      source.playbackRate.setValueAtTime(rate, now);
+      source.playbackRate.setValueAtTime(rate, now2);
     });
   }
   /**
@@ -19768,7 +18036,7 @@ __decorate([
   timeRange(0)
 ], Envelope.prototype, "decay", void 0);
 __decorate([
-  range2(0, 1)
+  range(0, 1)
 ], Envelope.prototype, "sustain", void 0);
 __decorate([
   timeRange(0)
@@ -19843,7 +18111,7 @@ var EnvelopeCurves = (() => {
 })();
 
 // node_modules/tone/build/esm/instrument/Instrument.js
-var Instrument = class _Instrument extends ToneAudioNode {
+var Instrument2 = class _Instrument extends ToneAudioNode {
   constructor() {
     const options = optionsFromArguments(_Instrument.getDefaults(), arguments);
     super(options);
@@ -19964,7 +18232,7 @@ var Instrument = class _Instrument extends ToneAudioNode {
 };
 
 // node_modules/tone/build/esm/instrument/Monophonic.js
-var Monophonic = class _Monophonic extends Instrument {
+var Monophonic = class _Monophonic extends Instrument2 {
   constructor() {
     const options = optionsFromArguments(_Monophonic.getDefaults(), arguments);
     super(options);
@@ -19972,7 +18240,7 @@ var Monophonic = class _Monophonic extends Instrument {
     this.onsilence = options.onsilence;
   }
   static getDefaults() {
-    return Object.assign(Instrument.getDefaults(), {
+    return Object.assign(Instrument2.getDefaults(), {
       detune: 0,
       onsilence: noOp,
       portamento: 0
@@ -20181,7 +18449,7 @@ var MembraneSynth = class _MembraneSynth extends Synth {
   }
 };
 __decorate([
-  range2(0)
+  range(0)
 ], MembraneSynth.prototype, "octaves", void 0);
 __decorate([
   timeRange(0)
@@ -20401,7 +18669,7 @@ var feedbackCombFilter = (
 registerProcessor(workletName, feedbackCombFilter);
 
 // node_modules/tone/build/esm/instrument/Sampler.js
-var Sampler = class _Sampler extends Instrument {
+var Sampler = class _Sampler extends Instrument2 {
   constructor() {
     const options = optionsFromArguments(_Sampler.getDefaults(), arguments, ["urls", "onload", "baseUrl"], "urls");
     super(options);
@@ -20432,7 +18700,7 @@ var Sampler = class _Sampler extends Instrument {
     }
   }
   static getDefaults() {
-    return Object.assign(Instrument.getDefaults(), {
+    return Object.assign(Instrument2.getDefaults(), {
       attack: 0,
       baseUrl: "",
       curve: "exponential",
@@ -20949,6 +19217,9 @@ var Channel = class _Channel extends ToneAudioNode {
 Channel.buses = /* @__PURE__ */ new Map();
 
 // node_modules/tone/build/esm/index.js
+function now() {
+  return getContext().now();
+}
 var Transport = getContext().transport;
 var Destination = getContext().destination;
 var Master = getContext().destination;
@@ -20956,107 +19227,2028 @@ var Listener = getContext().listener;
 var Draw = getContext().draw;
 var context = getContext();
 
-// src/audio-engine.ts
-var import_soundfont_player = __toESM(require_lib3(), 1);
+// src/refactor/note-designer.ts
+var NoteDesigner = class {
+  constructor(args) {
+    this.note = "";
+    this.instrument = null;
+    this.settings = {};
+    this.shouldUseVelocityRange = false;
+    this.after = (milliseconds) => {
+      this.settings.after = milliseconds;
+      return this;
+    };
+    this.velocity = (velocity, maxVelocity) => {
+      if (maxVelocity !== void 0) {
+        this.settings.minVelocity = velocity;
+        this.settings.maxVelocity = maxVelocity;
+        this.shouldUseVelocityRange = true;
+      } else {
+        this.settings.velocity = velocity;
+        this.shouldUseVelocityRange = false;
+      }
+      return this;
+    };
+    this.duration = (milliseconds) => {
+      this.settings.duration = milliseconds;
+      return this;
+    };
+    this.minVelocity = (minVelocity) => {
+      this.settings.minVelocity = minVelocity;
+      this.shouldUseVelocityRange = true;
+      return this;
+    };
+    this.maxVelocity = (maxVelocity) => {
+      this.settings.maxVelocity = maxVelocity;
+      this.shouldUseVelocityRange = true;
+      return this;
+    };
+    this.detune = (cents) => {
+      this.settings.detune = cents;
+      return this;
+    };
+    this.attack = (milliseconds) => {
+      this.settings.attack = milliseconds;
+      return this;
+    };
+    this.release = (milliseconds) => {
+      this.settings.release = milliseconds;
+      return this;
+    };
+    this.gain = (gain) => {
+      this.settings.gain = gain;
+      return this;
+    };
+    this.pan = (pan) => {
+      this.settings.pan = pan;
+      return this;
+    };
+    this.play = () => {
+      if (!this.instrument || !this.instrument.synth) {
+        throw new Error("Instrument not properly initialized");
+      }
+      const midi2 = typeof this.note === "string" ? Frequency(this.note).toMidi() : this.note;
+      const velocity = this.shouldUseVelocityRange ? this.calculateVelocityFromRange() : this.settings.velocity || this.instrument.settings.velocity || 75;
+      const voice = this.instrument.synth.playNote({
+        midi: midi2,
+        velocity,
+        startTime: this.settings.after,
+        duration: this.settings.duration,
+        detune: this.settings.detune,
+        attack: this.settings.attack,
+        release: this.settings.release,
+        gain: this.settings.gain,
+        pan: this.settings.pan
+      });
+      const noteInstance = {
+        id: voice.id,
+        name: typeof this.note === "string" ? this.note : Frequency(this.note, "midi").toNote(),
+        settings: {
+          velocity,
+          pan: this.settings.pan || this.instrument.settings.pan || 0,
+          attack: this.settings.attack || 0,
+          release: this.settings.release || 0,
+          detune: this.settings.detune || 0,
+          duration: this.settings.duration || 0,
+          after: this.settings.after || 0,
+          midi: midi2
+        },
+        play: () => {
+          return this.play();
+        },
+        stop: () => {
+          voice.stop();
+        },
+        after: (milliseconds) => {
+          setTimeout(() => voice.stop(), milliseconds);
+          return noteInstance;
+        },
+        duration: (milliseconds) => {
+          return noteInstance;
+        },
+        gain: (gain) => {
+          voice.modulate({ gain });
+          return noteInstance;
+        },
+        pan: (pan) => {
+          voice.modulate({ pan });
+          return noteInstance;
+        }
+      };
+      return noteInstance;
+    };
+    this.stop = () => {
+      this.instrument.stop(this.note);
+    };
+    this.calculateVelocityFromRange = () => {
+      const min = this.settings.minVelocity || this.instrument.settings.minVelocity || 60;
+      const max = this.settings.maxVelocity || this.instrument.settings.maxVelocity || 80;
+      return Math.random() * (max - min) + min;
+    };
+    this.note = args.note;
+    this.instrument = args.instrument;
+  }
+};
+
+// src/refactor/notes-designer.ts
+var NotesDesigner = class {
+  constructor(args) {
+    this.notes = [];
+    this.instrument = null;
+    this.settings = {};
+    this.shouldUseVelocityRange = false;
+    this.after = (milliseconds) => {
+      this.settings.after = milliseconds;
+      return this;
+    };
+    this.velocity = (velocity, maxVelocity) => {
+      if (maxVelocity !== void 0) {
+        this.settings.minVelocity = velocity;
+        this.settings.maxVelocity = maxVelocity;
+        this.shouldUseVelocityRange = true;
+      } else {
+        this.settings.velocity = velocity;
+        this.shouldUseVelocityRange = false;
+      }
+      return this;
+    };
+    this.duration = (milliseconds) => {
+      this.settings.duration = milliseconds;
+      return this;
+    };
+    this.stagger = (milliseconds) => {
+      this.settings.stagger = milliseconds;
+      return this;
+    };
+    this.minVelocity = (minVelocity) => {
+      this.settings.minVelocity = minVelocity;
+      this.shouldUseVelocityRange = true;
+      return this;
+    };
+    this.maxVelocity = (maxVelocity) => {
+      this.settings.maxVelocity = maxVelocity;
+      this.shouldUseVelocityRange = true;
+      return this;
+    };
+    this.detune = (cents) => {
+      this.settings.detune = cents;
+      return this;
+    };
+    this.attack = (milliseconds) => {
+      this.settings.attack = milliseconds;
+      return this;
+    };
+    this.release = (milliseconds) => {
+      this.settings.release = milliseconds;
+      return this;
+    };
+    this.gain = (gain) => {
+      this.settings.gain = gain;
+      return this;
+    };
+    this.pan = (pan) => {
+      this.settings.pan = pan;
+      return this;
+    };
+    this.play = () => {
+      if (!this.instrument || !this.instrument.synth) {
+        throw new Error("Instrument not properly initialized");
+      }
+      const noteInstances = [];
+      const staggerDelay = this.settings.stagger || 0;
+      this.notes.forEach((note2, index4) => {
+        const midi2 = typeof note2 === "string" ? Frequency(note2).toMidi() : note2;
+        const velocity = this.shouldUseVelocityRange ? this.calculateVelocityFromRange() : this.settings.velocity || this.instrument.settings.velocity || 75;
+        const startTime = (this.settings.after || 0) + index4 * staggerDelay;
+        const voice = this.instrument.synth.playNote({
+          midi: midi2,
+          velocity,
+          startTime,
+          duration: this.settings.duration,
+          detune: this.settings.detune,
+          attack: this.settings.attack,
+          release: this.settings.release,
+          gain: this.settings.gain,
+          pan: this.settings.pan
+        });
+        const noteInstance = {
+          id: voice.id,
+          name: typeof note2 === "string" ? note2 : Frequency(note2, "midi").toNote(),
+          settings: {
+            velocity,
+            pan: this.settings.pan || this.instrument.settings.pan || 0,
+            attack: this.settings.attack || 0,
+            release: this.settings.release || 0,
+            detune: this.settings.detune || 0,
+            duration: this.settings.duration || 0,
+            after: startTime,
+            midi: midi2
+          },
+          play: () => {
+            return this.instrument.note(note2).play();
+          },
+          stop: () => {
+            voice.stop();
+          },
+          after: (milliseconds) => {
+            setTimeout(() => voice.stop(), milliseconds);
+            return noteInstance;
+          },
+          duration: (milliseconds) => {
+            return noteInstance;
+          },
+          gain: (gain) => {
+            voice.modulate({ gain });
+            return noteInstance;
+          },
+          pan: (pan) => {
+            voice.modulate({ pan });
+            return noteInstance;
+          }
+        };
+        noteInstances.push(noteInstance);
+      });
+      return noteInstances;
+    };
+    this.stop = () => {
+      this.notes.forEach((n) => this.instrument.stop(n));
+    };
+    this.calculateVelocityFromRange = () => {
+      const min = this.settings.minVelocity || this.instrument.settings.minVelocity || 60;
+      const max = this.settings.maxVelocity || this.instrument.settings.maxVelocity || 80;
+      return Math.random() * (max - min) + min;
+    };
+    this.notes = args.notes;
+    this.instrument = args.instrument;
+  }
+};
+
+// node_modules/@tonaljs/pitch/dist/index.mjs
+function isNamedPitch(src) {
+  return src !== null && typeof src === "object" && "name" in src && typeof src.name === "string" ? true : false;
+}
+function isPitch(pitch2) {
+  return pitch2 !== null && typeof pitch2 === "object" && "step" in pitch2 && typeof pitch2.step === "number" && "alt" in pitch2 && typeof pitch2.alt === "number" && !isNaN(pitch2.step) && !isNaN(pitch2.alt) ? true : false;
+}
+var FIFTHS = [0, 2, 4, -1, 1, 3, 5];
+var STEPS_TO_OCTS = FIFTHS.map(
+  (fifths) => Math.floor(fifths * 7 / 12)
+);
+function coordinates(pitch2) {
+  const { step, alt, oct, dir = 1 } = pitch2;
+  const f = FIFTHS[step] + 7 * alt;
+  if (oct === void 0) {
+    return [dir * f];
+  }
+  const o = oct - STEPS_TO_OCTS[step] - 4 * alt;
+  return [dir * f, dir * o];
+}
+var FIFTHS_TO_STEPS = [3, 0, 4, 1, 5, 2, 6];
+function pitch(coord) {
+  const [f, o, dir] = coord;
+  const step = FIFTHS_TO_STEPS[unaltered(f)];
+  const alt = Math.floor((f + 1) / 7);
+  if (o === void 0) {
+    return { step, alt, dir };
+  }
+  const oct = o + 4 * alt + STEPS_TO_OCTS[step];
+  return { step, alt, oct, dir };
+}
+function unaltered(f) {
+  const i = (f + 1) % 7;
+  return i < 0 ? 7 + i : i;
+}
+
+// node_modules/@tonaljs/pitch-interval/dist/index.mjs
+var fillStr = (s, n) => Array(Math.abs(n) + 1).join(s);
+var NoInterval = Object.freeze({
+  empty: true,
+  name: "",
+  num: NaN,
+  q: "",
+  type: "",
+  step: NaN,
+  alt: NaN,
+  dir: NaN,
+  simple: NaN,
+  semitones: NaN,
+  chroma: NaN,
+  coord: [],
+  oct: NaN
+});
+var INTERVAL_TONAL_REGEX = "([-+]?\\d+)(d{1,4}|m|M|P|A{1,4})";
+var INTERVAL_SHORTHAND_REGEX = "(AA|A|P|M|m|d|dd)([-+]?\\d+)";
+var REGEX = new RegExp(
+  "^" + INTERVAL_TONAL_REGEX + "|" + INTERVAL_SHORTHAND_REGEX + "$"
+);
+function tokenizeInterval(str) {
+  const m = REGEX.exec(`${str}`);
+  if (m === null) {
+    return ["", ""];
+  }
+  return m[1] ? [m[1], m[2]] : [m[4], m[3]];
+}
+var cache = {};
+function interval(src) {
+  return typeof src === "string" ? cache[src] || (cache[src] = parse2(src)) : isPitch(src) ? interval(pitchName(src)) : isNamedPitch(src) ? interval(src.name) : NoInterval;
+}
+var SIZES = [0, 2, 4, 5, 7, 9, 11];
+var TYPES = "PMMPPMM";
+function parse2(str) {
+  const tokens = tokenizeInterval(str);
+  if (tokens[0] === "") {
+    return NoInterval;
+  }
+  const num = +tokens[0];
+  const q = tokens[1];
+  const step = (Math.abs(num) - 1) % 7;
+  const t = TYPES[step];
+  if (t === "M" && q === "P") {
+    return NoInterval;
+  }
+  const type = t === "M" ? "majorable" : "perfectable";
+  const name2 = "" + num + q;
+  const dir = num < 0 ? -1 : 1;
+  const simple = num === 8 || num === -8 ? num : dir * (step + 1);
+  const alt = qToAlt(type, q);
+  const oct = Math.floor((Math.abs(num) - 1) / 7);
+  const semitones = dir * (SIZES[step] + alt + 12 * oct);
+  const chroma3 = (dir * (SIZES[step] + alt) % 12 + 12) % 12;
+  const coord = coordinates({ step, alt, oct, dir });
+  return {
+    empty: false,
+    name: name2,
+    num,
+    q,
+    step,
+    alt,
+    dir,
+    type,
+    simple,
+    semitones,
+    chroma: chroma3,
+    coord,
+    oct
+  };
+}
+function coordToInterval(coord, forceDescending) {
+  const [f, o = 0] = coord;
+  const isDescending = f * 7 + o * 12 < 0;
+  const ivl = forceDescending || isDescending ? [-f, -o, -1] : [f, o, 1];
+  return interval(pitch(ivl));
+}
+function qToAlt(type, q) {
+  return q === "M" && type === "majorable" || q === "P" && type === "perfectable" ? 0 : q === "m" && type === "majorable" ? -1 : /^A+$/.test(q) ? q.length : /^d+$/.test(q) ? -1 * (type === "perfectable" ? q.length : q.length + 1) : 0;
+}
+function pitchName(props) {
+  const { step, alt, oct = 0, dir } = props;
+  if (!dir) {
+    return "";
+  }
+  const calcNum = step + 1 + 7 * oct;
+  const num = calcNum === 0 ? step + 1 : calcNum;
+  const d = dir < 0 ? "-" : "";
+  const type = TYPES[step] === "M" ? "majorable" : "perfectable";
+  const name2 = d + num + altToQ(type, alt);
+  return name2;
+}
+function altToQ(type, alt) {
+  if (alt === 0) {
+    return type === "majorable" ? "M" : "P";
+  } else if (alt === -1 && type === "majorable") {
+    return "m";
+  } else if (alt > 0) {
+    return fillStr("A", alt);
+  } else {
+    return fillStr("d", type === "perfectable" ? alt : alt + 1);
+  }
+}
+
+// node_modules/@tonaljs/pitch-note/dist/index.mjs
+var fillStr2 = (s, n) => Array(Math.abs(n) + 1).join(s);
+var NoNote = Object.freeze({
+  empty: true,
+  name: "",
+  letter: "",
+  acc: "",
+  pc: "",
+  step: NaN,
+  alt: NaN,
+  chroma: NaN,
+  height: NaN,
+  coord: [],
+  midi: null,
+  freq: null
+});
+var cache2 = /* @__PURE__ */ new Map();
+var stepToLetter = (step) => "CDEFGAB".charAt(step);
+var altToAcc = (alt) => alt < 0 ? fillStr2("b", -alt) : fillStr2("#", alt);
+var accToAlt = (acc) => acc[0] === "b" ? -acc.length : acc.length;
+function note(src) {
+  const stringSrc = JSON.stringify(src);
+  const cached = cache2.get(stringSrc);
+  if (cached) {
+    return cached;
+  }
+  const value = typeof src === "string" ? parse3(src) : isPitch(src) ? note(pitchName2(src)) : isNamedPitch(src) ? note(src.name) : NoNote;
+  cache2.set(stringSrc, value);
+  return value;
+}
+var REGEX2 = /^([a-gA-G]?)(#{1,}|b{1,}|x{1,}|)(-?\d*)\s*(.*)$/;
+function tokenizeNote(str) {
+  const m = REGEX2.exec(str);
+  return m ? [m[1].toUpperCase(), m[2].replace(/x/g, "##"), m[3], m[4]] : ["", "", "", ""];
+}
+function coordToNote(noteCoord) {
+  return note(pitch(noteCoord));
+}
+var mod = (n, m) => (n % m + m) % m;
+var SEMI = [0, 2, 4, 5, 7, 9, 11];
+function parse3(noteName) {
+  const tokens = tokenizeNote(noteName);
+  if (tokens[0] === "" || tokens[3] !== "") {
+    return NoNote;
+  }
+  const letter = tokens[0];
+  const acc = tokens[1];
+  const octStr = tokens[2];
+  const step = (letter.charCodeAt(0) + 3) % 7;
+  const alt = accToAlt(acc);
+  const oct = octStr.length ? +octStr : void 0;
+  const coord = coordinates({ step, alt, oct });
+  const name2 = letter + acc + octStr;
+  const pc = letter + acc;
+  const chroma3 = (SEMI[step] + alt + 120) % 12;
+  const height = oct === void 0 ? mod(SEMI[step] + alt, 12) - 12 * 99 : SEMI[step] + alt + 12 * (oct + 1);
+  const midi2 = height >= 0 && height <= 127 ? height : null;
+  const freq2 = oct === void 0 ? null : Math.pow(2, (height - 69) / 12) * 440;
+  return {
+    empty: false,
+    acc,
+    alt,
+    chroma: chroma3,
+    coord,
+    freq: freq2,
+    height,
+    letter,
+    midi: midi2,
+    name: name2,
+    oct,
+    pc,
+    step
+  };
+}
+function pitchName2(props) {
+  const { step, alt, oct } = props;
+  const letter = stepToLetter(step);
+  if (!letter) {
+    return "";
+  }
+  const pc = letter + altToAcc(alt);
+  return oct || oct === 0 ? pc + oct : pc;
+}
+
+// node_modules/@tonaljs/pitch-distance/dist/index.mjs
+function transpose(noteName, intervalName) {
+  const note2 = note(noteName);
+  const intervalCoord = Array.isArray(intervalName) ? intervalName : interval(intervalName).coord;
+  if (note2.empty || !intervalCoord || intervalCoord.length < 2) {
+    return "";
+  }
+  const noteCoord = note2.coord;
+  const tr2 = noteCoord.length === 1 ? [noteCoord[0] + intervalCoord[0]] : [noteCoord[0] + intervalCoord[0], noteCoord[1] + intervalCoord[1]];
+  return coordToNote(tr2).name;
+}
+function tonicIntervalsTransposer(intervals, tonic) {
+  const len = intervals.length;
+  return (normalized) => {
+    if (!tonic) return "";
+    const index4 = normalized < 0 ? (len - -normalized % len) % len : normalized % len;
+    const octaves = Math.floor(normalized / len);
+    const root = transpose(tonic, [0, octaves]);
+    return transpose(root, intervals[index4]);
+  };
+}
+function distance(fromNote, toNote) {
+  const from = note(fromNote);
+  const to2 = note(toNote);
+  if (from.empty || to2.empty) {
+    return "";
+  }
+  const fcoord = from.coord;
+  const tcoord = to2.coord;
+  const fifths = tcoord[0] - fcoord[0];
+  const octs = fcoord.length === 2 && tcoord.length === 2 ? tcoord[1] - fcoord[1] : -Math.floor(fifths * 7 / 12);
+  const forceDescending = to2.height === from.height && to2.midi !== null && from.oct === to2.oct && from.step > to2.step;
+  return coordToInterval([fifths, octs], forceDescending).name;
+}
+
+// node_modules/@tonaljs/chord/dist/index.mjs
+var dist_exports = {};
+__export(dist_exports, {
+  chord: () => chord,
+  chordScales: () => chordScales,
+  default: () => chord_default,
+  degrees: () => degrees,
+  detect: () => detect,
+  extended: () => extended,
+  get: () => get4,
+  getChord: () => getChord,
+  notes: () => notes,
+  reduced: () => reduced,
+  steps: () => steps,
+  tokenize: () => tokenize,
+  transpose: () => transpose2
+});
+
+// node_modules/@tonaljs/collection/dist/index.mjs
+function rotate(times, arr) {
+  const len = arr.length;
+  const n = (times % len + len) % len;
+  return arr.slice(n, len).concat(arr.slice(0, n));
+}
+function compact(arr) {
+  return arr.filter((n) => n === 0 || n);
+}
+
+// node_modules/@tonaljs/pcset/dist/index.mjs
+var EmptyPcset = {
+  empty: true,
+  name: "",
+  setNum: 0,
+  chroma: "000000000000",
+  normalized: "000000000000",
+  intervals: []
+};
+var setNumToChroma = (num2) => Number(num2).toString(2).padStart(12, "0");
+var chromaToNumber = (chroma22) => parseInt(chroma22, 2);
+var REGEX3 = /^[01]{12}$/;
+function isChroma(set) {
+  return REGEX3.test(set);
+}
+var isPcsetNum = (set) => typeof set === "number" && set >= 0 && set <= 4095;
+var isPcset = (set) => set && isChroma(set.chroma);
+var cache3 = { [EmptyPcset.chroma]: EmptyPcset };
+function get(src) {
+  const chroma22 = isChroma(src) ? src : isPcsetNum(src) ? setNumToChroma(src) : Array.isArray(src) ? listToChroma(src) : isPcset(src) ? src.chroma : EmptyPcset.chroma;
+  return cache3[chroma22] = cache3[chroma22] || chromaToPcset(chroma22);
+}
+var IVLS = [
+  "1P",
+  "2m",
+  "2M",
+  "3m",
+  "3M",
+  "4P",
+  "5d",
+  "5P",
+  "6m",
+  "6M",
+  "7m",
+  "7M"
+];
+function chromaToIntervals(chroma22) {
+  const intervals2 = [];
+  for (let i = 0; i < 12; i++) {
+    if (chroma22.charAt(i) === "1") intervals2.push(IVLS[i]);
+  }
+  return intervals2;
+}
+function modes(set, normalize = true) {
+  const pcs = get(set);
+  const binary = pcs.chroma.split("");
+  return compact(
+    binary.map((_, i) => {
+      const r = rotate(i, binary);
+      return normalize && r[0] === "0" ? null : r.join("");
+    })
+  );
+}
+function isSubsetOf(set) {
+  const s = get(set).setNum;
+  return (notes2) => {
+    const o = get(notes2).setNum;
+    return s && s !== o && (o & s) === o;
+  };
+}
+function isSupersetOf(set) {
+  const s = get(set).setNum;
+  return (notes2) => {
+    const o = get(notes2).setNum;
+    return s && s !== o && (o | s) === o;
+  };
+}
+function chromaRotations(chroma22) {
+  const binary = chroma22.split("");
+  return binary.map((_, i) => rotate(i, binary).join(""));
+}
+function chromaToPcset(chroma22) {
+  const setNum = chromaToNumber(chroma22);
+  const normalizedNum = chromaRotations(chroma22).map(chromaToNumber).filter((n) => n >= 2048).sort()[0];
+  const normalized = setNumToChroma(normalizedNum);
+  const intervals2 = chromaToIntervals(chroma22);
+  return {
+    empty: false,
+    name: "",
+    setNum,
+    chroma: chroma22,
+    normalized,
+    intervals: intervals2
+  };
+}
+function listToChroma(set) {
+  if (set.length === 0) {
+    return EmptyPcset.chroma;
+  }
+  let pitch2;
+  const binary = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  for (let i = 0; i < set.length; i++) {
+    pitch2 = note(set[i]);
+    if (pitch2.empty) pitch2 = interval(set[i]);
+    if (!pitch2.empty) binary[pitch2.chroma] = 1;
+  }
+  return binary.join("");
+}
+
+// node_modules/@tonaljs/chord-type/dist/index.mjs
+var CHORDS = [
+  // ==Major==
+  ["1P 3M 5P", "major", "M ^  maj"],
+  ["1P 3M 5P 7M", "major seventh", "maj7 \u0394 ma7 M7 Maj7 ^7"],
+  ["1P 3M 5P 7M 9M", "major ninth", "maj9 \u03949 ^9"],
+  ["1P 3M 5P 7M 9M 13M", "major thirteenth", "maj13 Maj13 ^13"],
+  ["1P 3M 5P 6M", "sixth", "6 add6 add13 M6"],
+  ["1P 3M 5P 6M 9M", "sixth added ninth", "6add9 6/9 69 M69"],
+  ["1P 3M 6m 7M", "major seventh flat sixth", "M7b6 ^7b6"],
+  [
+    "1P 3M 5P 7M 11A",
+    "major seventh sharp eleventh",
+    "maj#4 \u0394#4 \u0394#11 M7#11 ^7#11 maj7#11"
+  ],
+  // ==Minor==
+  // '''Normal'''
+  ["1P 3m 5P", "minor", "m min -"],
+  ["1P 3m 5P 7m", "minor seventh", "m7 min7 mi7 -7"],
+  [
+    "1P 3m 5P 7M",
+    "minor/major seventh",
+    "m/ma7 m/maj7 mM7 mMaj7 m/M7 -\u03947 m\u0394 -^7 -maj7"
+  ],
+  ["1P 3m 5P 6M", "minor sixth", "m6 -6"],
+  ["1P 3m 5P 7m 9M", "minor ninth", "m9 -9"],
+  ["1P 3m 5P 7M 9M", "minor/major ninth", "mM9 mMaj9 -^9"],
+  ["1P 3m 5P 7m 9M 11P", "minor eleventh", "m11 -11"],
+  ["1P 3m 5P 7m 9M 13M", "minor thirteenth", "m13 -13"],
+  // '''Diminished'''
+  ["1P 3m 5d", "diminished", "dim \xB0 o"],
+  ["1P 3m 5d 7d", "diminished seventh", "dim7 \xB07 o7"],
+  ["1P 3m 5d 7m", "half-diminished", "m7b5 \xF8 -7b5 h7 h"],
+  // ==Dominant/Seventh==
+  // '''Normal'''
+  ["1P 3M 5P 7m", "dominant seventh", "7 dom"],
+  ["1P 3M 5P 7m 9M", "dominant ninth", "9"],
+  ["1P 3M 5P 7m 9M 13M", "dominant thirteenth", "13"],
+  ["1P 3M 5P 7m 11A", "lydian dominant seventh", "7#11 7#4"],
+  // '''Altered'''
+  ["1P 3M 5P 7m 9m", "dominant flat ninth", "7b9"],
+  ["1P 3M 5P 7m 9A", "dominant sharp ninth", "7#9"],
+  ["1P 3M 7m 9m", "altered", "alt7"],
+  // '''Suspended'''
+  ["1P 4P 5P", "suspended fourth", "sus4 sus"],
+  ["1P 2M 5P", "suspended second", "sus2"],
+  ["1P 4P 5P 7m", "suspended fourth seventh", "7sus4 7sus"],
+  ["1P 5P 7m 9M 11P", "eleventh", "11"],
+  [
+    "1P 4P 5P 7m 9m",
+    "suspended fourth flat ninth",
+    "b9sus phryg 7b9sus 7b9sus4"
+  ],
+  // ==Other==
+  ["1P 5P", "fifth", "5"],
+  ["1P 3M 5A", "augmented", "aug + +5 ^#5"],
+  ["1P 3m 5A", "minor augmented", "m#5 -#5 m+"],
+  ["1P 3M 5A 7M", "augmented seventh", "maj7#5 maj7+5 +maj7 ^7#5"],
+  [
+    "1P 3M 5P 7M 9M 11A",
+    "major sharp eleventh (lydian)",
+    "maj9#11 \u03949#11 ^9#11"
+  ],
+  // ==Legacy==
+  ["1P 2M 4P 5P", "", "sus24 sus4add9"],
+  ["1P 3M 5A 7M 9M", "", "maj9#5 Maj9#5"],
+  ["1P 3M 5A 7m", "", "7#5 +7 7+ 7aug aug7"],
+  ["1P 3M 5A 7m 9A", "", "7#5#9 7#9#5 7alt"],
+  ["1P 3M 5A 7m 9M", "", "9#5 9+"],
+  ["1P 3M 5A 7m 9M 11A", "", "9#5#11"],
+  ["1P 3M 5A 7m 9m", "", "7#5b9 7b9#5"],
+  ["1P 3M 5A 7m 9m 11A", "", "7#5b9#11"],
+  ["1P 3M 5A 9A", "", "+add#9"],
+  ["1P 3M 5A 9M", "", "M#5add9 +add9"],
+  ["1P 3M 5P 6M 11A", "", "M6#11 M6b5 6#11 6b5"],
+  ["1P 3M 5P 6M 7M 9M", "", "M7add13"],
+  ["1P 3M 5P 6M 9M 11A", "", "69#11"],
+  ["1P 3m 5P 6M 9M", "", "m69 -69"],
+  ["1P 3M 5P 6m 7m", "", "7b6"],
+  ["1P 3M 5P 7M 9A 11A", "", "maj7#9#11"],
+  ["1P 3M 5P 7M 9M 11A 13M", "", "M13#11 maj13#11 M13+4 M13#4"],
+  ["1P 3M 5P 7M 9m", "", "M7b9"],
+  ["1P 3M 5P 7m 11A 13m", "", "7#11b13 7b5b13"],
+  ["1P 3M 5P 7m 13M", "", "7add6 67 7add13"],
+  ["1P 3M 5P 7m 9A 11A", "", "7#9#11 7b5#9 7#9b5"],
+  ["1P 3M 5P 7m 9A 11A 13M", "", "13#9#11"],
+  ["1P 3M 5P 7m 9A 11A 13m", "", "7#9#11b13"],
+  ["1P 3M 5P 7m 9A 13M", "", "13#9"],
+  ["1P 3M 5P 7m 9A 13m", "", "7#9b13"],
+  ["1P 3M 5P 7m 9M 11A", "", "9#11 9+4 9#4"],
+  ["1P 3M 5P 7m 9M 11A 13M", "", "13#11 13+4 13#4"],
+  ["1P 3M 5P 7m 9M 11A 13m", "", "9#11b13 9b5b13"],
+  ["1P 3M 5P 7m 9m 11A", "", "7b9#11 7b5b9 7b9b5"],
+  ["1P 3M 5P 7m 9m 11A 13M", "", "13b9#11"],
+  ["1P 3M 5P 7m 9m 11A 13m", "", "7b9b13#11 7b9#11b13 7b5b9b13"],
+  ["1P 3M 5P 7m 9m 13M", "", "13b9"],
+  ["1P 3M 5P 7m 9m 13m", "", "7b9b13"],
+  ["1P 3M 5P 7m 9m 9A", "", "7b9#9"],
+  ["1P 3M 5P 9M", "", "Madd9 2 add9 add2"],
+  ["1P 3M 5P 9m", "", "Maddb9"],
+  ["1P 3M 5d", "", "Mb5"],
+  ["1P 3M 5d 6M 7m 9M", "", "13b5"],
+  ["1P 3M 5d 7M", "", "M7b5"],
+  ["1P 3M 5d 7M 9M", "", "M9b5"],
+  ["1P 3M 5d 7m", "", "7b5"],
+  ["1P 3M 5d 7m 9M", "", "9b5"],
+  ["1P 3M 7m", "", "7no5"],
+  ["1P 3M 7m 13m", "", "7b13"],
+  ["1P 3M 7m 9M", "", "9no5"],
+  ["1P 3M 7m 9M 13M", "", "13no5"],
+  ["1P 3M 7m 9M 13m", "", "9b13"],
+  ["1P 3m 4P 5P", "", "madd4"],
+  ["1P 3m 5P 6m 7M", "", "mMaj7b6"],
+  ["1P 3m 5P 6m 7M 9M", "", "mMaj9b6"],
+  ["1P 3m 5P 7m 11P", "", "m7add11 m7add4"],
+  ["1P 3m 5P 9M", "", "madd9"],
+  ["1P 3m 5d 6M 7M", "", "o7M7"],
+  ["1P 3m 5d 7M", "", "oM7"],
+  ["1P 3m 6m 7M", "", "mb6M7"],
+  ["1P 3m 6m 7m", "", "m7#5"],
+  ["1P 3m 6m 7m 9M", "", "m9#5"],
+  ["1P 3m 5A 7m 9M 11P", "", "m11A"],
+  ["1P 3m 6m 9m", "", "mb6b9"],
+  ["1P 2M 3m 5d 7m", "", "m9b5"],
+  ["1P 4P 5A 7M", "", "M7#5sus4"],
+  ["1P 4P 5A 7M 9M", "", "M9#5sus4"],
+  ["1P 4P 5A 7m", "", "7#5sus4"],
+  ["1P 4P 5P 7M", "", "M7sus4"],
+  ["1P 4P 5P 7M 9M", "", "M9sus4"],
+  ["1P 4P 5P 7m 9M", "", "9sus4 9sus"],
+  ["1P 4P 5P 7m 9M 13M", "", "13sus4 13sus"],
+  ["1P 4P 5P 7m 9m 13m", "", "7sus4b9b13 7b9b13sus4"],
+  ["1P 4P 7m 10m", "", "4 quartal"],
+  ["1P 5P 7m 9m 11P", "", "11b9"]
+];
+var data_default = CHORDS;
+var NoChordType = {
+  ...EmptyPcset,
+  name: "",
+  quality: "Unknown",
+  intervals: [],
+  aliases: []
+};
+var dictionary = [];
+var index = {};
+function get2(type) {
+  return index[type] || NoChordType;
+}
+function all() {
+  return dictionary.slice();
+}
+function add(intervals, aliases, fullName) {
+  const quality = getQuality(intervals);
+  const chord2 = {
+    ...get(intervals),
+    name: fullName || "",
+    quality,
+    intervals,
+    aliases
+  };
+  dictionary.push(chord2);
+  if (chord2.name) {
+    index[chord2.name] = chord2;
+  }
+  index[chord2.setNum] = chord2;
+  index[chord2.chroma] = chord2;
+  chord2.aliases.forEach((alias) => addAlias(chord2, alias));
+}
+function addAlias(chord2, alias) {
+  index[alias] = chord2;
+}
+function getQuality(intervals) {
+  const has = (interval2) => intervals.indexOf(interval2) !== -1;
+  return has("5A") ? "Augmented" : has("3M") ? "Major" : has("5d") ? "Diminished" : has("3m") ? "Minor" : "Unknown";
+}
+data_default.forEach(
+  ([ivls, fullName, names22]) => add(ivls.split(" "), names22.split(" "), fullName)
+);
+dictionary.sort((a, b) => a.setNum - b.setNum);
+
+// node_modules/@tonaljs/chord-detect/dist/index.mjs
+var namedSet = (notes2) => {
+  const pcToName = notes2.reduce((record, n) => {
+    const chroma3 = note(n).chroma;
+    if (chroma3 !== void 0) {
+      record[chroma3] = record[chroma3] || note(n).name;
+    }
+    return record;
+  }, {});
+  return (chroma3) => pcToName[chroma3];
+};
+function detect(source, options = {}) {
+  const notes2 = source.map((n) => note(n).pc).filter((x) => x);
+  if (note.length === 0) {
+    return [];
+  }
+  const found = findMatches(notes2, 1, options);
+  return found.filter((chord2) => chord2.weight).sort((a, b) => b.weight - a.weight).map((chord2) => chord2.name);
+}
+var BITMASK = {
+  // 3m 000100000000
+  // 3M 000010000000
+  anyThirds: 384,
+  // 5P 000000010000
+  perfectFifth: 16,
+  // 5d 000000100000
+  // 5A 000000001000
+  nonPerfectFifths: 40,
+  anySeventh: 3
+};
+var testChromaNumber = (bitmask) => (chromaNumber) => Boolean(chromaNumber & bitmask);
+var hasAnyThird = testChromaNumber(BITMASK.anyThirds);
+var hasPerfectFifth = testChromaNumber(BITMASK.perfectFifth);
+var hasAnySeventh = testChromaNumber(BITMASK.anySeventh);
+var hasNonPerfectFifth = testChromaNumber(BITMASK.nonPerfectFifths);
+function hasAnyThirdAndPerfectFifthAndAnySeventh(chordType) {
+  const chromaNumber = parseInt(chordType.chroma, 2);
+  return hasAnyThird(chromaNumber) && hasPerfectFifth(chromaNumber) && hasAnySeventh(chromaNumber);
+}
+function withPerfectFifth(chroma3) {
+  const chromaNumber = parseInt(chroma3, 2);
+  return hasNonPerfectFifth(chromaNumber) ? chroma3 : (chromaNumber | 16).toString(2);
+}
+function findMatches(notes2, weight, options) {
+  const tonic = notes2[0];
+  const tonicChroma = note(tonic).chroma;
+  const noteName = namedSet(notes2);
+  const allModes = modes(notes2, false);
+  const found = [];
+  allModes.forEach((mode, index4) => {
+    const modeWithPerfectFifth = options.assumePerfectFifth && withPerfectFifth(mode);
+    const chordTypes = all().filter((chordType) => {
+      if (options.assumePerfectFifth && hasAnyThirdAndPerfectFifthAndAnySeventh(chordType)) {
+        return chordType.chroma === modeWithPerfectFifth;
+      }
+      return chordType.chroma === mode;
+    });
+    chordTypes.forEach((chordType) => {
+      const chordName = chordType.aliases[0];
+      const baseNote = noteName(index4);
+      const isInversion = index4 !== tonicChroma;
+      if (isInversion) {
+        found.push({
+          weight: 0.5 * weight,
+          name: `${baseNote}${chordName}/${tonic}`
+        });
+      } else {
+        found.push({ weight: 1 * weight, name: `${baseNote}${chordName}` });
+      }
+    });
+  });
+  return found;
+}
+
+// node_modules/@tonaljs/interval/dist/index.mjs
+var IQ = "P m M m M P d P m M m M".split(" ");
+var add2 = combinator((a, b) => [a[0] + b[0], a[1] + b[1]]);
+var subtract = combinator((a, b) => [a[0] - b[0], a[1] - b[1]]);
+function combinator(fn) {
+  return (a, b) => {
+    const coordA = interval(a).coord;
+    const coordB = interval(b).coord;
+    if (coordA && coordB) {
+      const coord = fn(coordA, coordB);
+      return coordToInterval(coord).name;
+    }
+  };
+}
+
+// node_modules/@tonaljs/scale-type/dist/index.mjs
+var SCALES = [
+  // Basic scales
+  ["1P 2M 3M 5P 6M", "major pentatonic", "pentatonic"],
+  ["1P 2M 3M 4P 5P 6M 7M", "major", "ionian"],
+  ["1P 2M 3m 4P 5P 6m 7m", "minor", "aeolian"],
+  // Jazz common scales
+  ["1P 2M 3m 3M 5P 6M", "major blues"],
+  ["1P 3m 4P 5d 5P 7m", "minor blues", "blues"],
+  ["1P 2M 3m 4P 5P 6M 7M", "melodic minor"],
+  ["1P 2M 3m 4P 5P 6m 7M", "harmonic minor"],
+  ["1P 2M 3M 4P 5P 6M 7m 7M", "bebop"],
+  ["1P 2M 3m 4P 5d 6m 6M 7M", "diminished", "whole-half diminished"],
+  // Modes
+  ["1P 2M 3m 4P 5P 6M 7m", "dorian"],
+  ["1P 2M 3M 4A 5P 6M 7M", "lydian"],
+  ["1P 2M 3M 4P 5P 6M 7m", "mixolydian", "dominant"],
+  ["1P 2m 3m 4P 5P 6m 7m", "phrygian"],
+  ["1P 2m 3m 4P 5d 6m 7m", "locrian"],
+  // 5-note scales
+  ["1P 3M 4P 5P 7M", "ionian pentatonic"],
+  ["1P 3M 4P 5P 7m", "mixolydian pentatonic", "indian"],
+  ["1P 2M 4P 5P 6M", "ritusen"],
+  ["1P 2M 4P 5P 7m", "egyptian"],
+  ["1P 3M 4P 5d 7m", "neopolitan major pentatonic"],
+  ["1P 3m 4P 5P 6m", "vietnamese 1"],
+  ["1P 2m 3m 5P 6m", "pelog"],
+  ["1P 2m 4P 5P 6m", "kumoijoshi"],
+  ["1P 2M 3m 5P 6m", "hirajoshi"],
+  ["1P 2m 4P 5d 7m", "iwato"],
+  ["1P 2m 4P 5P 7m", "in-sen"],
+  ["1P 3M 4A 5P 7M", "lydian pentatonic", "chinese"],
+  ["1P 3m 4P 6m 7m", "malkos raga"],
+  ["1P 3m 4P 5d 7m", "locrian pentatonic", "minor seven flat five pentatonic"],
+  ["1P 3m 4P 5P 7m", "minor pentatonic", "vietnamese 2"],
+  ["1P 3m 4P 5P 6M", "minor six pentatonic"],
+  ["1P 2M 3m 5P 6M", "flat three pentatonic", "kumoi"],
+  ["1P 2M 3M 5P 6m", "flat six pentatonic"],
+  ["1P 2m 3M 5P 6M", "scriabin"],
+  ["1P 3M 5d 6m 7m", "whole tone pentatonic"],
+  ["1P 3M 4A 5A 7M", "lydian #5P pentatonic"],
+  ["1P 3M 4A 5P 7m", "lydian dominant pentatonic"],
+  ["1P 3m 4P 5P 7M", "minor #7M pentatonic"],
+  ["1P 3m 4d 5d 7m", "super locrian pentatonic"],
+  // 6-note scales
+  ["1P 2M 3m 4P 5P 7M", "minor hexatonic"],
+  ["1P 2A 3M 5P 5A 7M", "augmented"],
+  ["1P 2M 4P 5P 6M 7m", "piongio"],
+  ["1P 2m 3M 4A 6M 7m", "prometheus neopolitan"],
+  ["1P 2M 3M 4A 6M 7m", "prometheus"],
+  ["1P 2m 3M 5d 6m 7m", "mystery #1"],
+  ["1P 2m 3M 4P 5A 6M", "six tone symmetric"],
+  ["1P 2M 3M 4A 5A 6A", "whole tone", "messiaen's mode #1"],
+  ["1P 2m 4P 4A 5P 7M", "messiaen's mode #5"],
+  // 7-note scales
+  ["1P 2M 3M 4P 5d 6m 7m", "locrian major", "arabian"],
+  ["1P 2m 3M 4A 5P 6m 7M", "double harmonic lydian"],
+  [
+    "1P 2m 2A 3M 4A 6m 7m",
+    "altered",
+    "super locrian",
+    "diminished whole tone",
+    "pomeroy"
+  ],
+  ["1P 2M 3m 4P 5d 6m 7m", "locrian #2", "half-diminished", "aeolian b5"],
+  [
+    "1P 2M 3M 4P 5P 6m 7m",
+    "mixolydian b6",
+    "melodic minor fifth mode",
+    "hindu"
+  ],
+  ["1P 2M 3M 4A 5P 6M 7m", "lydian dominant", "lydian b7", "overtone"],
+  ["1P 2M 3M 4A 5A 6M 7M", "lydian augmented"],
+  [
+    "1P 2m 3m 4P 5P 6M 7m",
+    "dorian b2",
+    "phrygian #6",
+    "melodic minor second mode"
+  ],
+  [
+    "1P 2m 3m 4d 5d 6m 7d",
+    "ultralocrian",
+    "superlocrian bb7",
+    "superlocrian diminished"
+  ],
+  ["1P 2m 3m 4P 5d 6M 7m", "locrian 6", "locrian natural 6", "locrian sharp 6"],
+  ["1P 2A 3M 4P 5P 5A 7M", "augmented heptatonic"],
+  // Source https://en.wikipedia.org/wiki/Ukrainian_Dorian_scale
+  [
+    "1P 2M 3m 4A 5P 6M 7m",
+    "dorian #4",
+    "ukrainian dorian",
+    "romanian minor",
+    "altered dorian"
+  ],
+  ["1P 2M 3m 4A 5P 6M 7M", "lydian diminished"],
+  ["1P 2M 3M 4A 5A 7m 7M", "leading whole tone"],
+  ["1P 2M 3M 4A 5P 6m 7m", "lydian minor"],
+  ["1P 2m 3M 4P 5P 6m 7m", "phrygian dominant", "spanish", "phrygian major"],
+  ["1P 2m 3m 4P 5P 6m 7M", "balinese"],
+  ["1P 2m 3m 4P 5P 6M 7M", "neopolitan major"],
+  ["1P 2M 3M 4P 5P 6m 7M", "harmonic major"],
+  ["1P 2m 3M 4P 5P 6m 7M", "double harmonic major", "gypsy"],
+  ["1P 2M 3m 4A 5P 6m 7M", "hungarian minor"],
+  ["1P 2A 3M 4A 5P 6M 7m", "hungarian major"],
+  ["1P 2m 3M 4P 5d 6M 7m", "oriental"],
+  ["1P 2m 3m 3M 4A 5P 7m", "flamenco"],
+  ["1P 2m 3m 4A 5P 6m 7M", "todi raga"],
+  ["1P 2m 3M 4P 5d 6m 7M", "persian"],
+  ["1P 2m 3M 5d 6m 7m 7M", "enigmatic"],
+  [
+    "1P 2M 3M 4P 5A 6M 7M",
+    "major augmented",
+    "major #5",
+    "ionian augmented",
+    "ionian #5"
+  ],
+  ["1P 2A 3M 4A 5P 6M 7M", "lydian #9"],
+  // 8-note scales
+  ["1P 2m 2M 4P 4A 5P 6m 7M", "messiaen's mode #4"],
+  ["1P 2m 3M 4P 4A 5P 6m 7M", "purvi raga"],
+  ["1P 2m 3m 3M 4P 5P 6m 7m", "spanish heptatonic"],
+  ["1P 2M 3m 3M 4P 5P 6M 7m", "bebop minor"],
+  ["1P 2M 3M 4P 5P 5A 6M 7M", "bebop major"],
+  ["1P 2m 3m 4P 5d 5P 6m 7m", "bebop locrian"],
+  ["1P 2M 3m 4P 5P 6m 7m 7M", "minor bebop"],
+  ["1P 2M 3M 4P 5d 5P 6M 7M", "ichikosucho"],
+  ["1P 2M 3m 4P 5P 6m 6M 7M", "minor six diminished"],
+  [
+    "1P 2m 3m 3M 4A 5P 6M 7m",
+    "half-whole diminished",
+    "dominant diminished",
+    "messiaen's mode #2"
+  ],
+  ["1P 3m 3M 4P 5P 6M 7m 7M", "kafi raga"],
+  ["1P 2M 3M 4P 4A 5A 6A 7M", "messiaen's mode #6"],
+  // 9-note scales
+  ["1P 2M 3m 3M 4P 5d 5P 6M 7m", "composite blues"],
+  ["1P 2M 3m 3M 4A 5P 6m 7m 7M", "messiaen's mode #3"],
+  // 10-note scales
+  ["1P 2m 2M 3m 4P 4A 5P 6m 6M 7M", "messiaen's mode #7"],
+  // 12-note scales
+  ["1P 2m 2M 3m 3M 4P 5d 5P 6m 6M 7m 7M", "chromatic"]
+];
+var data_default2 = SCALES;
+var NoScaleType = {
+  ...EmptyPcset,
+  intervals: [],
+  aliases: []
+};
+var dictionary2 = [];
+var index2 = {};
+function get3(type) {
+  return index2[type] || NoScaleType;
+}
+function all2() {
+  return dictionary2.slice();
+}
+function add3(intervals, name2, aliases = []) {
+  const scale = { ...get(intervals), name: name2, intervals, aliases };
+  dictionary2.push(scale);
+  index2[scale.name] = scale;
+  index2[scale.setNum] = scale;
+  index2[scale.chroma] = scale;
+  scale.aliases.forEach((alias) => addAlias2(scale, alias));
+  return scale;
+}
+function addAlias2(scale, alias) {
+  index2[alias] = scale;
+}
+data_default2.forEach(
+  ([ivls, name2, ...aliases]) => add3(ivls.split(" "), name2, aliases)
+);
+
+// node_modules/@tonaljs/chord/dist/index.mjs
+var NoChord = {
+  empty: true,
+  name: "",
+  symbol: "",
+  root: "",
+  bass: "",
+  rootDegree: 0,
+  type: "",
+  tonic: null,
+  setNum: NaN,
+  quality: "Unknown",
+  chroma: "",
+  normalized: "",
+  aliases: [],
+  notes: [],
+  intervals: []
+};
+function tokenize(name2) {
+  const [letter, acc, oct, type] = tokenizeNote(name2);
+  if (letter === "") {
+    return tokenizeBass("", name2);
+  } else if (letter === "A" && type === "ug") {
+    return tokenizeBass("", "aug");
+  } else {
+    return tokenizeBass(letter + acc, oct + type);
+  }
+}
+function tokenizeBass(note2, chord2) {
+  const split = chord2.split("/");
+  if (split.length === 1) {
+    return [note2, split[0], ""];
+  }
+  const [letter, acc, oct, type] = tokenizeNote(split[1]);
+  if (letter !== "" && oct === "" && type === "") {
+    return [note2, split[0], letter + acc];
+  } else {
+    return [note2, chord2, ""];
+  }
+}
+function get4(src) {
+  if (Array.isArray(src)) {
+    return getChord(src[1] || "", src[0], src[2]);
+  } else if (src === "") {
+    return NoChord;
+  } else {
+    const [tonic, type, bass] = tokenize(src);
+    const chord2 = getChord(type, tonic, bass);
+    return chord2.empty ? getChord(src) : chord2;
+  }
+}
+function getChord(typeName, optionalTonic, optionalBass) {
+  const type = get2(typeName);
+  const tonic = note(optionalTonic || "");
+  const bass = note(optionalBass || "");
+  if (type.empty || optionalTonic && tonic.empty || optionalBass && bass.empty) {
+    return NoChord;
+  }
+  const bassInterval = distance(tonic.pc, bass.pc);
+  const bassIndex = type.intervals.indexOf(bassInterval);
+  const hasRoot = bassIndex >= 0;
+  const root = hasRoot ? bass : note("");
+  const rootDegree = bassIndex === -1 ? NaN : bassIndex + 1;
+  const hasBass = bass.pc && bass.pc !== tonic.pc;
+  const intervals = Array.from(type.intervals);
+  if (hasRoot) {
+    for (let i = 1; i < rootDegree; i++) {
+      const num = intervals[0][0];
+      const quality = intervals[0][1];
+      const newNum = parseInt(num, 10) + 7;
+      intervals.push(`${newNum}${quality}`);
+      intervals.shift();
+    }
+  } else if (hasBass) {
+    const ivl = subtract(distance(tonic.pc, bass.pc), "8P");
+    if (ivl) intervals.unshift(ivl);
+  }
+  const notes2 = tonic.empty ? [] : intervals.map((i) => transpose(tonic.pc, i));
+  typeName = type.aliases.indexOf(typeName) !== -1 ? typeName : type.aliases[0];
+  const symbol = `${tonic.empty ? "" : tonic.pc}${typeName}${hasRoot && rootDegree > 1 ? "/" + root.pc : hasBass ? "/" + bass.pc : ""}`;
+  const name2 = `${optionalTonic ? tonic.pc + " " : ""}${type.name}${hasRoot && rootDegree > 1 ? " over " + root.pc : hasBass ? " over " + bass.pc : ""}`;
+  return {
+    ...type,
+    name: name2,
+    symbol,
+    tonic: tonic.pc,
+    type: type.name,
+    root: root.pc,
+    bass: hasBass ? bass.pc : "",
+    intervals,
+    rootDegree,
+    notes: notes2
+  };
+}
+var chord = get4;
+function transpose2(chordName, interval2) {
+  const [tonic, type, bass] = tokenize(chordName);
+  if (!tonic) {
+    return chordName;
+  }
+  const tr2 = transpose(bass, interval2);
+  const slash = tr2 ? "/" + tr2 : "";
+  return transpose(tonic, interval2) + type + slash;
+}
+function chordScales(name2) {
+  const s = get4(name2);
+  const isChordIncluded = isSupersetOf(s.chroma);
+  return all2().filter((scale) => isChordIncluded(scale.chroma)).map((scale) => scale.name);
+}
+function extended(chordName) {
+  const s = get4(chordName);
+  const isSuperset = isSupersetOf(s.chroma);
+  return all().filter((chord2) => isSuperset(chord2.chroma)).map((chord2) => s.tonic + chord2.aliases[0]);
+}
+function reduced(chordName) {
+  const s = get4(chordName);
+  const isSubset = isSubsetOf(s.chroma);
+  return all().filter((chord2) => isSubset(chord2.chroma)).map((chord2) => s.tonic + chord2.aliases[0]);
+}
+function notes(chordName, tonic) {
+  const chord2 = get4(chordName);
+  const note2 = tonic || chord2.tonic;
+  if (!note2 || chord2.empty) return [];
+  return chord2.intervals.map((ivl) => transpose(note2, ivl));
+}
+function degrees(chordName, tonic) {
+  const chord2 = get4(chordName);
+  const note2 = tonic || chord2.tonic;
+  const transpose22 = tonicIntervalsTransposer(chord2.intervals, note2);
+  return (degree) => degree ? transpose22(degree > 0 ? degree - 1 : degree) : "";
+}
+function steps(chordName, tonic) {
+  const chord2 = get4(chordName);
+  const note2 = tonic || chord2.tonic;
+  return tonicIntervalsTransposer(chord2.intervals, note2);
+}
+var chord_default = {
+  getChord,
+  get: get4,
+  detect,
+  chordScales,
+  extended,
+  reduced,
+  tokenize,
+  transpose: transpose2,
+  degrees,
+  steps,
+  notes,
+  chord
+};
+
+// node_modules/@tonaljs/duration-value/dist/index.mjs
+var DATA = [
+  [
+    0.125,
+    "dl",
+    ["large", "duplex longa", "maxima", "octuple", "octuple whole"]
+  ],
+  [0.25, "l", ["long", "longa"]],
+  [0.5, "d", ["double whole", "double", "breve"]],
+  [1, "w", ["whole", "semibreve"]],
+  [2, "h", ["half", "minim"]],
+  [4, "q", ["quarter", "crotchet"]],
+  [8, "e", ["eighth", "quaver"]],
+  [16, "s", ["sixteenth", "semiquaver"]],
+  [32, "t", ["thirty-second", "demisemiquaver"]],
+  [64, "sf", ["sixty-fourth", "hemidemisemiquaver"]],
+  [128, "h", ["hundred twenty-eighth"]],
+  [256, "th", ["two hundred fifty-sixth"]]
+];
+var data_default3 = DATA;
+var VALUES = [];
+data_default3.forEach(
+  ([denominator, shorthand, names22]) => add4(denominator, shorthand, names22)
+);
+function add4(denominator, shorthand, names22) {
+  VALUES.push({
+    empty: false,
+    dots: "",
+    name: "",
+    value: 1 / denominator,
+    fraction: denominator < 1 ? [1 / denominator, 1] : [1, denominator],
+    shorthand,
+    names: names22
+  });
+}
+
+// node_modules/@tonaljs/midi/dist/index.mjs
+var L2 = Math.log(2);
+var L440 = Math.log(440);
+function freqToMidi(freq2) {
+  const v = 12 * (Math.log(freq2) - L440) / L2 + 69;
+  return Math.round(v * 100) / 100;
+}
+var SHARPS = "C C# D D# E F F# G G# A A# B".split(" ");
+var FLATS = "C Db D Eb E F Gb G Ab A Bb B".split(" ");
+function midiToNoteName(midi2, options = {}) {
+  if (isNaN(midi2) || midi2 === -Infinity || midi2 === Infinity) return "";
+  midi2 = Math.round(midi2);
+  const pcs = options.sharps === true ? SHARPS : FLATS;
+  const pc = pcs[midi2 % 12];
+  if (options.pitchClass) {
+    return pc;
+  }
+  const o = Math.floor(midi2 / 12) - 1;
+  return pc + o;
+}
+
+// node_modules/@tonaljs/note/dist/index.mjs
+var NAMES = ["C", "D", "E", "F", "G", "A", "B"];
+var toName = (n) => n.name;
+var onlyNotes = (array) => array.map(note).filter((n) => !n.empty);
+function names(array) {
+  if (array === void 0) {
+    return NAMES.slice();
+  } else if (!Array.isArray(array)) {
+    return [];
+  } else {
+    return onlyNotes(array).map(toName);
+  }
+}
+var get5 = note;
+var name = (note2) => get5(note2).name;
+var pitchClass = (note2) => get5(note2).pc;
+var accidentals = (note2) => get5(note2).acc;
+var octave = (note2) => get5(note2).oct;
+var midi = (note2) => get5(note2).midi;
+var freq = (note2) => get5(note2).freq;
+var chroma = (note2) => get5(note2).chroma;
+function fromMidi(midi2) {
+  return midiToNoteName(midi2);
+}
+function fromFreq(freq2) {
+  return midiToNoteName(freqToMidi(freq2));
+}
+function fromFreqSharps(freq2) {
+  return midiToNoteName(freqToMidi(freq2), { sharps: true });
+}
+function fromMidiSharps(midi2) {
+  return midiToNoteName(midi2, { sharps: true });
+}
+var distance2 = distance;
+var transpose3 = transpose;
+var tr = transpose;
+var transposeBy = (interval2) => (note2) => transpose3(note2, interval2);
+var trBy = transposeBy;
+var transposeFrom = (note2) => (interval2) => transpose3(note2, interval2);
+var trFrom = transposeFrom;
+function transposeFifths(noteName, fifths) {
+  return transpose3(noteName, [fifths, 0]);
+}
+var trFifths = transposeFifths;
+function transposeOctaves(noteName, octaves) {
+  return transpose3(noteName, [0, octaves]);
+}
+var ascending = (a, b) => a.height - b.height;
+var descending = (a, b) => b.height - a.height;
+function sortedNames(notes2, comparator) {
+  comparator = comparator || ascending;
+  return onlyNotes(notes2).sort(comparator).map(toName);
+}
+function sortedUniqNames(notes2) {
+  return sortedNames(notes2, ascending).filter(
+    (n, i, a) => i === 0 || n !== a[i - 1]
+  );
+}
+var simplify = (noteName) => {
+  const note2 = get5(noteName);
+  if (note2.empty) {
+    return "";
+  }
+  return midiToNoteName(note2.midi || note2.chroma, {
+    sharps: note2.alt > 0,
+    pitchClass: note2.midi === null
+  });
+};
+function enharmonic(noteName, destName) {
+  const src = get5(noteName);
+  if (src.empty) {
+    return "";
+  }
+  const dest = get5(
+    destName || midiToNoteName(src.midi || src.chroma, {
+      sharps: src.alt < 0,
+      pitchClass: true
+    })
+  );
+  if (dest.empty || dest.chroma !== src.chroma) {
+    return "";
+  }
+  if (src.oct === void 0) {
+    return dest.pc;
+  }
+  const srcChroma = src.chroma - src.alt;
+  const destChroma = dest.chroma - dest.alt;
+  const destOctOffset = srcChroma > 11 || destChroma < 0 ? -1 : srcChroma < 0 || destChroma > 11 ? 1 : 0;
+  const destOct = src.oct + destOctOffset;
+  return dest.pc + destOct;
+}
+var index_default = {
+  names,
+  get: get5,
+  name,
+  pitchClass,
+  accidentals,
+  octave,
+  midi,
+  ascending,
+  descending,
+  distance: distance2,
+  sortedNames,
+  sortedUniqNames,
+  fromMidi,
+  fromMidiSharps,
+  freq,
+  fromFreq,
+  fromFreqSharps,
+  chroma,
+  transpose: transpose3,
+  tr,
+  transposeBy,
+  trBy,
+  transposeFrom,
+  trFrom,
+  transposeFifths,
+  transposeOctaves,
+  trFifths,
+  simplify,
+  enharmonic
+};
+
+// node_modules/@tonaljs/roman-numeral/dist/index.mjs
+var NoRomanNumeral = { empty: true, name: "", chordType: "" };
+var cache4 = {};
+function get6(src) {
+  return typeof src === "string" ? cache4[src] || (cache4[src] = parse4(src)) : typeof src === "number" ? get6(NAMES2[src] || "") : isPitch(src) ? fromPitch(src) : isNamedPitch(src) ? get6(src.name) : NoRomanNumeral;
+}
+function fromPitch(pitch2) {
+  return get6(altToAcc(pitch2.alt) + NAMES2[pitch2.step]);
+}
+var REGEX4 = /^(#{1,}|b{1,}|x{1,}|)(IV|I{1,3}|VI{0,2}|iv|i{1,3}|vi{0,2})([^IViv]*)$/;
+function tokenize2(str) {
+  return REGEX4.exec(str) || ["", "", "", ""];
+}
+var ROMANS = "I II III IV V VI VII";
+var NAMES2 = ROMANS.split(" ");
+var NAMES_MINOR = ROMANS.toLowerCase().split(" ");
+function parse4(src) {
+  const [name2, acc, roman, chordType] = tokenize2(src);
+  if (!roman) {
+    return NoRomanNumeral;
+  }
+  const upperRoman = roman.toUpperCase();
+  const step = NAMES2.indexOf(upperRoman);
+  const alt = accToAlt(acc);
+  const dir = 1;
+  return {
+    empty: false,
+    name: name2,
+    roman,
+    interval: interval({ step, alt, dir }).name,
+    acc,
+    chordType,
+    alt,
+    step,
+    major: roman === upperRoman,
+    oct: 0,
+    dir
+  };
+}
+
+// node_modules/@tonaljs/key/dist/index.mjs
+var Empty = Object.freeze([]);
+var NoKey = {
+  type: "major",
+  tonic: "",
+  alteration: 0,
+  keySignature: ""
+};
+var NoKeyScale = {
+  tonic: "",
+  grades: Empty,
+  intervals: Empty,
+  scale: Empty,
+  triads: Empty,
+  chords: Empty,
+  chordsHarmonicFunction: Empty,
+  chordScales: Empty,
+  secondaryDominants: Empty,
+  secondaryDominantSupertonics: Empty,
+  substituteDominantsMinorRelative: Empty,
+  substituteDominants: Empty,
+  substituteDominantSupertonics: Empty,
+  secondaryDominantsMinorRelative: Empty
+};
+var NoMajorKey = {
+  ...NoKey,
+  ...NoKeyScale,
+  type: "major",
+  minorRelative: "",
+  scale: Empty,
+  substituteDominants: Empty,
+  secondaryDominantSupertonics: Empty,
+  substituteDominantsMinorRelative: Empty
+};
+var NoMinorKey = {
+  ...NoKey,
+  type: "minor",
+  relativeMajor: "",
+  natural: NoKeyScale,
+  harmonic: NoKeyScale,
+  melodic: NoKeyScale
+};
+var mapScaleToType = (scale, list, sep = "") => list.map((type, i) => `${scale[i]}${sep}${type}`);
+function keyScale(grades, triads3, chordTypes, harmonicFunctions, chordScales2) {
+  return (tonic) => {
+    const intervals = grades.map((gr) => get6(gr).interval || "");
+    const scale = intervals.map((interval2) => transpose3(tonic, interval2));
+    const chords2 = mapScaleToType(scale, chordTypes);
+    const secondaryDominants = scale.map((note2) => transpose3(note2, "5P")).map(
+      (note2) => (
+        // A secondary dominant is a V chord which:
+        // 1. is not diatonic to the key,
+        // 2. it must have a diatonic root.
+        scale.includes(note2) && !chords2.includes(note2 + "7") ? note2 + "7" : ""
+      )
+    );
+    const secondaryDominantSupertonics = supertonics(
+      secondaryDominants,
+      triads3
+    );
+    const substituteDominants = secondaryDominants.map((chord2) => {
+      if (!chord2) return "";
+      const domRoot = chord2.slice(0, -1);
+      const subRoot = transpose3(domRoot, "5d");
+      return subRoot + "7";
+    });
+    const substituteDominantSupertonics = supertonics(
+      substituteDominants,
+      triads3
+    );
+    return {
+      tonic,
+      grades,
+      intervals,
+      scale,
+      triads: mapScaleToType(scale, triads3),
+      chords: chords2,
+      chordsHarmonicFunction: harmonicFunctions.slice(),
+      chordScales: mapScaleToType(scale, chordScales2, " "),
+      secondaryDominants,
+      secondaryDominantSupertonics,
+      substituteDominants,
+      substituteDominantSupertonics,
+      // @deprecated use secondaryDominantsSupertonic
+      secondaryDominantsMinorRelative: secondaryDominantSupertonics,
+      // @deprecated use secondaryDominantsSupertonic
+      substituteDominantsMinorRelative: substituteDominantSupertonics
+    };
+  };
+}
+var supertonics = (dominants, targetTriads) => {
+  return dominants.map((chord2, index4) => {
+    if (!chord2) return "";
+    const domRoot = chord2.slice(0, -1);
+    const minorRoot = transpose3(domRoot, "5P");
+    const target = targetTriads[index4];
+    const isMinor = target.endsWith("m");
+    return isMinor ? minorRoot + "m7" : minorRoot + "m7b5";
+  });
+};
+var MajorScale = keyScale(
+  "I II III IV V VI VII".split(" "),
+  " m m   m dim".split(" "),
+  "maj7 m7 m7 maj7 7 m7 m7b5".split(" "),
+  "T SD T SD D T D".split(" "),
+  "major,dorian,phrygian,lydian,mixolydian,minor,locrian".split(",")
+);
+var NaturalScale = keyScale(
+  "I II bIII IV V bVI bVII".split(" "),
+  "m dim  m m  ".split(" "),
+  "m7 m7b5 maj7 m7 m7 maj7 7".split(" "),
+  "T SD T SD D SD SD".split(" "),
+  "minor,locrian,major,dorian,phrygian,lydian,mixolydian".split(",")
+);
+var HarmonicScale = keyScale(
+  "I II bIII IV V bVI VII".split(" "),
+  "m dim aug m   dim".split(" "),
+  "mMaj7 m7b5 +maj7 m7 7 maj7 o7".split(" "),
+  "T SD T SD D SD D".split(" "),
+  "harmonic minor,locrian 6,major augmented,lydian diminished,phrygian dominant,lydian #9,ultralocrian".split(
+    ","
+  )
+);
+var MelodicScale = keyScale(
+  "I II bIII IV V VI VII".split(" "),
+  "m m aug   dim dim".split(" "),
+  "m6 m7 +maj7 7 7 m7b5 m7b5".split(" "),
+  "T SD T SD D  ".split(" "),
+  "melodic minor,dorian b2,lydian augmented,lydian dominant,mixolydian b6,locrian #2,altered".split(
+    ","
+  )
+);
+
+// node_modules/@tonaljs/mode/dist/index.mjs
+var MODES = [
+  [0, 2773, 0, "ionian", "", "Maj7", "major"],
+  [1, 2902, 2, "dorian", "m", "m7"],
+  [2, 3418, 4, "phrygian", "m", "m7"],
+  [3, 2741, -1, "lydian", "", "Maj7"],
+  [4, 2774, 1, "mixolydian", "", "7"],
+  [5, 2906, 3, "aeolian", "m", "m7", "minor"],
+  [6, 3434, 5, "locrian", "dim", "m7b5"]
+];
+var NoMode = {
+  ...EmptyPcset,
+  name: "",
+  alt: 0,
+  modeNum: NaN,
+  triad: "",
+  seventh: "",
+  aliases: []
+};
+var modes2 = MODES.map(toMode);
+var index3 = {};
+modes2.forEach((mode2) => {
+  index3[mode2.name] = mode2;
+  mode2.aliases.forEach((alias) => {
+    index3[alias] = mode2;
+  });
+});
+function get7(name2) {
+  return typeof name2 === "string" ? index3[name2.toLowerCase()] || NoMode : name2 && name2.name ? get7(name2.name) : NoMode;
+}
+function toMode(mode2) {
+  const [modeNum, setNum, alt, name2, triad, seventh, alias] = mode2;
+  const aliases = alias ? [alias] : [];
+  const chroma3 = Number(setNum).toString(2);
+  const intervals = get3(name2).intervals;
+  return {
+    empty: false,
+    intervals,
+    modeNum,
+    chroma: chroma3,
+    normalized: chroma3,
+    name: name2,
+    setNum,
+    alt,
+    triad,
+    seventh,
+    aliases
+  };
+}
+function chords(chords2) {
+  return (modeName, tonic) => {
+    const mode2 = get7(modeName);
+    if (mode2.empty) return [];
+    const triads22 = rotate(mode2.modeNum, chords2);
+    const tonics = mode2.intervals.map((i) => transpose(tonic, i));
+    return triads22.map((triad, i) => tonics[i] + triad);
+  };
+}
+var triads = chords(MODES.map((x) => x[4]));
+var seventhChords = chords(MODES.map((x) => x[5]));
+
+// node_modules/@tonaljs/voice-leading/dist/index.mjs
+var topNoteDiff = (voicings, lastVoicing) => {
+  if (!lastVoicing || !lastVoicing.length) {
+    return voicings[0];
+  }
+  const topNoteMidi = (voicing) => index_default.midi(voicing[voicing.length - 1]) || 0;
+  const diff = (voicing) => Math.abs(topNoteMidi(lastVoicing) - topNoteMidi(voicing));
+  return voicings.sort((a, b) => diff(a) - diff(b))[0];
+};
+var index_default2 = {
+  topNoteDiff
+};
+
+// node_modules/@tonaljs/voicing-dictionary/dist/index.mjs
+var triads2 = {
+  M: ["1P 3M 5P", "3M 5P 8P", "5P 8P 10M"],
+  m: ["1P 3m 5P", "3m 5P 8P", "5P 8P 10m"],
+  o: ["1P 3m 5d", "3m 5d 8P", "5d 8P 10m"],
+  aug: ["1P 3m 5A", "3m 5A 8P", "5A 8P 10m"]
+};
+var lefthand = {
+  m7: ["3m 5P 7m 9M", "7m 9M 10m 12P"],
+  "7": ["3M 6M 7m 9M", "7m 9M 10M 13M"],
+  "^7": ["3M 5P 7M 9M", "7M 9M 10M 12P"],
+  "69": ["3M 5P 6A 9M"],
+  m7b5: ["3m 5d 7m 8P", "7m 8P 10m 12d"],
+  "7b9": ["3M 6m 7m 9m", "7m 9m 10M 13m"],
+  // b9 / b13
+  "7b13": ["3M 6m 7m 9m", "7m 9m 10M 13m"],
+  // b9 / b13
+  o7: ["1P 3m 5d 6M", "5d 6M 8P 10m"],
+  "7#11": ["7m 9M 11A 13A"],
+  "7#9": ["3M 7m 9A"],
+  mM7: ["3m 5P 7M 9M", "7M 9M 10m 12P"],
+  m6: ["3m 5P 6M 9M", "6M 9M 10m 12P"]
+};
+var all3 = {
+  M: ["1P 3M 5P", "3M 5P 8P", "5P 8P 10M"],
+  m: ["1P 3m 5P", "3m 5P 8P", "5P 8P 10m"],
+  o: ["1P 3m 5d", "3m 5d 8P", "5d 8P 10m"],
+  aug: ["1P 3m 5A", "3m 5A 8P", "5A 8P 10m"],
+  m7: ["3m 5P 7m 9M", "7m 9M 10m 12P"],
+  "7": ["3M 6M 7m 9M", "7m 9M 10M 13M"],
+  "^7": ["3M 5P 7M 9M", "7M 9M 10M 12P"],
+  "69": ["3M 5P 6A 9M"],
+  m7b5: ["3m 5d 7m 8P", "7m 8P 10m 12d"],
+  "7b9": ["3M 6m 7m 9m", "7m 9m 10M 13m"],
+  // b9 / b13
+  "7b13": ["3M 6m 7m 9m", "7m 9m 10M 13m"],
+  // b9 / b13
+  o7: ["1P 3m 5d 6M", "5d 6M 8P 10m"],
+  "7#11": ["7m 9M 11A 13A"],
+  "7#9": ["3M 7m 9A"],
+  mM7: ["3m 5P 7M 9M", "7M 9M 10m 12P"],
+  m6: ["3m 5P 6M 9M", "6M 9M 10m 12P"]
+};
+var defaultDictionary = lefthand;
+function lookup(symbol, dictionary3 = defaultDictionary) {
+  if (dictionary3[symbol]) {
+    return dictionary3[symbol];
+  }
+  const { aliases } = chord_default.get("C" + symbol);
+  const match = Object.keys(dictionary3).find((_symbol) => aliases.includes(_symbol)) || "";
+  if (match !== void 0) {
+    return dictionary3[match];
+  }
+  return void 0;
+}
+var index_default3 = {
+  lookup,
+  lefthand,
+  triads: triads2,
+  all: all3,
+  defaultDictionary
+};
+
+// node_modules/@tonaljs/voicing/dist/index.mjs
+var defaultDictionary2 = index_default3.all;
+var defaultVoiceLeading = index_default2.topNoteDiff;
+
+// node_modules/@tonaljs/core/dist/index.mjs
+function deprecate(original, alternative, fn) {
+  return function(...args) {
+    console.warn(`${original} is deprecated. Use ${alternative}.`);
+    return fn.apply(this, args);
+  };
+}
+var isNamed = deprecate("isNamed", "isNamedPitch", isNamedPitch);
+
+// src/refactor/chord-designer.ts
+var ChordDesigner = class {
+  constructor(args) {
+    this.chord = "";
+    this.instrument = null;
+    this.settings = {};
+    this.shouldUseVelocityRange = false;
+    this.after = (milliseconds) => {
+      this.settings.after = milliseconds;
+      return this;
+    };
+    this.velocity = (velocity, maxVelocity) => {
+      if (maxVelocity !== void 0) {
+        this.settings.minVelocity = velocity;
+        this.settings.maxVelocity = maxVelocity;
+        this.shouldUseVelocityRange = true;
+      } else {
+        this.settings.velocity = velocity;
+        this.shouldUseVelocityRange = false;
+      }
+      return this;
+    };
+    this.duration = (milliseconds) => {
+      this.settings.duration = milliseconds;
+      return this;
+    };
+    this.stagger = (milliseconds) => {
+      this.settings.stagger = milliseconds;
+      return this;
+    };
+    this.octave = (octave2) => {
+      this.settings.octave = octave2;
+      return this;
+    };
+    this.inversion = (inversion) => {
+      this.settings.inversion = inversion;
+      return this;
+    };
+    this.voicing = (voicing) => {
+      this.settings.voicing = voicing;
+      return this;
+    };
+    this.bassNote = (note2) => {
+      this.settings.bassNote = note2;
+      return this;
+    };
+    this.bassOctave = (octave2) => {
+      this.settings.bassOctave = octave2;
+      return this;
+    };
+    this.minVelocity = (minVelocity) => {
+      this.settings.minVelocity = minVelocity;
+      this.shouldUseVelocityRange = true;
+      return this;
+    };
+    this.maxVelocity = (maxVelocity) => {
+      this.settings.maxVelocity = maxVelocity;
+      this.shouldUseVelocityRange = true;
+      return this;
+    };
+    this.detune = (cents) => {
+      this.settings.detune = cents;
+      return this;
+    };
+    this.attack = (milliseconds) => {
+      this.settings.attack = milliseconds;
+      return this;
+    };
+    this.release = (milliseconds) => {
+      this.settings.release = milliseconds;
+      return this;
+    };
+    this.gain = (gain) => {
+      this.settings.gain = gain;
+      return this;
+    };
+    this.pan = (pan) => {
+      this.settings.pan = pan;
+      return this;
+    };
+    this.play = () => {
+      let notes2 = this.getChordNotes();
+      if (this.settings.voicing) {
+        notes2 = this.applyVoicing(notes2);
+      }
+      if (this.settings.inversion) {
+        notes2 = this.applyInversion(notes2);
+      }
+      if (this.settings.bassNote) {
+        notes2 = this.addBassNote(notes2);
+      }
+      const notesDesigner = new NotesDesigner({
+        notes: notes2,
+        instrument: this.instrument
+      });
+      return notesDesigner.after(this.settings.after || 0).duration(this.settings.duration || 0).velocity(this.settings.velocity || 0).minVelocity(this.settings.minVelocity || 0).maxVelocity(this.settings.maxVelocity || 0).stagger(this.settings.stagger || 0).detune(this.settings.detune || 0).attack(this.settings.attack || 0).release(this.settings.release || 0).gain(this.settings.gain || 0).pan(this.settings.pan || 0).play();
+    };
+    this.stop = () => {
+      const notes2 = this.getChordNotes();
+      notes2.forEach((note2) => this.instrument.stop(note2));
+    };
+    this.getChordNotes = () => {
+      try {
+        const chordNotes = dist_exports.get(this.chord).notes;
+        if (chordNotes.length === 0) {
+          console.warn(`Could not parse chord: ${this.chord}`);
+          return [this.chord];
+        }
+        const octave2 = this.settings.octave || 3;
+        return chordNotes.map((note2) => `${note2}${octave2}`);
+      } catch (error) {
+        console.warn(`Error parsing chord ${this.chord}:`, error);
+        return [this.chord];
+      }
+    };
+    this.applyVoicing = (notes2) => {
+      const voicing = this.settings.voicing;
+      if (!voicing) return notes2;
+      const customVoicings = this.instrument?.parent?.wembley?.voicings || {};
+      if (typeof voicing === "string" && customVoicings[voicing]) {
+        const voicingFunction = customVoicings[voicing];
+        return voicingFunction(notes2);
+      }
+      switch (voicing) {
+        case "open":
+          return notes2.map((note2, index4) => {
+            const octave2 = 3 + Math.floor(index4 / 2);
+            return note2.replace(/\d+$/, octave2.toString());
+          });
+        case "closed":
+          return notes2;
+        case "drop2":
+          if (notes2.length >= 2) {
+            const result = [...notes2];
+            const secondHighest = result[result.length - 2];
+            const lowerOctave = parseInt(secondHighest.slice(-1)) - 1;
+            result[result.length - 2] = secondHighest.replace(/\d+$/, lowerOctave.toString());
+            return result;
+          }
+          return notes2;
+        case "rootless":
+          return notes2.slice(1);
+        case "shell":
+          return notes2.length > 2 ? [notes2[0], notes2[2]] : notes2;
+        default:
+          return notes2;
+      }
+    };
+    this.applyInversion = (notes2) => {
+      const inversion = this.settings.inversion;
+      if (!inversion || inversion === 0) return notes2;
+      const rotated = [...notes2];
+      for (let i = 0; i < inversion; i++) {
+        const first = rotated.shift();
+        if (first) {
+          const octave2 = parseInt(first.slice(-1)) + 1;
+          const noteWithHigherOctave = first.replace(/\d+$/, octave2.toString());
+          rotated.push(noteWithHigherOctave);
+        }
+      }
+      return rotated;
+    };
+    this.addBassNote = (notes2) => {
+      const bassNote = this.settings.bassNote;
+      const bassOctave = this.settings.bassOctave || 2;
+      if (typeof bassNote === "string") {
+        const bassNoteWithOctave = `${bassNote}${bassOctave}`;
+        return [bassNoteWithOctave, ...notes2];
+      } else if (typeof bassNote === "number") {
+        const noteIndex = bassNote % notes2.length;
+        const selectedNote = notes2[noteIndex];
+        const noteWithBassOctave = selectedNote.replace(/\d+$/, bassOctave.toString());
+        return [noteWithBassOctave, ...notes2];
+      }
+      return notes2;
+    };
+    this.chord = args.chord;
+    this.instrument = args.instrument;
+    if (args.octave !== void 0) {
+      this.settings.octave = args.octave;
+    }
+  }
+};
+
+// src/refactor/audio-engine.ts
 var createAudioEngine = () => {
   let audioContext = null;
   const getAudioContext = async () => {
     if (audioContext && audioContext.isStarted) {
       return audioContext;
     }
-    let nativeContext;
-    try {
-      nativeContext = new AudioContext();
-      if (nativeContext.state === "suspended") {
-        await nativeContext.resume();
-      }
-    } catch (error) {
-      if (getContext().state === "suspended") {
-        await start();
-      }
-      nativeContext = getContext().rawContext || getContext();
+    if (getContext().state === "suspended") {
+      await start();
     }
-    const masterGain = nativeContext.createGain ? nativeContext.createGain() : new Gain(0.7).toDestination();
-    if (nativeContext.createGain) {
-      masterGain.connect(nativeContext.destination);
-      masterGain.gain.value = 0.7;
-    }
+    const masterGain = new Gain(0.7).toDestination();
     audioContext = {
-      context: nativeContext,
+      context: getContext(),
       masterGain,
       isStarted: true
     };
     return audioContext;
   };
   const loadSoundfont = async (args) => {
-    const soundfont = {
+    const audioFont = {
       name: extractNameFromUrl(args.url),
       url: args.url,
-      soundfontPlayer: null,
+      soundfont: null,
+      samples: /* @__PURE__ */ new Map(),
       isLoaded: false
     };
     try {
-      const audioCtx = await getAudioContext();
       console.log(`Loading soundfont from ${args.url}...`);
-      let instrumentName;
-      let loadOptions = {};
-      if (args.url.endsWith(".sf2")) {
-        console.warn(`Direct .sf2 file loading is not yet supported. Using default instrument for ${soundfont.name}`);
-        instrumentName = "acoustic_grand_piano";
-      } else {
-        if (args.url.includes("/") || args.url.includes(".js")) {
-          instrumentName = args.url;
-        } else {
-          instrumentName = args.url;
-        }
-      }
-      const player = await import_soundfont_player.default.instrument(audioCtx.context, instrumentName, {
-        ...loadOptions
-        // Don't connect to Tone.js destination - let soundfont-player handle its own routing
-      });
-      soundfont.soundfontPlayer = player;
-      soundfont.isLoaded = true;
-      console.log(`\u2713 Loaded soundfont: ${soundfont.name}`);
+      const soundfont = await fetchSoundfont(args.url);
+      audioFont.soundfont = soundfont;
+      audioFont.isLoaded = true;
+      console.log(`\u2713 Loaded soundfont: ${audioFont.name}`);
     } catch (error) {
-      console.error(`Failed to load soundfont ${soundfont.name}:`, error);
+      console.error(`Failed to load soundfont ${audioFont.name}:`, error);
       throw error;
     }
-    return soundfont;
+    return audioFont;
   };
   const createSynth = (args) => {
     const activeVoices = /* @__PURE__ */ new Map();
-    const engineInstance = { getAudioContext, loadSoundfont, createSynth };
     const playNote = (noteArgs) => {
       const voiceId = `${noteArgs.midi}-${Date.now()}-${Math.random()}`;
-      const promise = playNoteInternal({
-        ...noteArgs,
-        voiceId,
-        soundfont: args.soundfont,
-        config: args.config,
-        engine: engineInstance
-      });
+      const synth = new Synth().toDestination();
+      const startTime = noteArgs.startTime ? `+${noteArgs.startTime / 1e3}` : now();
+      const duration = noteArgs.duration ? noteArgs.duration / 1e3 : 1;
+      const velocity = Math.max(0, Math.min(127, noteArgs.velocity || 70)) / 127;
+      const gain = Math.max(0, Math.min(100, noteArgs.gain || args.config.gain || 70)) / 100;
+      const frequency = Frequency(noteArgs.midi, "midi").toFrequency();
+      synth.volume.value = gainToDb(velocity * gain);
+      if (noteArgs.detune) {
+        synth.detune.value = noteArgs.detune;
+      }
       const voice = {
         id: voiceId,
         midi: noteArgs.midi,
-        soundfontNote: null,
-        isPlaying: false,
+        player: null,
+        // We're using synth instead of player for now
+        isPlaying: true,
         stop: (stopArgs) => {
-          promise.then((actualVoice) => actualVoice.stop(stopArgs)).catch(console.error);
+          if (voice.isPlaying) {
+            try {
+              const stopTime = stopArgs?.stopTime ? `+${stopArgs.stopTime / 1e3}` : now();
+              synth.triggerRelease(stopTime);
+              voice.isPlaying = false;
+              setTimeout(() => {
+                synth.dispose();
+                activeVoices.delete(voiceId);
+              }, 100);
+            } catch (error) {
+              console.warn("Error stopping note:", error);
+              voice.isPlaying = false;
+            }
+          }
         },
         modulate: (modArgs) => {
-          promise.then((actualVoice) => actualVoice.modulate(modArgs)).catch(console.error);
+          if (voice.isPlaying) {
+            if (modArgs.gain !== void 0) {
+              const newGain = Math.max(0, Math.min(100, modArgs.gain)) / 100;
+              synth.volume.rampTo(gainToDb(newGain), modArgs.duration ? modArgs.duration / 1e3 : 0.1);
+            }
+          }
         }
       };
-      promise.then((actualVoice) => {
-        voice.soundfontNote = actualVoice.soundfontNote;
-        voice.isPlaying = actualVoice.isPlaying;
-      }).catch(console.error);
+      if (noteArgs.duration) {
+        synth.triggerAttackRelease(frequency, duration, startTime, velocity);
+        setTimeout(() => {
+          voice.isPlaying = false;
+          synth.dispose();
+          activeVoices.delete(voiceId);
+        }, (noteArgs.duration || 1e3) + 100);
+      } else {
+        synth.triggerAttack(frequency, startTime, velocity);
+      }
       activeVoices.set(voiceId, voice);
       return voice;
     };
     const stopNote = (args2) => {
       args2.voice.stop({ stopTime: args2.stopTime });
-      activeVoices.delete(args2.voice.id);
     };
     const stopAllNotes = () => {
       console.log(`Stopping all notes for synth (${activeVoices.size} active voices)`);
@@ -21075,152 +21267,182 @@ var createAudioEngine = () => {
     createSynth
   };
 };
-var playNoteInternal = async (args) => {
-  const audioCtx = await args.engine.getAudioContext();
-  if (!args.soundfont.soundfontPlayer || !args.soundfont.isLoaded) {
-    throw new Error("Soundfont not loaded");
-  }
-  const startTime = args.startTime ? audioCtx.context.currentTime + args.startTime / 1e3 : audioCtx.context.currentTime;
-  const duration = args.duration ? args.duration / 1e3 : void 0;
-  const velocityGain = Math.max(0, Math.min(100, args.velocity || 70)) / 100;
-  const configGain = Math.max(0, Math.min(100, args.config.gain || 70)) / 100;
-  const finalGain = velocityGain * configGain * (args.gain ? args.gain / 100 : 1);
-  const playOptions = {
-    time: startTime,
-    gain: finalGain
-  };
-  if (duration) {
-    playOptions.duration = duration;
-  }
-  const soundfontNote = args.soundfont.soundfontPlayer.play(args.midi, startTime, playOptions);
-  const voice = {
-    id: args.voiceId,
-    midi: args.midi,
-    soundfontNote,
-    isPlaying: true,
-    stop: (stopArgs) => {
-      if (voice.isPlaying && soundfontNote) {
-        try {
-          const stopTime = stopArgs?.stopTime || audioCtx.context.currentTime;
-          if (soundfontNote.stop) {
-            soundfontNote.stop(stopTime);
-          }
-          voice.isPlaying = false;
-        } catch (error) {
-          console.warn("Error stopping soundfont note:", error);
-          voice.isPlaying = false;
-        }
-      }
-    },
-    modulate: (modArgs) => {
-      console.warn("Real-time modulation is not supported with soundfont playback");
-    }
-  };
-  return voice;
-};
 var extractNameFromUrl = (url) => {
   const match = url.match(/([^/]+)\.sf2?$/i);
-  return match ? match[1] : "unknown";
+  if (match) return match[1];
+  const pathMatch = url.match(/([^/]+)\.(js|json)$/i);
+  if (pathMatch) return pathMatch[1];
+  return "unknown";
 };
 var audioEngine = createAudioEngine();
 
-// src/player.ts
-var loadInstrumentsWithNewFormat = async (instrumentsConfig, globalConfig) => {
-  console.log("Loading instruments with new format:", instrumentsConfig);
-  const instruments = {};
-  for (const [name2, instrumentConfig] of Object.entries(instrumentsConfig)) {
-    console.log(`Loading ${name2} from ${instrumentConfig.url}...`);
-    const mergedConfig = {
-      ...globalConfig,
-      ...instrumentConfig.gain !== void 0 && { gain: instrumentConfig.gain },
-      ...instrumentConfig.minVelocity !== void 0 && { minVelocity: instrumentConfig.minVelocity },
-      ...instrumentConfig.maxVelocity !== void 0 && { maxVelocity: instrumentConfig.maxVelocity },
-      ...instrumentConfig.pan !== void 0 && { pan: instrumentConfig.pan }
+// src/refactor/instrument.ts
+var Instrument3 = class {
+  constructor(loadResult, parent) {
+    this.id = crypto.randomUUID();
+    this.parent = null;
+    this.name = "";
+    this.originalConfig = {};
+    this.soundfont = null;
+    this.synth = null;
+    this.settings = {};
+    this.note = (note2) => {
+      return new NoteDesigner({ note: note2, instrument: this });
     };
-    const soundfont = await audioEngine.loadSoundfont({ url: instrumentConfig.url });
-    const synth = audioEngine.createSynth({ soundfont, config: mergedConfig });
-    instruments[name2] = createInstrument({
-      name: name2,
-      synth,
-      soundfontUrl: instrumentConfig.url,
-      config: mergedConfig
+    this.notes = (notes2) => {
+      return new NotesDesigner({ notes: notes2, instrument: this });
+    };
+    this.chord = (chord2, octave2) => {
+      return new ChordDesigner({ chord: chord2, octave: octave2, instrument: this });
+    };
+    // stop() // stop all notes played by instrument
+    // stop('C3') // stop one note played by instrument
+    // stop(['C3', 'D3']) // stop multiple notes played by instrument
+    // stop('Cmin', 3) // stop multiple notes played by instrument
+    this.stop = (target) => {
+      console.log(`[Instrument.stop target]:`, target);
+      if (!this.synth) return [];
+      if (!target) {
+        this.synth.stopAllNotes();
+        return [];
+      }
+      this.synth.stopAllNotes();
+      return [];
+    };
+    this.id = crypto.randomUUID();
+    this.parent = parent;
+    this.name = loadResult.name;
+    this.soundfont = loadResult.soundfont;
+    this.originalConfig = loadResult.config;
+    this.settings = {
+      id: this.id,
+      name: loadResult.name,
+      url: loadResult.config.url,
+      minVelocity: loadResult.config.minVelocity || parent?.settings?.minVelocity || 60,
+      maxVelocity: loadResult.config.maxVelocity || parent?.settings?.maxVelocity || 80,
+      velocity: parent?.settings?.velocity || 75,
+      gain: loadResult.config.gain || parent?.settings?.gain || 50,
+      pan: loadResult.config.pan || parent?.settings?.pan || 0,
+      duration: 1e3,
+      // Default duration
+      soundfont: loadResult.soundfont,
+      originalConfig: { [loadResult.name]: loadResult.config }
+    };
+    this.synth = audioEngine.createSynth({
+      soundfont: this.soundfont,
+      config: this.settings
     });
-    console.log(`\u2713 ${name2} loaded successfully`);
   }
-  return instruments;
-};
-var createEnhancedGear = (initialInstruments, globalConfig) => {
-  let allInstruments = { ...initialInstruments };
-  const load = async (newInstrumentsConfig) => {
-    const newInstruments = await loadInstrumentsWithNewFormat(newInstrumentsConfig, globalConfig);
-    allInstruments = { ...allInstruments, ...newInstruments };
-    Object.assign(gear, newInstruments);
-    return gear;
-  };
-  const stop = () => {
-    console.log("Stopping all sounds from all instruments");
-    const instruments = Object.values(allInstruments);
-    instruments.forEach((instrument) => instrument.stop());
-  };
-  const gear = { ...allInstruments, load, stop };
-  return gear;
-};
-var createPlayer = (config) => {
-  const load = async (soundfontLoadConfig) => {
-    console.log("Loading soundfonts:", soundfontLoadConfig);
-    const instruments = {};
-    for (const [name2, url] of Object.entries(soundfontLoadConfig)) {
-      console.log(`Loading ${name2} from ${url}...`);
-      const soundfont = await audioEngine.loadSoundfont({ url });
-      const synth = audioEngine.createSynth({ soundfont, config });
-      instruments[name2] = createInstrument({
-        name: name2,
-        synth,
-        soundfontUrl: url,
-        config
-      });
-      console.log(`\u2713 ${name2} loaded successfully`);
-    }
-    const stop = () => {
-      console.log("Stopping all sounds from all instruments");
-      const allInstruments = Object.values(instruments);
-      allInstruments.forEach((instrument) => instrument.stop());
-    };
-    const gear = { ...instruments, stop };
-    return gear;
-  };
-  const player = {
-    load
-  };
-  return player;
 };
 
-// src/wembley.ts
-var createWembley = () => {
-  const configure = (config) => {
-    return createPlayer({
-      gain: 70,
-      maxVelocity: 85,
-      minVelocity: 45,
-      voicings: {},
-      ...config
-    });
-  };
-  const initialize = async (config) => {
-    const globalConfig = {
-      gain: 70,
-      maxVelocity: 85,
-      minVelocity: 45,
-      pan: 0,
-      voicings: {},
-      ...config
+// src/refactor/wembley.ts
+var Gear = class {
+  constructor(config, wembley2) {
+    // Index signature for dynamic instrument properties
+    this.id = crypto.randomUUID();
+    this.wembley = null;
+    this.instruments = {};
+    this.settings = {};
+    this.loadInitialInstruments = async (config) => {
+      if (!config.instruments) return;
+      for (const [name2, instrumentConfig] of Object.entries(config.instruments)) {
+        await this.loadSingleInstrument(name2, instrumentConfig);
+      }
     };
-    const instrumentsConfig = config.instruments || {};
-    const initialInstruments = await loadInstrumentsWithNewFormat(instrumentsConfig, globalConfig);
-    return createEnhancedGear(initialInstruments, globalConfig);
-  };
-  const wembley2 = { configure, initialize };
-  return wembley2;
+    // This matches the GearT interface
+    this.loadInstrument = async (config) => {
+      const instrumentName = Object.keys(config)[0];
+      const instrumentConfig = config[instrumentName];
+      const rawSoundfont = await fetchSoundfont(instrumentConfig.url);
+      const audioFont = {
+        name: instrumentName,
+        url: instrumentConfig.url,
+        soundfont: rawSoundfont,
+        samples: /* @__PURE__ */ new Map(),
+        isLoaded: true
+      };
+      const instrument = new Instrument3({ name: instrumentName, soundfont: audioFont, config: instrumentConfig }, this);
+      this.instruments[instrumentName] = instrument;
+      this[instrumentName] = instrument;
+      return instrument;
+    };
+    // Convenience method that matches API expectations
+    this.load = async (config) => {
+      const results = [];
+      for (const [name2, instrumentConfig] of Object.entries(config)) {
+        const rawSoundfont = await fetchSoundfont(instrumentConfig.url);
+        const audioFont = {
+          name: name2,
+          url: instrumentConfig.url,
+          soundfont: rawSoundfont,
+          samples: /* @__PURE__ */ new Map(),
+          isLoaded: true
+        };
+        const instrument = new Instrument3({ name: name2, soundfont: audioFont, config: instrumentConfig }, this);
+        this.instruments[name2] = instrument;
+        this[name2] = instrument;
+        results.push(instrument);
+      }
+      return results.length === 1 ? results[0] : results;
+    };
+    // Internal method for loading individual instruments
+    this.loadSingleInstrument = async (name2, config) => {
+      const rawSoundfont = await fetchSoundfont(config.url);
+      const audioFont = {
+        name: name2,
+        url: config.url,
+        soundfont: rawSoundfont,
+        samples: /* @__PURE__ */ new Map(),
+        isLoaded: true
+      };
+      const instrument = new Instrument3({ name: name2, soundfont: audioFont, config }, this);
+      this.instruments[name2] = instrument;
+      this[name2] = instrument;
+      return instrument;
+    };
+    this.stop = (target) => {
+      console.log(`[Gear.stop target]:`, target);
+      Object.values(this.instruments).forEach((instrument) => instrument.stop(target));
+      return [];
+    };
+    this.wembley = wembley2;
+    this.settings = { ...DEFAULT_SETTINGS, ...config };
+  }
+};
+var Wembley = class {
+  constructor() {
+    this.id = crypto.randomUUID();
+    this.gears = {};
+    this.settings = DEFAULT_SETTINGS;
+    this.playingNotes = [];
+    this.initialize = async (config) => {
+      if (config.minVelocity) this.settings.minVelocity = config.minVelocity;
+      if (config.maxVelocity) this.settings.maxVelocity = config.maxVelocity;
+      if (config.velocity) this.settings.velocity = config.velocity;
+      if (config.gain) this.settings.gain = config.gain;
+      if (config.pan) this.settings.pan = config.pan;
+      const gear = new Gear(config, this);
+      this.gears[gear.id] = gear;
+      await gear.loadInitialInstruments(config);
+      return gear;
+    };
+    // Dispatch the stop request to all gears, and as a
+    // result, to all instruments.
+    this.stop = (target) => {
+      console.log(`[Wembley.stop target]:`, target);
+      Object.values(this.gears).forEach((gear) => gear.stop(target));
+    };
+    // Update the global settings.
+    // These are the last fallback for when
+    // neither a note, instrument, or gear are missing a value.
+    // wembley.set({ minVelocity: 22 })
+    this.set = (settings) => {
+      Object.assign(this.settings, settings);
+    };
+  }
+};
+var createWembley = () => {
+  return new Wembley();
 };
 
 // src/index.ts

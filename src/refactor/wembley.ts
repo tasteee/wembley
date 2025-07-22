@@ -1,42 +1,97 @@
-import type { WembleyT, ConfigT, InitializeConfigT, StopTargetT, BaseSettingsT } from '../types.js'
-import { createPlayer, loadInstrumentsWithNewFormat, createEnhancedGear } from '../player.js'
+import type { WembleyT, ConfigT, InitializeConfigT, StopTargetT, BaseSettingsT, GearT, InstrumentConfigT, NewSoundfontLoadConfigT } from '../types.js'
 import { fetchSoundfont } from './fetch-soundfont.js'
 import { listerine } from 'listerine'
-import { NoteDesigner } from './note-designer.js'
+import { DEFAULT_SETTINGS } from './constants.js'
+import { Instrument } from './instrument.js'
 
-// When chord(...).play(), we take the symbol,
-// convert it into notes, and play them with the
-// given settings. We store each played note instance
-// in playTracker.active.notes, and we save
-// all of the played note instances together
-// in active.chords.
+class Gear implements GearT {
+	[key: string]: any // Index signature for dynamic instrument properties
+	id = crypto.randomUUID()
+	wembley = null
+	instruments = {} as Record<string, Instrument>
+	settings = {} as BaseSettingsT
 
-// So we can do chord(...).stop() and we can easily
-// look up the chord (an array of note instances),
-// and stop each of them.
-
-// note(C4).play() -> active.notes.set(C4I, )
-// note(C4).stop() =>
-
-// type NoteInstanceT = { id: string, createdAt: number, }
-// const list = listerine(arraOfItems)
-
-class PlayTracker {
-	private instances = [] as any[]
-	private instanceGroups = {}
-
-	add = (instance: any) => {
-		this.instances.push(instance)
+	constructor(config: InitializeConfigT, wembley: Wembley) {
+		this.wembley = wembley
+		this.settings = { ...DEFAULT_SETTINGS, ...config }
 	}
 
-	find = (query) => {
-		const list = listerine(this.instances)
-		return list.find(query)
+	loadInitialInstruments = async (config: InitializeConfigT) => {
+		if (!config.instruments) return
+
+		for (const [name, instrumentConfig] of Object.entries(config.instruments)) {
+			await this.loadSingleInstrument(name, instrumentConfig)
+		}
 	}
 
-	findOne = (query) => {
-		const list = listerine(this.instances)
-		return list.findOne(query)
+	// This matches the GearT interface
+	loadInstrument = async (config: NewSoundfontLoadConfigT) => {
+		// Handle single instrument loading from config object
+		const instrumentName = Object.keys(config)[0]
+		const instrumentConfig = config[instrumentName]
+		
+		const rawSoundfont = await fetchSoundfont(instrumentConfig.url)
+		const audioFont = {
+			name: instrumentName,
+			url: instrumentConfig.url,
+			soundfont: rawSoundfont,
+			samples: new Map(),
+			isLoaded: true
+		}
+		
+		const instrument = new Instrument({ name: instrumentName, soundfont: audioFont, config: instrumentConfig }, this)
+		this.instruments[instrumentName] = instrument
+		// Add instrument to gear object dynamically
+		this[instrumentName] = instrument
+		return instrument
+	}
+
+	// Convenience method that matches API expectations
+	load = async (config: NewSoundfontLoadConfigT) => {
+		// Load multiple instruments from config object
+		const results = []
+		for (const [name, instrumentConfig] of Object.entries(config)) {
+			const rawSoundfont = await fetchSoundfont(instrumentConfig.url)
+			const audioFont = {
+				name,
+				url: instrumentConfig.url,
+				soundfont: rawSoundfont,
+				samples: new Map(),
+				isLoaded: true
+			}
+			
+			const instrument = new Instrument({ name, soundfont: audioFont, config: instrumentConfig }, this)
+			this.instruments[name] = instrument
+			// Add instrument to gear object dynamically
+			this[name] = instrument
+			results.push(instrument)
+		}
+		return results.length === 1 ? results[0] : results
+	}
+
+	// Internal method for loading individual instruments
+	private loadSingleInstrument = async (name: string, config: InstrumentConfigT) => {
+		const rawSoundfont = await fetchSoundfont(config.url)
+		const audioFont = {
+			name,
+			url: config.url,
+			soundfont: rawSoundfont,
+			samples: new Map(),
+			isLoaded: true
+		}
+		
+		const instrument = new Instrument({ name, soundfont: audioFont, config }, this)
+		this.instruments[name] = instrument
+		// Add instrument to gear object dynamically
+		this[name] = instrument
+		return instrument
+	}
+
+	stop = (target?: StopTargetT): any => {
+		console.log(`[Gear.stop target]:`, target)
+		Object.values(this.instruments).forEach((instrument) => instrument.stop(target))
+		// For now, return empty array - we'll implement proper note tracking later
+		return []
 	}
 }
 
@@ -57,7 +112,7 @@ class Wembley {
 	settings = DEFAULT_SETTINGS as BaseSettingsT
 	playingNotes = []
 
-	initialize = async (config: InitializeConfigT) => {
+	initialize = async (config: InitializeConfigT): Promise<GearT> => {
 		if (config.minVelocity) this.settings.minVelocity = config.minVelocity
 		if (config.maxVelocity) this.settings.maxVelocity = config.maxVelocity
 		if (config.velocity) this.settings.velocity = config.velocity
@@ -66,6 +121,8 @@ class Wembley {
 
 		const gear = new Gear(config, this)
 		this.gears[gear.id] = gear
+		await gear.loadInitialInstruments(config)
+		return gear
 	}
 
 	// Dispatch the stop request to all gears, and as a
@@ -88,4 +145,6 @@ class Wembley {
 const WEMBLEY_LOG_PREFIX = '🎺 Ⅰ⋮⋮⋮⋮⋮⟫ wembley ⟪⋮⋮⋮⋮⋮Ⅰ  '
 // ↅ ∎ ⅲ ↀ ↇ Ⅹ Ⅰ ⁼ ◤ ◥ ▼ ◀ ▶ ⇶ ⇛ ⇉ ⇇ ← → W Ṇ Ķ Ĥ ₯ ₩ ⌂ ✕ ✓ ⟫ ⟪ № — © •
 
-const wembley = new Wembley()
+export const createWembley = (): WembleyT => {
+	return new Wembley()
+}

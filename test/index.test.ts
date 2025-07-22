@@ -20,24 +20,24 @@ describe('wembley', () => {
 
 		// gear.piano.note('C3') // play C3 on piano
 		expect(gear.piano.note).toBeDefined()
-		expect(typeof gear.piano.note).toBe('functiion')
+		expect(typeof gear.piano.note).toBe('function')
 		expect(gear.piano.note.length).toBe(1)
 
 		// gear.piano.notes(['C3', 'D4']) // play C3 and D4 on piano
 		expect(gear.piano.notes).toBeDefined()
-		expect(typeof gear.piano.notes).toBe('functiion')
+		expect(typeof gear.piano.notes).toBe('function')
 		expect(gear.piano.notes.length).toBe(1)
 
 		// gear.piano.chord('Cmin', 2) // play the notes of Cmin based in octave 2 on piano
 		expect(gear.piano.chord).toBeDefined()
-		expect(typeof gear.piano.chord).toBe('functiion')
+		expect(typeof gear.piano.chord).toBe('function')
 		expect(gear.piano.chord.length).toBe(2)
 
 		// gear.piano.stop() // stop all noteInstances played by piano
 		// gear.piano.stop('C3') // stop all C3 noteInstances played by piano
 		// gear.piano.stop(['C3', 'F4']) // stop all C3 and F4 noteInstances played by piano
 		expect(gear.piano.stop).toBeDefined()
-		expect(typeof gear.piano.stop).toBe('functiion')
+		expect(typeof gear.piano.stop).toBe('function')
 		expect(gear.piano.stop.length).toBe(1)
 	})
 
