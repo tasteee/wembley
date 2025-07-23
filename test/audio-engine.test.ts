@@ -41,7 +41,7 @@ describe('audio engine cancelScheduledValues fix', () => {
 		}).not.toThrow()
 	})
 
-	it.only('should handle various note modifiers combined without error', async () => {
+	it('should handle various note modifiers combined without error', async () => {
 		const gear = await getGear()
 		expect(() => {
 			console.log(gear.piano)
