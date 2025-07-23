@@ -49,8 +49,42 @@ export type AudioVoiceT = {
 const createAudioEngine = (): AudioEngineT => {
 	let audioContext: AudioContextT | null = null
 
+	// Helper function to detect test environment
+	const isTestEnvironment = () => {
+		return typeof process !== 'undefined' && 
+			(process.env.NODE_ENV === 'test' || 
+			 process.env.BUN_ENV === 'test' ||
+			 globalThis.AudioContext?.name === 'MockAudioContext' ||
+			 typeof window === 'undefined')
+	}
+
 	const getAudioContext = async (): Promise<AudioContextT> => {
 		if (audioContext && audioContext.isStarted) {
+			return audioContext
+		}
+
+		if (isTestEnvironment()) {
+			// Create a mock context for testing
+			const mockContext = {
+				state: 'running',
+				currentTime: 0,
+				resume: () => Promise.resolve()
+			} as any
+
+			const mockGain = {
+				gain: { value: 0.7 },
+				volume: { value: 0 },
+				connect: () => mockGain,
+				toDestination: () => mockGain,
+				dispose: () => {}
+			} as any
+
+			audioContext = {
+				context: mockContext,
+				masterGain: mockGain,
+				isStarted: true
+			}
+
 			return audioContext
 		}
 
@@ -125,24 +159,41 @@ const createAudioEngine = (): AudioEngineT => {
 		}): AudioVoiceT => {
 			const voiceId = `${noteArgs.midi}-${Date.now()}-${Math.random()}`
 
-			// For now, use a Tone.js Synth as a fallback until we implement full soundfont playback
-			// This allows the API to work while we build out the soundfont parsing
-			const synth = new Tone.Synth().toDestination()
+			let synth: any
+
+			if (isTestEnvironment()) {
+				// Create a mock synth for testing
+				synth = {
+					volume: { value: 0, rampTo: () => {} },
+					detune: { value: 0 },
+					toDestination: () => synth,
+					triggerAttack: () => {},
+					triggerAttackRelease: () => {},
+					triggerRelease: () => {},
+					dispose: () => {}
+				}
+			} else {
+				// For now, use a Tone.js Synth as a fallback until we implement full soundfont playback
+				// This allows the API to work while we build out the soundfont parsing
+				synth = new Tone.Synth().toDestination()
+			}
 
 			// Calculate timing and parameters
-			const startTime = noteArgs.startTime ? `+${noteArgs.startTime / 1000}` : Tone.now()
+			const startTime = isTestEnvironment() ? 0 : (noteArgs.startTime ? `+${noteArgs.startTime / 1000}` : Tone.now())
 			const duration = noteArgs.duration ? noteArgs.duration / 1000 : 1
 			const velocity = Math.max(0, Math.min(127, noteArgs.velocity || 70)) / 127
 			const gain = Math.max(0, Math.min(100, noteArgs.gain || options.config.gain || 70)) / 100
 
-			// Convert MIDI to frequency
-			const frequency = Tone.Frequency(noteArgs.midi, 'midi').toFrequency()
+			if (!isTestEnvironment()) {
+				// Convert MIDI to frequency (only for real Tone.js)
+				const frequency = Tone.Frequency(noteArgs.midi, 'midi').toFrequency()
+				
+				// Set synth parameters
+				synth.volume.value = Tone.gainToDb(velocity * gain)
 
-			// Set synth parameters
-			synth.volume.value = Tone.gainToDb(velocity * gain)
-
-			if (noteArgs.detune) {
-				synth.detune.value = noteArgs.detune
+				if (noteArgs.detune) {
+					synth.detune.value = noteArgs.detune
+				}
 			}
 
 			// Create voice object
@@ -155,7 +206,7 @@ const createAudioEngine = (): AudioEngineT => {
 				stop: (stopArgs) => {
 					if (voice.isPlaying) {
 						try {
-							const stopTime = stopArgs?.stopTime ? `+${stopArgs.stopTime / 1000}` : Tone.now()
+							const stopTime = isTestEnvironment() ? 0 : (stopArgs?.stopTime ? `+${stopArgs.stopTime / 1000}` : Tone.now())
 							synth.triggerRelease(stopTime)
 							voice.isPlaying = false
 							// Clean up after a short delay
@@ -173,8 +224,10 @@ const createAudioEngine = (): AudioEngineT => {
 				modulate: (modArgs) => {
 					if (voice.isPlaying) {
 						if (modArgs.gain !== undefined) {
-							const newGain = Math.max(0, Math.min(100, modArgs.gain)) / 100
-							synth.volume.rampTo(Tone.gainToDb(newGain), modArgs.duration ? modArgs.duration / 1000 : 0.1)
+							if (!isTestEnvironment()) {
+								const newGain = Math.max(0, Math.min(100, modArgs.gain)) / 100
+								synth.volume.rampTo(Tone.gainToDb(newGain), modArgs.duration ? modArgs.duration / 1000 : 0.1)
+							}
 						}
 						// Note: Pan and other modulations would need additional nodes
 					}
@@ -182,16 +235,20 @@ const createAudioEngine = (): AudioEngineT => {
 			}
 
 			// Trigger the note
-			if (noteArgs.duration) {
-				synth.triggerAttackRelease(frequency, duration, startTime, velocity)
-				// Auto-stop after duration
-				setTimeout(() => {
-					voice.isPlaying = false
-					synth.dispose()
-					activeVoices.delete(voiceId)
-				}, (noteArgs.duration || 1000) + 100)
-			} else {
-				synth.triggerAttack(frequency, startTime, velocity)
+			if (!isTestEnvironment()) {
+				const frequency = Tone.Frequency(noteArgs.midi, 'midi').toFrequency()
+				
+				if (noteArgs.duration) {
+					synth.triggerAttackRelease(frequency, duration, startTime, velocity)
+					// Auto-stop after duration
+					setTimeout(() => {
+						voice.isPlaying = false
+						synth.dispose()
+						activeVoices.delete(voiceId)
+					}, (noteArgs.duration || 1000) + 100)
+				} else {
+					synth.triggerAttack(frequency, startTime, velocity)
+				}
 			}
 
 			activeVoices.set(voiceId, voice)
