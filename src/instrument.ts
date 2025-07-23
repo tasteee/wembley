@@ -1,7 +1,6 @@
 import { NoteDesigner } from './note-designer.js'
 import { NotesDesigner } from './notes-designer.js'
 import { ChordDesigner } from './chord-designer.js'
-import { InstrumentT, StopTargetT, InstrumentConfigT, NewSoundfontLoadConfigT } from './types.js'
 import { audioEngine } from './audio-engine.js'
 import type { AudioSynthT, AudioFontT } from './audio-engine.js'
 
@@ -29,6 +28,7 @@ export class Instrument implements InstrumentT {
 	id = crypto.randomUUID()
 	parent = null
 	name = ''
+	isLoaded = false
 
 	originalConfig = {} as InstrumentConfigT
 	soundfont = null as AudioFontT | null
@@ -41,7 +41,7 @@ export class Instrument implements InstrumentT {
 		this.name = loadResult.name
 		this.soundfont = loadResult.soundfont
 		this.originalConfig = loadResult.config
-		
+
 		// Initialize settings with defaults and config overrides
 		this.settings = {
 			id: this.id,
@@ -49,19 +49,24 @@ export class Instrument implements InstrumentT {
 			url: loadResult.config.url,
 			minVelocity: loadResult.config.minVelocity || parent?.settings?.minVelocity || 60,
 			maxVelocity: loadResult.config.maxVelocity || parent?.settings?.maxVelocity || 80,
-			velocity: parent?.settings?.velocity || 75,
+			velocity: loadResult.config.velocity || parent?.settings?.velocity || 75,
 			gain: loadResult.config.gain || parent?.settings?.gain || 50,
 			pan: loadResult.config.pan || parent?.settings?.pan || 0,
-			duration: 1000, // Default duration
+			duration: loadResult.config.velocity || parent?.settings?.duration || 1000, // Default duration
 			soundfont: loadResult.soundfont,
 			originalConfig: { [loadResult.name]: loadResult.config }
 		}
+	}
 
+	load = async () => {
+		if (this.isLoaded) return this
 		// Create synth for this instrument
-		this.synth = audioEngine.createSynth({ 
-			soundfont: this.soundfont, 
-			config: this.settings 
+		this.synth = await audioEngine.createSynth({
+			soundfont: this.soundfont,
+			config: this.settings
 		})
+		this.isLoaded = true
+		return this
 	}
 
 	note = (note: string) => {

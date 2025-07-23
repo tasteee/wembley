@@ -58,8 +58,10 @@
   },
   "dependencies": {
     "@marmooo/soundfont-parser": "^0.1.1",
+    "audio-context-mock": "^0.1.3",
     "await-to-js": "^3.0.0",
     "listerine": "^1.0.1",
+    "standardized-audio-context-mock": "^9.7.24",
     "tonal": "^6.4.2",
     "tone": "^15.1.22"
   }

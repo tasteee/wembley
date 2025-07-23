@@ -1,8 +1,19 @@
-import type { AudioVoiceT } from './audio-engine.js'
+// Global type declarations - no imports allowed here for global scope
 
 type TodoT = any
+type InstrumentConfigMapT = Record<string, InstrumentConfigT>
+type InstrumentMapT = Record<string, Instrument>
 
-export type VoicingT =
+type AudioVoiceT = {
+	id: string
+	midi: number
+	soundfontNote: any // The playing note from soundfont-player
+	isPlaying: boolean
+	stop: (args?: { stopTime?: number; fadeTime?: number }) => void
+	modulate: (args: { gain?: number; pan?: number; startTime?: number; duration?: number }) => void
+}
+
+type VoicingT =
 	| 'open'
 	| 'closed'
 	| 'drop2'
@@ -16,7 +27,7 @@ export type VoicingT =
 	| 'guitaristic'
 	| 'orchestral'
 
-export type VoicingFunctionT = (notes: string[]) => string[]
+type VoicingFunctionT = (notes: string[]) => string[]
 
 // [target].stop() // stop all notes from all instruments
 // [target].stop(string) // (note) stop matching note from all instruments
@@ -35,14 +46,14 @@ type StopTargetT = string | number | string[] | number[]
 // and of instrument "piano". Or we can request noteInstances that were played as a part of
 // a specific cord symbol. Or that were played along side some other note(s). Basically, the
 // idea is for a search engine for noteInstances.
-export type InstanceTrackerT = {
+type InstanceTrackerT = {
 	noteInstances: Map<string, Set<AudioVoiceT>>
 	chordInstances: Map<string, Set<AudioVoiceT>>
 	notesInstances: Map<string, Set<AudioVoiceT>>
 	allInstances: Set<AudioVoiceT>
 }
 
-export type BaseSettingsT = {
+type BaseSettingsT = {
 	gain?: number
 	maxVelocity?: number
 	minVelocity?: number
@@ -50,7 +61,7 @@ export type BaseSettingsT = {
 	pan?: number
 }
 
-export type ConfigT = {
+type ConfigT = {
 	gain?: number
 	maxVelocity?: number
 	minVelocity?: number
@@ -58,19 +69,20 @@ export type ConfigT = {
 	pan?: number
 }
 
-export type SoundfontLoadConfigT = Record<string, string>
+type SoundfontLoadConfigT = Record<string, string>
 
-export type InstrumentConfigT = {
+type InstrumentConfigT = {
 	url: string
 	gain?: number
+	velocity?: number
 	minVelocity?: number
 	maxVelocity?: number
 	pan?: number
 }
 
-export type NewSoundfontLoadConfigT = Record<string, InstrumentConfigT>
+type NewSoundfontLoadConfigT = Record<string, InstrumentConfigT>
 
-export type InitializeConfigT = {
+type InitializeConfigT = {
 	id?: string // may be useful later
 	gain?: number // default gain for all instruments
 	velocity?: number // default velocity for all instruments
@@ -99,7 +111,7 @@ export type InitializeConfigT = {
 // NoteDesignerT is an object with chained methods
 // up until play() or stop() is invoked. Its sole
 // purpose is to design a note for playback.
-export type NoteDesignerT = {
+type NoteDesignerT = {
 	velocity: (velocity: number, maxVelocity?: number) => NoteDesignerT
 	minVelocity: (velocity: number) => NoteDesignerT
 	maxVelocity: (velocity: number) => NoteDesignerT
@@ -117,7 +129,7 @@ export type NoteDesignerT = {
 // NotesDesignerT is an object with chained methods
 // up until play() or stop() is invoked. Its sole
 // purpose is to design notes for playback.
-export type NotesDesignerT = {
+type NotesDesignerT = {
 	minVelocity: (velocity: number) => NotesDesignerT
 	maxVelocity: (velocity: number) => NotesDesignerT
 	velocity: (velocity: number, maxVelocity?: number) => NotesDesignerT
@@ -129,7 +141,8 @@ export type NotesDesignerT = {
 	release: (milliseconds: number) => NotesDesignerT
 	gain: (gain: number) => NotesDesignerT
 	pan: (pan: number) => NotesDesignerT
-	play: () => NoteInstanceT[]
+	// play: () => NoteInstanceT[]
+	play: () => any
 	stop: () => void
 }
 
@@ -141,7 +154,7 @@ export type NotesDesignerT = {
 // chord, but since we know it is a chord that follows
 // rules of music theory, we can also offer to handle
 // things like setting an inversion, voicing, etc.
-export type ChordDesignerT = {
+type ChordDesignerT = {
 	velocity: (velocity: number, maxVelocity?: number) => ChordDesignerT
 	minVelocity: (velocity: number) => ChordDesignerT
 	maxVelocity: (velocity: number) => ChordDesignerT
@@ -241,7 +254,7 @@ type NoteInstanceSettingsT = {
 // the note has stopped playing, but it will
 // be deactivated so methods called on it
 // will not do anything (except log in dev mode).
-export type NoteInstanceT = StopFeaturesT & {
+type NoteInstanceT = StopFeaturesT & {
 	id: string
 	name: string // 'C#3' etc
 	// settings
@@ -269,7 +282,7 @@ type InstrumentSettingsT = {
 	originalConfig: NewSoundfontLoadConfigT
 }
 
-export type InstrumentT = {
+type InstrumentT = {
 	id: string // uuid
 	name: string // the key of the instrument in initialize config
 	settings: InstrumentSettingsT
@@ -283,7 +296,8 @@ export type InstrumentT = {
 	stop: (target?: StopTargetT) => any
 }
 
-export type GearT = Record<string, InstrumentT> & {
+type GearT = Record<string, InstrumentT> & {
+	loadInitialInstruments: () => Promise<void>
 	// async load a soundfont from a url. when it is loaded,
 	// build an instrument object centered around the soundfont.
 	// this will return the instrument but also apply it to gear
@@ -292,7 +306,7 @@ export type GearT = Record<string, InstrumentT> & {
 	stop: (target?: StopTargetT) => any
 }
 
-export type WembleyT = {
+type WembleyT = {
 	// initializes, builds, and returns the gear
 	// that all of the soundfont playing
 	// will occur on.

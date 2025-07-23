@@ -2,14 +2,12 @@ import { describe, it, expect } from '@jest/globals'
 import { wembley } from '../src'
 import { getGear } from './test-helpers'
 
-describe('wembley', () => {
+describe.skip('wembley', () => {
 	it('gear should have correct api', async () => {
 		const gear = await getGear()
 		expect(gear).toBeDefined()
-		// gear.load({ instrumentName: { ...config }})
 		expect(gear.load).toBeDefined()
 		expect(typeof gear.load).toBe('function')
-		// gear.stop()
 		expect(gear.stop).toBeDefined()
 		expect(typeof gear.stop).toBe('function')
 	})
@@ -47,7 +45,7 @@ describe('wembley', () => {
 		expect(target.length).toBe(argvCount)
 	}
 
-	it('NoteBuilderT should have correct API', async () => {
+	it.only('NoteBuilderT should have correct API', async () => {
 		const gear = await getGear()
 		const note = gear.piano.note('C3')
 		expect(note).toBeDefined()

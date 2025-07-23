@@ -15,8 +15,18 @@
     "noEmit": true,
     "outDir": "dist",   
     "resolveJsonModule": true,
-    "rootDir": "."
+    "rootDir": ".",
+    "typeRoots": ["./node_modules/@types", "./src"]
   },
 
-  "files": ["./src/types.d.ts"]
+  "include": [
+    "src/**/*.ts",
+    "test/setupTests.ts" // Ensure this is included
+  ],
+  
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build"
+  ]
 }
