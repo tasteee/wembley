@@ -2,7 +2,7 @@ import { describe, it, expect } from '@jest/globals'
 import { wembley } from '../src'
 import { PIANO_URL } from './test-helpers'
 
-describe.skip('wembley.initialize() V1 API', () => {
+describe('wembley.initialize() V1 API', () => {
 	it('should support the new initialize API with instruments configuration', async () => {
 		const gear = await wembley.initialize({
 			// set some default values

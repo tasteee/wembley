@@ -2,7 +2,7 @@ import { describe, it, expect } from '@jest/globals'
 import { wembley } from '../src'
 import { getGear } from './test-helpers'
 
-describe.skip('wembley', () => {
+describe('wembley', () => {
 	it('gear should have correct api', async () => {
 		const gear = await getGear()
 		expect(gear).toBeDefined()
@@ -45,7 +45,7 @@ describe.skip('wembley', () => {
 		expect(target.length).toBe(argvCount)
 	}
 
-	it.only('NoteBuilderT should have correct API', async () => {
+	it('NoteBuilderT should have correct API', async () => {
 		const gear = await getGear()
 		const note = gear.piano.note('C3')
 		expect(note).toBeDefined()
