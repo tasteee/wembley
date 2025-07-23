@@ -21435,6 +21435,18 @@ var Gear = class {
       instrumentList.forEach((instrument) => instrument.stop(target));
       return [];
     };
+    // Alias for loadInstruments to match GearT type definition
+    this.load = async (config) => {
+      await this.loadInstruments(config);
+      return this;
+    };
+    // Alias for loadInstruments that loads a single instrument
+    this.loadInstrument = async (config) => {
+      await this.loadInstruments(config);
+      const instrumentNames = Object.keys(config);
+      const firstInstrumentName = instrumentNames[0];
+      return this[firstInstrumentName];
+    };
     this.parent = wembley2;
     const { instruments, voicings, ...rest } = config;
     this.settings = { ...DEFAULT_SETTINGS, ...rest };
