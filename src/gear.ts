@@ -80,4 +80,19 @@ export class Gear {
 		// For now, return empty array - we'll implement proper note tracking later
 		return []
 	}
+
+	// Alias for loadInstruments to match GearT type definition
+	load = async (config: NewSoundfontLoadConfigT) => {
+		await this.loadInstruments(config)
+		return this
+	}
+
+	// Alias for loadInstruments that loads a single instrument
+	loadInstrument = async (config: NewSoundfontLoadConfigT) => {
+		await this.loadInstruments(config)
+		// Return the first loaded instrument
+		const instrumentNames = Object.keys(config)
+		const firstInstrumentName = instrumentNames[0]
+		return this[firstInstrumentName]
+	}
 }
