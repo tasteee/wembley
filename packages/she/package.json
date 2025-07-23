@@ -1,0 +1,31 @@
+{
+  "name": "she",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "description": "Centralized brand UX component library and styles",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "bun test src"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "ui",
+    "components",
+    "design-system",
+    "brand",
+    "ux"
+  ],
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
