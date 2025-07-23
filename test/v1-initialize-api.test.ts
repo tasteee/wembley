@@ -113,7 +113,7 @@ describe('wembley.initialize() V1 API', () => {
 		expect(gear.load).toBeDefined()
 
 		// Should be able to load instruments later
-		await gear.load({
+		await gear.loadInstruments({
 			laterPiano: {
 				url: PIANO_URL,
 				gain: 80

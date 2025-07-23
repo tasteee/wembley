@@ -3,6 +3,7 @@ import { NotesDesigner } from './notes-designer.js'
 import { ChordDesigner } from './chord-designer.js'
 import { audioEngine } from './audio-engine.js'
 import type { AudioSynthT, AudioFontT } from './audio-engine.js'
+import { DEFAULT_SETTINGS } from './constants.js'
 
 type InstrumentLoadResultT = {
 	name: string
@@ -42,17 +43,14 @@ export class Instrument implements InstrumentT {
 		this.soundfont = loadResult.soundfont
 		this.originalConfig = loadResult.config
 
-		// Initialize settings with defaults and config overrides
 		this.settings = {
 			id: this.id,
 			name: loadResult.name,
 			url: loadResult.config.url,
-			minVelocity: loadResult.config.minVelocity || parent?.settings?.minVelocity || 60,
-			maxVelocity: loadResult.config.maxVelocity || parent?.settings?.maxVelocity || 80,
-			velocity: loadResult.config.velocity || parent?.settings?.velocity || 75,
-			gain: loadResult.config.gain || parent?.settings?.gain || 50,
-			pan: loadResult.config.pan || parent?.settings?.pan || 0,
-			duration: loadResult.config.velocity || parent?.settings?.duration || 1000, // Default duration
+			...DEFAULT_SETTINGS,
+			...this.settings,
+			...parent?.settings,
+			...loadResult.config,
 			soundfont: loadResult.soundfont,
 			originalConfig: { [loadResult.name]: loadResult.config }
 		}
@@ -60,11 +58,12 @@ export class Instrument implements InstrumentT {
 
 	load = async () => {
 		if (this.isLoaded) return this
-		// Create synth for this instrument
+
 		this.synth = await audioEngine.createSynth({
 			soundfont: this.soundfont,
 			config: this.settings
 		})
+
 		this.isLoaded = true
 		return this
 	}

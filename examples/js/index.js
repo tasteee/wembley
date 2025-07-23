@@ -480,6 +480,8 @@ var require_bundle = __commonJS({
 
 // src/constants.ts
 var DEFAULT_SETTINGS = {
+  duration: 1e3,
+  after: 0,
   velocity: 75,
   minVelocity: 60,
   maxVelocity: 80,
@@ -21380,13 +21382,10 @@ var Instrument3 = class {
       id: this.id,
       name: loadResult.name,
       url: loadResult.config.url,
-      minVelocity: loadResult.config.minVelocity || parent?.settings?.minVelocity || 60,
-      maxVelocity: loadResult.config.maxVelocity || parent?.settings?.maxVelocity || 80,
-      velocity: loadResult.config.velocity || parent?.settings?.velocity || 75,
-      gain: loadResult.config.gain || parent?.settings?.gain || 50,
-      pan: loadResult.config.pan || parent?.settings?.pan || 0,
-      duration: loadResult.config.velocity || parent?.settings?.duration || 1e3,
-      // Default duration
+      ...DEFAULT_SETTINGS,
+      ...this.settings,
+      ...parent?.settings,
+      ...loadResult.config,
       soundfont: loadResult.soundfont,
       originalConfig: { [loadResult.name]: loadResult.config }
     };
@@ -21414,19 +21413,16 @@ var Gear = class {
     this.loadInstruments = async (loadConfig) => {
       const instrumentEntries = Object.entries(loadConfig);
       const instrumentLoaders = [];
+      console.log({ loadConfig });
       for (const [name2, config] of instrumentEntries) {
-        console.log("loading soundfont for", name2);
         const promise = fetchSoundfont(config.url).then((rawfont) => {
-          console.log("soundfont loaded for", name2);
           const soundfont = { name: name2, url: config.url, soundfont: rawfont };
           const instrument = new Instrument3({ name: name2, soundfont, config }, this);
           return instrument.load();
         });
         instrumentLoaders.push(promise);
       }
-      console.log("waiting for soundfonts to load...");
       const instruments = await Promise.all(instrumentLoaders);
-      console.log("soundfonts all loaded and shit, instruments all the way created and shit");
       instruments.forEach((instrument) => this[instrument.name] = instrument);
     };
     this.stop = (target) => {
@@ -21434,6 +21430,18 @@ var Gear = class {
       const instrumentList = Object.values(this.instruments);
       instrumentList.forEach((instrument) => instrument.stop(target));
       return [];
+    };
+    // Alias for loadInstruments to match GearT type definition
+    this.load = async (config) => {
+      await this.loadInstruments(config);
+      return this;
+    };
+    // Alias for loadInstruments that loads a single instrument
+    this.loadInstrument = async (config) => {
+      await this.loadInstruments(config);
+      const instrumentNames = Object.keys(config);
+      const firstInstrumentName = instrumentNames[0];
+      return this[firstInstrumentName];
     };
     this.parent = wembley2;
     const { instruments, voicings, ...rest } = config;

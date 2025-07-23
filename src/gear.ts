@@ -40,10 +40,9 @@ export class Gear {
 		const instrumentEntries = Object.entries(loadConfig)
 		const instrumentLoaders = [] as any
 
+		console.log({ loadConfig })
 		for (const [name, config] of instrumentEntries) {
-			console.log('loading soundfont for', name)
 			const promise = fetchSoundfont(config.url).then((rawfont) => {
-				console.log('soundfont loaded for', name)
 				const soundfont = { name, url: config.url, soundfont: rawfont }
 				const instrument = new Instrument({ name, soundfont, config }, this)
 				return instrument.load()
@@ -52,9 +51,7 @@ export class Gear {
 			instrumentLoaders.push(promise)
 		}
 
-		console.log('waiting for soundfonts to load...')
 		const instruments = await Promise.all(instrumentLoaders)
-		console.log('soundfonts all loaded and shit, instruments all the way created and shit')
 		instruments.forEach((instrument) => (this[instrument.name] = instrument))
 	}
 
