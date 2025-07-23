@@ -66,8 +66,7 @@ describe('wembley.initialize() V1 API', () => {
 
 		expect(gear.piano).toBeDefined()
 
-		// Should be able to load additional instruments with new object format
-		await gear.load({
+		await gear.loadInstruments({
 			piano2: {
 				url: PIANO_URL,
 				gain: 70,
@@ -77,7 +76,6 @@ describe('wembley.initialize() V1 API', () => {
 			},
 			guitar: {
 				url: PIANO_URL
-				// optional properties should use defaults
 			}
 		})
 

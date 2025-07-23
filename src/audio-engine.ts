@@ -51,11 +51,13 @@ const createAudioEngine = (): AudioEngineT => {
 
 	// Helper function to detect test environment
 	const isTestEnvironment = () => {
-		return typeof process !== 'undefined' && 
-			(process.env.NODE_ENV === 'test' || 
-			 process.env.BUN_ENV === 'test' ||
-			 globalThis.AudioContext?.name === 'MockAudioContext' ||
-			 typeof window === 'undefined')
+		return (
+			typeof process !== 'undefined' &&
+			(process.env.NODE_ENV === 'test' ||
+				process.env.BUN_ENV === 'test' ||
+				globalThis.AudioContext?.name === 'MockAudioContext' ||
+				typeof window === 'undefined')
+		)
 	}
 
 	const getAudioContext = async (): Promise<AudioContextT> => {
@@ -179,7 +181,7 @@ const createAudioEngine = (): AudioEngineT => {
 			}
 
 			// Calculate timing and parameters
-			const startTime = isTestEnvironment() ? 0 : (noteArgs.startTime ? `+${noteArgs.startTime / 1000}` : Tone.now())
+			const startTime = isTestEnvironment() ? 0 : noteArgs.startTime ? `+${noteArgs.startTime / 1000}` : Tone.now()
 			const duration = noteArgs.duration ? noteArgs.duration / 1000 : 1
 			const velocity = Math.max(0, Math.min(127, noteArgs.velocity || 70)) / 127
 			const gain = Math.max(0, Math.min(100, noteArgs.gain || options.config.gain || 70)) / 100
@@ -187,7 +189,7 @@ const createAudioEngine = (): AudioEngineT => {
 			if (!isTestEnvironment()) {
 				// Convert MIDI to frequency (only for real Tone.js)
 				const frequency = Tone.Frequency(noteArgs.midi, 'midi').toFrequency()
-				
+
 				// Set synth parameters
 				synth.volume.value = Tone.gainToDb(velocity * gain)
 
@@ -206,7 +208,7 @@ const createAudioEngine = (): AudioEngineT => {
 				stop: (stopArgs) => {
 					if (voice.isPlaying) {
 						try {
-							const stopTime = isTestEnvironment() ? 0 : (stopArgs?.stopTime ? `+${stopArgs.stopTime / 1000}` : Tone.now())
+							const stopTime = isTestEnvironment() ? 0 : stopArgs?.stopTime ? `+${stopArgs.stopTime / 1000}` : Tone.now()
 							synth.triggerRelease(stopTime)
 							voice.isPlaying = false
 							// Clean up after a short delay
@@ -237,7 +239,7 @@ const createAudioEngine = (): AudioEngineT => {
 			// Trigger the note
 			if (!isTestEnvironment()) {
 				const frequency = Tone.Frequency(noteArgs.midi, 'midi').toFrequency()
-				
+
 				if (noteArgs.duration) {
 					synth.triggerAttackRelease(frequency, duration, startTime, velocity)
 					// Auto-stop after duration

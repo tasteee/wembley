@@ -1,8 +1,8 @@
-// Global type declarations - no imports allowed here for global scope
+// Type definitions for Wembley
 
 type TodoT = any
 type InstrumentConfigMapT = Record<string, InstrumentConfigT>
-type InstrumentMapT = Record<string, Instrument>
+type InstrumentMapT = Record<string, InstrumentT>
 
 type AudioVoiceT = {
 	id: string
@@ -85,9 +85,7 @@ type NewSoundfontLoadConfigT = Record<string, InstrumentConfigT>
 type InitializeConfigT = {
 	id?: string // may be useful later
 	gain?: number // default gain for all instruments
-	velocity?: number // default velocity for all instruments
-	pan?: number // default pan for all instruments
-	// it is good to set a default min/maxVelocity because the
+	velocity?: number // default velocity for all instruments	// it is good to set a default min/maxVelocity because the
 	// defaults are 0 and 127, respectively. If you set maxVelocity to 80
 	// but you don't set minVelocity, then your notes will be played
 	// anywhere between 0 and 80, which is not a super
