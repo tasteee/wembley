@@ -1,0 +1,45 @@
+{
+  "name": "wembly",
+  "type": "module",
+  "version": "1.0.0",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "description": "A delightful, DX-obsessed soundfont sequencer for the web. Chainable, expressive, and stupid-easy to get ideas flowing.",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
+  },
+  "scripts": {
+    "build": "node build-simple.cjs",
+    "build-file": "node build-simple.cjs",
+    "test": "bun test ./src/.test/audio-engine.test.ts ./src/.test/index.test.ts ./src/.test/v1-initialize-api.test.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "audio",
+    "soundfont",
+    "sequencer",
+    "music",
+    "web-audio",
+    "midi",
+    "synthesizer",
+    "piano",
+    "chord",
+    "note",
+    "instrument"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@marmooo/soundfont-parser": "^0.1.1",
+    "audio-context-mock": "^0.1.3",
+    "await-to-js": "^3.0.0",
+    "listerine": "^1.0.1",
+    "standardized-audio-context-mock": "^9.7.24",
+    "tonal": "^6.4.2",
+    "tone": "^15.1.22"
+  }
+}

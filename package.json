@@ -1,23 +1,20 @@
 {
-  "name": "wembley",
+  "name": "wembley-monorepo",
   "type": "module",
   "version": "1.0.0",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "description": "A delightful, DX-obsessed soundfont sequencer for the web. Chainable, expressive, and stupid-easy to get ideas flowing.",
-  "exports": {
-    "types": "./dist/index.d.ts",
-    "import": "./dist/index.js",
-    "require": "./dist/index.cjs"
-  },
+  "description": "Monorepo containing wembly soundfont library, she component library, and documentation site",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "build": "node build-simple.cjs",
-    "build-file": "node build-simple.cjs",
-    "copy": "powershell -Command \"Copy-Item -Path 'dist/*' -Destination 'examples/js' -Recurse -Force\"",
-    "prepublishOnly": "bun run build",
-    "serve": "serve ./examples",
-    "test": "bun test"
+    "build": "bun run build:packages",
+    "build:packages": "bun run --filter='*' build",
+    "test": "bun run --filter='*' test",
+    "test:wembly": "cd packages/wembly && bun run test",
+    "test:she": "cd packages/she && bun test",
+    "test:site": "cd packages/site && bun test",
+    "dev:site": "cd packages/site && bun run dev",
+    "serve": "serve ./examples"
   },
   "files": [
     "dist"
