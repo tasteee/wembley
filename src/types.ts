@@ -1,10 +1,10 @@
-// Global type declarations - no imports allowed here for global scope
+// Type definitions for Wembley
 
-type TodoT = any
-type InstrumentConfigMapT = Record<string, InstrumentConfigT>
-type InstrumentMapT = Record<string, Instrument>
+export type TodoT = any
+export type InstrumentConfigMapT = Record<string, InstrumentConfigT>
+export type InstrumentMapT = Record<string, Instrument>
 
-type AudioVoiceT = {
+export type AudioVoiceT = {
 	id: string
 	midi: number
 	soundfontNote: any // The playing note from soundfont-player
@@ -13,7 +13,7 @@ type AudioVoiceT = {
 	modulate: (args: { gain?: number; pan?: number; startTime?: number; duration?: number }) => void
 }
 
-type VoicingT =
+export type VoicingT =
 	| 'open'
 	| 'closed'
 	| 'drop2'
@@ -27,7 +27,7 @@ type VoicingT =
 	| 'guitaristic'
 	| 'orchestral'
 
-type VoicingFunctionT = (notes: string[]) => string[]
+export type VoicingFunctionT = (notes: string[]) => string[]
 
 // [target].stop() // stop all notes from all instruments
 // [target].stop(string) // (note) stop matching note from all instruments
@@ -35,7 +35,7 @@ type VoicingFunctionT = (notes: string[]) => string[]
 // [target].stop(string[]) // (notes) stop all matching notes from all instruments
 // [target].stop(number[]) // (midi notes) stop all matching midi notes from all instruments
 // [target].stop(string) // (chord symbol) stop all notes in chord from all instruments
-type StopTargetT = string | number | string[] | number[]
+export type StopTargetT = string | number | string[] | number[]
 
 // I am still trying to think this one through. I think we need a central store,
 // like a fast food drive in that serves up ALL the noteInstances. So we can order
@@ -46,14 +46,14 @@ type StopTargetT = string | number | string[] | number[]
 // and of instrument "piano". Or we can request noteInstances that were played as a part of
 // a specific cord symbol. Or that were played along side some other note(s). Basically, the
 // idea is for a search engine for noteInstances.
-type InstanceTrackerT = {
+export type InstanceTrackerT = {
 	noteInstances: Map<string, Set<AudioVoiceT>>
 	chordInstances: Map<string, Set<AudioVoiceT>>
 	notesInstances: Map<string, Set<AudioVoiceT>>
 	allInstances: Set<AudioVoiceT>
 }
 
-type BaseSettingsT = {
+export type BaseSettingsT = {
 	gain?: number
 	maxVelocity?: number
 	minVelocity?: number
@@ -61,7 +61,7 @@ type BaseSettingsT = {
 	pan?: number
 }
 
-type ConfigT = {
+export type ConfigT = {
 	gain?: number
 	maxVelocity?: number
 	minVelocity?: number
@@ -69,9 +69,9 @@ type ConfigT = {
 	pan?: number
 }
 
-type SoundfontLoadConfigT = Record<string, string>
+export type SoundfontLoadConfigT = Record<string, string>
 
-type InstrumentConfigT = {
+export type InstrumentConfigT = {
 	url: string
 	gain?: number
 	velocity?: number
@@ -80,9 +80,9 @@ type InstrumentConfigT = {
 	pan?: number
 }
 
-type NewSoundfontLoadConfigT = Record<string, InstrumentConfigT>
+export type NewSoundfontLoadConfigT = Record<string, InstrumentConfigT>
 
-type InitializeConfigT = {
+export type InitializeConfigT = {
 	id?: string // may be useful later
 	gain?: number // default gain for all instruments
 	velocity?: number // default velocity for all instruments
@@ -111,7 +111,7 @@ type InitializeConfigT = {
 // NoteDesignerT is an object with chained methods
 // up until play() or stop() is invoked. Its sole
 // purpose is to design a note for playback.
-type NoteDesignerT = {
+export type NoteDesignerT = {
 	velocity: (velocity: number, maxVelocity?: number) => NoteDesignerT
 	minVelocity: (velocity: number) => NoteDesignerT
 	maxVelocity: (velocity: number) => NoteDesignerT
@@ -129,7 +129,7 @@ type NoteDesignerT = {
 // NotesDesignerT is an object with chained methods
 // up until play() or stop() is invoked. Its sole
 // purpose is to design notes for playback.
-type NotesDesignerT = {
+export type NotesDesignerT = {
 	minVelocity: (velocity: number) => NotesDesignerT
 	maxVelocity: (velocity: number) => NotesDesignerT
 	velocity: (velocity: number, maxVelocity?: number) => NotesDesignerT
@@ -154,7 +154,7 @@ type NotesDesignerT = {
 // chord, but since we know it is a chord that follows
 // rules of music theory, we can also offer to handle
 // things like setting an inversion, voicing, etc.
-type ChordDesignerT = {
+export type ChordDesignerT = {
 	velocity: (velocity: number, maxVelocity?: number) => ChordDesignerT
 	minVelocity: (velocity: number) => ChordDesignerT
 	maxVelocity: (velocity: number) => ChordDesignerT
@@ -179,7 +179,7 @@ type ChordDesignerT = {
 // methods that PlayFeaturesT has, but also adds a few more that
 // we know we can accurately perform given that the notes being
 // played fit into the rules of a chord in music theory.
-type ChordPlayFeaturesT = PlayFeaturesT & {
+export type ChordPlayFeaturesT = PlayFeaturesT & {
 	octave: (octave: number) => ChordPlayFeaturesT
 	inversion: (inversion: number) => ChordPlayFeaturesT
 	voicing: (voicing: VoicingT | string) => ChordPlayFeaturesT
@@ -188,7 +188,7 @@ type ChordPlayFeaturesT = PlayFeaturesT & {
 
 // PlayFeaturesT reppresents the methods that can be chained
 // to set up a custom playback of a note, or group of notes.
-type PlayFeaturesT = {
+export type PlayFeaturesT = {
 	velocity: (velocity: number) => PlayFeaturesT
 	minVelocity: (velocity: number) => PlayFeaturesT
 	maxVelocity: (velocity: number) => PlayFeaturesT
@@ -212,7 +212,7 @@ type PlayFeaturesT = {
 // its current value to 0 at the end, tweening pan from its
 // current value to -100 at the end, and the whole process,
 // once it has begun, will last 1000ms.
-type StopFeaturesT = {
+export type StopFeaturesT = {
 	after: (milliseconds: number) => StopFeaturesT
 	duration: (milliseconds: number) => StopFeaturesT
 	gain: (gain: number) => StopFeaturesT
@@ -220,7 +220,7 @@ type StopFeaturesT = {
 	stop: () => void
 }
 
-type NoteInstanceMap = {
+export type NoteInstanceMap = {
 	id: string // Unique identifier for the note instance
 	note: string // The note name, e.g. 'C3'
 	midi: number // The MIDI number of the note
@@ -234,7 +234,7 @@ type NoteInstanceMap = {
 	duration: number // Duration of the note in milliseconds
 }
 
-type NoteInstanceSettingsT = {
+export type NoteInstanceSettingsT = {
 	velocity: number
 	pan: number | string
 	attack: number
@@ -254,7 +254,7 @@ type NoteInstanceSettingsT = {
 // the note has stopped playing, but it will
 // be deactivated so methods called on it
 // will not do anything (except log in dev mode).
-type NoteInstanceT = StopFeaturesT & {
+export type NoteInstanceT = StopFeaturesT & {
 	id: string
 	name: string // 'C#3' etc
 	// settings
@@ -268,7 +268,7 @@ type NoteInstanceT = StopFeaturesT & {
 // values, as well as a few that are added internally,
 // including the reference to the soundfont that
 // is loaded to create the instrument
-type InstrumentSettingsT = {
+export type InstrumentSettingsT = {
 	id: string
 	name: string
 	url: string
@@ -282,7 +282,7 @@ type InstrumentSettingsT = {
 	originalConfig: NewSoundfontLoadConfigT
 }
 
-type InstrumentT = {
+export type InstrumentT = {
 	id: string // uuid
 	name: string // the key of the instrument in initialize config
 	settings: InstrumentSettingsT
@@ -296,7 +296,7 @@ type InstrumentT = {
 	stop: (target?: StopTargetT) => any
 }
 
-type GearT = Record<string, InstrumentT> & {
+export type GearT = Record<string, InstrumentT> & {
 	loadInitialInstruments: () => Promise<void>
 	// async load a soundfont from a url. when it is loaded,
 	// build an instrument object centered around the soundfont.
@@ -306,7 +306,7 @@ type GearT = Record<string, InstrumentT> & {
 	stop: (target?: StopTargetT) => any
 }
 
-type WembleyT = {
+export type WembleyT = {
 	// initializes, builds, and returns the gear
 	// that all of the soundfont playing
 	// will occur on.

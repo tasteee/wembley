@@ -1,4 +1,4 @@
-import { NoteInstanceT, NoteInstanceSettingsT } from './types'
+import { NoteInstanceT, NoteInstanceSettingsT } from './types.js'
 import { numbers } from './numbers'
 
 export class NoteInstance implements NoteInstanceT {

@@ -7,9 +7,7 @@ module.exports = {
     '.*\\.spec\\.ts$', // Ignore Playwright spec files
     'browser\\.spec\\.ts$'    // Specifically ignore browser tests
   ],
-  "beforeAll": [
-    "<rootDir>/setupTests.ts" // Ensure setup file is run before all tests
-  ],
+  // Remove invalid beforeAll option
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   transform: {
     '^.+\\.ts$': 'ts-jest',

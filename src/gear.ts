@@ -2,6 +2,14 @@ import { fetchSoundfont } from './fetch-soundfont'
 import { Instrument } from './instrument'
 import { DEFAULT_SETTINGS } from './constants'
 import { Wembley } from './wembley'
+import type { 
+	InstrumentConfigMapT, 
+	BaseSettingsT, 
+	InitializeConfigT, 
+	NewSoundfontLoadConfigT, 
+	InstrumentMapT, 
+	StopTargetT 
+} from './types.js'
 
 // TODO: Error if dev tries to load an instrument
 // with the name that matches an existing property

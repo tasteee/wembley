@@ -1,5 +1,6 @@
 import * as Tone from 'tone'
 import { fetchSoundfont } from './fetch-soundfont.js'
+import type { ConfigT } from './types.js'
 
 export type AudioContextT = {
 	context: Tone.BaseContext

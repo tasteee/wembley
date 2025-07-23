@@ -1,5 +1,6 @@
 import { DEFAULT_SETTINGS } from './constants'
 import { Gear } from './gear'
+import type { BaseSettingsT, InitializeConfigT, StopTargetT } from './types.js'
 
 export class Wembley {
 	id = crypto.randomUUID()

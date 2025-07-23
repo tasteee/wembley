@@ -3,6 +3,7 @@ import { NotesDesigner } from './notes-designer.js'
 import { ChordDesigner } from './chord-designer.js'
 import { audioEngine } from './audio-engine.js'
 import type { AudioSynthT, AudioFontT } from './audio-engine.js'
+import type { InstrumentConfigT, NewSoundfontLoadConfigT, InstrumentT, StopTargetT } from './types.js'
 
 type InstrumentLoadResultT = {
 	name: string
