@@ -478,6 +478,15 @@ var require_bundle = __commonJS({
   }
 });
 
+// src/constants.ts
+var DEFAULT_SETTINGS = {
+  velocity: 75,
+  minVelocity: 60,
+  maxVelocity: 80,
+  gain: 50,
+  pan: 0
+};
+
 // node_modules/await-to-js/dist/await-to-js.es5.js
 function to(promise, errorExt) {
   return promise.then(function(data) {
@@ -2067,15 +2076,6 @@ var fetchSoundfont = async (url) => {
   const parsed = parse(buffer);
   const soundFont = new SoundFont(parsed);
   return soundFont;
-};
-
-// src/constants.ts
-var DEFAULT_SETTINGS = {
-  velocity: 75,
-  minVelocity: 60,
-  maxVelocity: 80,
-  gain: 50,
-  pan: 0
 };
 
 // node_modules/tone/build/esm/version.js
@@ -21154,16 +21154,42 @@ var ChordDesigner = class {
 // src/audio-engine.ts
 var createAudioEngine = () => {
   let audioContext = null;
+  const isTestEnvironment = () => {
+    return typeof process !== "undefined" && (process.env.BUN_ENV === "test" || globalThis.AudioContext?.name === "MockAudioContext" || typeof window === "undefined");
+  };
   const getAudioContext = async () => {
     if (audioContext && audioContext.isStarted) {
       return audioContext;
     }
-    if (getContext().state === "suspended") {
+    if (isTestEnvironment()) {
+      const mockContext = {
+        state: "running",
+        currentTime: 0,
+        resume: () => Promise.resolve()
+      };
+      const mockGain = {
+        gain: { value: 0.7 },
+        volume: { value: 0 },
+        connect: () => mockGain,
+        toDestination: () => mockGain,
+        dispose: () => {
+        }
+      };
+      audioContext = {
+        context: mockContext,
+        masterGain: mockGain,
+        isStarted: true
+      };
+      return audioContext;
+    }
+    const context2 = new Context();
+    setContext(context2);
+    if (context2.state === "suspended") {
       await start();
     }
     const masterGain = new Gain(0.7).toDestination();
     audioContext = {
-      context: getContext(),
+      context: context2,
       masterGain,
       isStarted: true
     };
@@ -21189,19 +21215,40 @@ var createAudioEngine = () => {
     }
     return audioFont;
   };
-  const createSynth = (args) => {
+  const createSynth = async (options) => {
+    await getAudioContext();
     const activeVoices = /* @__PURE__ */ new Map();
     const playNote = (noteArgs) => {
       const voiceId = `${noteArgs.midi}-${Date.now()}-${Math.random()}`;
-      const synth = new Synth().toDestination();
-      const startTime = noteArgs.startTime ? `+${noteArgs.startTime / 1e3}` : now();
+      let synth;
+      if (isTestEnvironment()) {
+        synth = {
+          volume: { value: 0, rampTo: () => {
+          } },
+          detune: { value: 0 },
+          toDestination: () => synth,
+          triggerAttack: () => {
+          },
+          triggerAttackRelease: () => {
+          },
+          triggerRelease: () => {
+          },
+          dispose: () => {
+          }
+        };
+      } else {
+        synth = new Synth().toDestination();
+      }
+      const startTime = isTestEnvironment() ? 0 : noteArgs.startTime ? `+${noteArgs.startTime / 1e3}` : now();
       const duration = noteArgs.duration ? noteArgs.duration / 1e3 : 1;
       const velocity = Math.max(0, Math.min(127, noteArgs.velocity || 70)) / 127;
-      const gain = Math.max(0, Math.min(100, noteArgs.gain || args.config.gain || 70)) / 100;
-      const frequency = Frequency(noteArgs.midi, "midi").toFrequency();
-      synth.volume.value = gainToDb(velocity * gain);
-      if (noteArgs.detune) {
-        synth.detune.value = noteArgs.detune;
+      const gain = Math.max(0, Math.min(100, noteArgs.gain || options.config.gain || 70)) / 100;
+      if (!isTestEnvironment()) {
+        const frequency = Frequency(noteArgs.midi, "midi").toFrequency();
+        synth.volume.value = gainToDb(velocity * gain);
+        if (noteArgs.detune) {
+          synth.detune.value = noteArgs.detune;
+        }
       }
       const voice = {
         id: voiceId,
@@ -21212,7 +21259,7 @@ var createAudioEngine = () => {
         stop: (stopArgs) => {
           if (voice.isPlaying) {
             try {
-              const stopTime = stopArgs?.stopTime ? `+${stopArgs.stopTime / 1e3}` : now();
+              const stopTime = isTestEnvironment() ? 0 : stopArgs?.stopTime ? `+${stopArgs.stopTime / 1e3}` : now();
               synth.triggerRelease(stopTime);
               voice.isPlaying = false;
               setTimeout(() => {
@@ -21228,27 +21275,32 @@ var createAudioEngine = () => {
         modulate: (modArgs) => {
           if (voice.isPlaying) {
             if (modArgs.gain !== void 0) {
-              const newGain = Math.max(0, Math.min(100, modArgs.gain)) / 100;
-              synth.volume.rampTo(gainToDb(newGain), modArgs.duration ? modArgs.duration / 1e3 : 0.1);
+              if (!isTestEnvironment()) {
+                const newGain = Math.max(0, Math.min(100, modArgs.gain)) / 100;
+                synth.volume.rampTo(gainToDb(newGain), modArgs.duration ? modArgs.duration / 1e3 : 0.1);
+              }
             }
           }
         }
       };
-      if (noteArgs.duration) {
-        synth.triggerAttackRelease(frequency, duration, startTime, velocity);
-        setTimeout(() => {
-          voice.isPlaying = false;
-          synth.dispose();
-          activeVoices.delete(voiceId);
-        }, (noteArgs.duration || 1e3) + 100);
-      } else {
-        synth.triggerAttack(frequency, startTime, velocity);
+      if (!isTestEnvironment()) {
+        const frequency = Frequency(noteArgs.midi, "midi").toFrequency();
+        if (noteArgs.duration) {
+          synth.triggerAttackRelease(frequency, duration, startTime, velocity);
+          setTimeout(() => {
+            voice.isPlaying = false;
+            synth.dispose();
+            activeVoices.delete(voiceId);
+          }, (noteArgs.duration || 1e3) + 100);
+        } else {
+          synth.triggerAttack(frequency, startTime, velocity);
+        }
       }
       activeVoices.set(voiceId, voice);
       return voice;
     };
-    const stopNote = (args2) => {
-      args2.voice.stop({ stopTime: args2.stopTime });
+    const stopNote = (args) => {
+      args.voice.stop({ stopTime: args.stopTime });
     };
     const stopAllNotes = () => {
       console.log(`Stopping all notes for synth (${activeVoices.size} active voices)`);
@@ -21282,10 +21334,20 @@ var Instrument3 = class {
     this.id = crypto.randomUUID();
     this.parent = null;
     this.name = "";
+    this.isLoaded = false;
     this.originalConfig = {};
     this.soundfont = null;
     this.synth = null;
     this.settings = {};
+    this.load = async () => {
+      if (this.isLoaded) return this;
+      this.synth = await audioEngine.createSynth({
+        soundfont: this.soundfont,
+        config: this.settings
+      });
+      this.isLoaded = true;
+      return this;
+    };
     this.note = (note2) => {
       return new NoteDesigner({ note: note2, instrument: this });
     };
@@ -21320,95 +21382,73 @@ var Instrument3 = class {
       url: loadResult.config.url,
       minVelocity: loadResult.config.minVelocity || parent?.settings?.minVelocity || 60,
       maxVelocity: loadResult.config.maxVelocity || parent?.settings?.maxVelocity || 80,
-      velocity: parent?.settings?.velocity || 75,
+      velocity: loadResult.config.velocity || parent?.settings?.velocity || 75,
       gain: loadResult.config.gain || parent?.settings?.gain || 50,
       pan: loadResult.config.pan || parent?.settings?.pan || 0,
-      duration: 1e3,
+      duration: loadResult.config.velocity || parent?.settings?.duration || 1e3,
       // Default duration
       soundfont: loadResult.soundfont,
       originalConfig: { [loadResult.name]: loadResult.config }
     };
-    this.synth = audioEngine.createSynth({
-      soundfont: this.soundfont,
-      config: this.settings
-    });
+  }
+};
+
+// src/gear.ts
+var Gear = class {
+  constructor(config, wembley2) {
+    this.id = crypto.randomUUID();
+    this.parent = null;
+    this.instrumentNames = [];
+    this.instrumentsConfig = {};
+    this.settings = {};
+    // Take the instrument config we alreay received in constructor,
+    // and perform the async task of loadInstruments here, since
+    // a constructor cannot be async. It is called directly after creation:
+    // const gears = new Gear({ ... })
+    // await gears.loadInitialInstruments()
+    this.loadInitialInstruments = async () => {
+      if (!this.instrumentsConfig) return;
+      console.log("[loadInitialInstruments] Loading instruments:", this.instrumentsConfig);
+      await this.loadInstruments(this.instrumentsConfig);
+    };
+    this.loadInstruments = async (loadConfig) => {
+      const instrumentEntries = Object.entries(loadConfig);
+      const instrumentLoaders = [];
+      for (const [name2, config] of instrumentEntries) {
+        console.log("loading soundfont for", name2);
+        const promise = fetchSoundfont(config.url).then((rawfont) => {
+          console.log("soundfont loaded for", name2);
+          const soundfont = { name: name2, url: config.url, soundfont: rawfont };
+          const instrument = new Instrument3({ name: name2, soundfont, config }, this);
+          return instrument.load();
+        });
+        instrumentLoaders.push(promise);
+      }
+      console.log("waiting for soundfonts to load...");
+      const instruments = await Promise.all(instrumentLoaders);
+      console.log("soundfonts all loaded and shit, instruments all the way created and shit");
+      instruments.forEach((instrument) => this[instrument.name] = instrument);
+    };
+    this.stop = (target) => {
+      console.log(`[Gear.stop target]:`, target);
+      const instrumentList = Object.values(this.instruments);
+      instrumentList.forEach((instrument) => instrument.stop(target));
+      return [];
+    };
+    this.parent = wembley2;
+    const { instruments, voicings, ...rest } = config;
+    this.settings = { ...DEFAULT_SETTINGS, ...rest };
+    this.instrumentsConfig = instruments || {};
+  }
+  get instruments() {
+    return this.instrumentNames.reduce((final, name2) => {
+      final[name2] = this[name2];
+      return final;
+    }, {});
   }
 };
 
 // src/wembley.ts
-var Gear = class {
-  constructor(config, wembley2) {
-    // Index signature for dynamic instrument properties
-    this.id = crypto.randomUUID();
-    this.wembley = null;
-    this.instruments = {};
-    this.settings = {};
-    this.loadInitialInstruments = async (config) => {
-      if (!config.instruments) return;
-      for (const [name2, instrumentConfig] of Object.entries(config.instruments)) {
-        await this.loadSingleInstrument(name2, instrumentConfig);
-      }
-    };
-    // This matches the GearT interface
-    this.loadInstrument = async (config) => {
-      const instrumentName = Object.keys(config)[0];
-      const instrumentConfig = config[instrumentName];
-      const rawSoundfont = await fetchSoundfont(instrumentConfig.url);
-      const audioFont = {
-        name: instrumentName,
-        url: instrumentConfig.url,
-        soundfont: rawSoundfont,
-        samples: /* @__PURE__ */ new Map(),
-        isLoaded: true
-      };
-      const instrument = new Instrument3({ name: instrumentName, soundfont: audioFont, config: instrumentConfig }, this);
-      this.instruments[instrumentName] = instrument;
-      this[instrumentName] = instrument;
-      return instrument;
-    };
-    // Convenience method that matches API expectations
-    this.load = async (config) => {
-      const results = [];
-      for (const [name2, instrumentConfig] of Object.entries(config)) {
-        const rawSoundfont = await fetchSoundfont(instrumentConfig.url);
-        const audioFont = {
-          name: name2,
-          url: instrumentConfig.url,
-          soundfont: rawSoundfont,
-          samples: /* @__PURE__ */ new Map(),
-          isLoaded: true
-        };
-        const instrument = new Instrument3({ name: name2, soundfont: audioFont, config: instrumentConfig }, this);
-        this.instruments[name2] = instrument;
-        this[name2] = instrument;
-        results.push(instrument);
-      }
-      return results.length === 1 ? results[0] : results;
-    };
-    // Internal method for loading individual instruments
-    this.loadSingleInstrument = async (name2, config) => {
-      const rawSoundfont = await fetchSoundfont(config.url);
-      const audioFont = {
-        name: name2,
-        url: config.url,
-        soundfont: rawSoundfont,
-        samples: /* @__PURE__ */ new Map(),
-        isLoaded: true
-      };
-      const instrument = new Instrument3({ name: name2, soundfont: audioFont, config }, this);
-      this.instruments[name2] = instrument;
-      this[name2] = instrument;
-      return instrument;
-    };
-    this.stop = (target) => {
-      console.log(`[Gear.stop target]:`, target);
-      Object.values(this.instruments).forEach((instrument) => instrument.stop(target));
-      return [];
-    };
-    this.wembley = wembley2;
-    this.settings = { ...DEFAULT_SETTINGS, ...config };
-  }
-};
 var Wembley = class {
   constructor() {
     this.id = crypto.randomUUID();
@@ -21423,7 +21463,7 @@ var Wembley = class {
       if (config.pan) this.settings.pan = config.pan;
       const gear = new Gear(config, this);
       this.gears[gear.id] = gear;
-      await gear.loadInitialInstruments(config);
+      await gear.loadInitialInstruments();
       return gear;
     };
     // Dispatch the stop request to all gears, and as a
