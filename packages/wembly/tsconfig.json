@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "esnext",
+    "strict": false,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "noImplicitOverride": false,
+    "noImplicitThis": false,
+    "forceConsistentCasingInFileNames": true,
+    "noUnusedLocals": false,
+    "noImplicitAny": false,
+    "allowJs": true,
+    "noEmit": true,
+    "outDir": "dist",   
+    "resolveJsonModule": true,
+    "rootDir": ".",
+    "typeRoots": ["./node_modules/@types", "./src"]
+  },
+
+   "files": ["./src/types.d.ts"],
+
+  "include": [
+    "src/**/*.ts",
+    "test/setupTests.ts" // Ensure this is included
+  ],
+  
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build"
+  ]
+}

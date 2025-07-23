@@ -1,0 +1,25 @@
+{
+  "name": "site",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Documentation and demo site for wembly and she packages",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "build": "bun build src/index.ts --outdir=dist",
+    "test": "bun test src"
+  },
+  "keywords": [
+    "docs",
+    "demo",
+    "documentation",
+    "site"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "wembly": "workspace:*",
+    "she": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
